@@ -1,0 +1,68 @@
+.map {
+  margin-right: auto;
+  margin-left: auto;
+}
+.overlaybox {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/box_movie.png")
+    no-repeat;
+  padding: 15px 10px;
+}
+.overlaybox div,
+ul {
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+.overlaybox li {
+  list-style: none;
+}
+.overlaybox .boxtitle {
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png")
+    no-repeat right 120px center;
+  margin-bottom: 8px;
+}
+
+.overlaybox ul {
+  width: 247px;
+}
+
+.overlaybox li {
+  position: relative;
+  margin-bottom: 2px;
+  background: #2b2d36;
+  padding: 5px 10px;
+  color: #aaabaf;
+  line-height: 1;
+}
+
+.overlaybox li span {
+  display: inline-block;
+}
+
+.overlaybox li .number {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.overlaybox li .title {
+  font-size: 13px;
+}
+
+.overlaybox li:hover {
+  color: #fff;
+  background: #d24545;
+}
+
+.overlaybox li:hover .up {
+  background-position: 0 0px;
+}
+
+.overlaybox li:hover .down {
+  background-position: 0 -20px;
+}
