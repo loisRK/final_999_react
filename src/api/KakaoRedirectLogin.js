@@ -31,6 +31,15 @@ const KakaoRedirectHandler = () => {
       // 위에서 setItem 을 사용하여 내부에 저장시킨 토크을 다시 불러온다.
       // 이때, 내부 저장소에서 가져온 토큰을 다시 token 이라는 변수에 담는다.
       const token = window.localStorage.getItem("token");
+      // const token = window.localStorage.getItem("token").split(" ")[1];
+      console.log("TOKEN : " + token);
+
+      // var base64Payload = token.split(".")[1];
+      // var payload = Buffer.from(base64Payload, "base64");
+      // var result = JSON.parse(payload.toString());
+      // console.log("RESULT : " + payload.toString());
+      // console.log("RESULT : " + result);
+
       // 백엔드로 토큰 다시 넘기기
       try {
         const res = await axios
@@ -47,10 +56,12 @@ const KakaoRedirectHandler = () => {
           // data 라는 변수에 유저 정보를 저장하고, setItem을 사용해 로컬에 다시 저장한다.
           .then((data) => {
             window.localStorage.setItem("profile", data);
-            console.log(data.data);
+            // console.log("DATA : " + data.json());
+            // console.log("BODY : " + data.body);
             // 만약, 유저정보를 잘 불러왔다면 navigate를 사용해 프론트엔드에서 설정한 마이페이지 경로를 설정해서 이동시킨다.
             if (data) {
               navigate("/");
+              // navigate("/myPage");
             }
           });
       } catch (e) {

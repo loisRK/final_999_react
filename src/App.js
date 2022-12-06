@@ -9,7 +9,8 @@ import Posting from "./components/Posting";
 import Home from "./components/Home";
 import DiaryEdit from "./components/DiaryEdit";
 import InsertDiary from "./components/InsertDiary";
-import KakaoRedirectHandler from "./api/KakaoRedirectHandler";
+import KakaoRedirectHandler from "./api/KakaoRedirectLogin";
+import KakaoRedirectLogout from "./api/KakaoRedirectLogout";
 import MyPage from "./components/MyPage";
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
           <Route path="/diaryFile/*" element={<Diary />} />
           <Route path="/diaryEdit/*" element={<DiaryEdit />} />
           <Route path="/insert" element={<InsertDiary />} />
+          <Route path="/kakaoLogout" element={<KakaoRedirectLogout />} />
           <Route
             path="/oauth/callback/kakao"
             element={<KakaoRedirectHandler />}

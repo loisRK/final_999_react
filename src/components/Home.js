@@ -1,12 +1,13 @@
 import "../App.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Map from "./Map";
 import { useEffect, useState } from "react";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { KAKAO_AUTH_URL } from "./KakaoLoginData";
 import kakao_login from "../img/kakao_login.png";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
-import KakaoRedirectHandler from "../api/KakaoRedirectHandler";
+import KakaoRedirectHandler from "../api/KakaoRedirectLogin";
+import { KAKAO_LOGOUT_URL } from "./KakaoLogoutData";
 
 const style = {
   position: "absolute",
@@ -20,19 +21,25 @@ const style = {
   p: 4,
 };
 
-const handleLogin = () => {
-  window.location.href = KAKAO_AUTH_URL;
-};
-
-const logout = () => {};
-
 function Home() {
+  const handleLogin = () => {
+    window.location.href = KAKAO_AUTH_URL;
+  };
+
+  const logout = () => {
+    // navigate("/kakaoLogout");
+    window.location.href = KAKAO_LOGOUT_URL;
+    // window.localStorage.clear();
+    // navigate("/");
+  };
   const [open, setOpen] = useState(false);
+  const token = window.localStorage.getItem("token");
+  const navigate = useNavigate();
   return (
     <div>
       <h1>999.com</h1>
       <br />
-      {window.localStorage.getItem("token") === null ? (
+      {token === null ? (
         <Button onClick={() => setOpen(true)}>Login</Button>
       ) : (
         <Button onClick={logout}>Logout</Button>
