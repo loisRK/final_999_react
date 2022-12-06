@@ -5,6 +5,7 @@ import { REST_API_KEY, REDIRECT_URI } from "../components/KakaoLogoutData";
 
 const KakaoRedirectHandler = () => {
   const navigate = useNavigate();
+  // 우리 서버에서 발급한 jwt 토큰(id, nickname, access_token 정보 포함)
   const token = window.localStorage.getItem("token");
   //   console.log(token);
 
