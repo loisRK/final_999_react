@@ -1,10 +1,8 @@
 import "../App.css";
 import { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import Posts from "./Posts";
-import Pagination from "./Pagination";
 import { axiosData } from "../api/Diary";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Posting() {
   // infinite scrolling

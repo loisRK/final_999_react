@@ -4,9 +4,7 @@ import Map from "./Map";
 import { useEffect, useState } from "react";
 import { Box, Button, Modal, Typography } from "@mui/material";
 import { KAKAO_AUTH_URL } from "./KakaoLoginData";
-import kakao_login from "../img/kakao_login.png";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
-import KakaoRedirectHandler from "../api/KakaoRedirectLogin";
 import { KAKAO_LOGOUT_URL } from "./KakaoLogoutData";
 
 const style = {
@@ -27,10 +25,7 @@ function Home() {
   };
 
   const logout = () => {
-    // navigate("/kakaoLogout");
     window.location.href = KAKAO_LOGOUT_URL;
-    // window.localStorage.clear();
-    // navigate("/");
   };
   const [open, setOpen] = useState(false);
   const token = window.localStorage.getItem("token");
@@ -67,6 +62,8 @@ function Home() {
         </Box>
       </Modal>
       <Link to={"/posting"}>Post</Link>
+      <br />
+      <Link to={"/myPage"}>My Page</Link>
       <h2 className="map">Map</h2>
       <Map />
     </div>
