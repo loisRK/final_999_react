@@ -19,14 +19,25 @@ ul {
 .overlaybox li {
   list-style: none;
 }
+
+.overlaybox .boxtitle .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 10px;
+  height: 10px;}
+  
 .overlaybox .boxtitle {
   color: #fff;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: bold;
-  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png")
-    no-repeat right 120px center;
   margin-bottom: 8px;
 }
+
+
+
+.overlaybox .boxtitle .close:hover {
+  cursor: pointer;}
 
 .overlaybox ul {
   width: 247px;
