@@ -5,8 +5,12 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@fontsource/public-sans": "^4.5.11",
     "@fontsource/roboto": "^4.5.8",
+<<<<<<< HEAD
     "@mui/icons-material": "^5.10.16",
+=======
+>>>>>>> ae8e741397f8dafd6da7f5309bc3f48cda28bc53
     "@mui/joy": "^5.0.0-alpha.56",
     "@mui/material": "^5.10.16",
     "@mui/styled-engine-sc": "^5.10.16",
