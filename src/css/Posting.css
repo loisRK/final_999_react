@@ -1,0 +1,16 @@
+.postHome {
+  /* display: flex;
+  flex-direction: row;
+  -ms-overflow-style: none;
+  scrollbar-width: none; */
+}
+
+/* .postHome::-webkit-scrollbar {
+  display: none;
+} */
+
+.postPage {
+  padding-bottom: 100px;
+  background: white;
+  height: 100%;
+}

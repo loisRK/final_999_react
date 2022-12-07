@@ -1,8 +1,23 @@
-import "../App.css";
+import "../css/Posting.css";
 import { useEffect, useRef, useState } from "react";
 import Posts from "./Posts";
 import { axiosData } from "../api/Diary";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  AppBar,
+  BottomNavigation,
+  BottomNavigationAction,
+  Fab,
+  Toolbar,
+  Typography,
+} from "@mui/material";
+import {
+  AccountCircleOutlined,
+  AddCircle,
+  HomeOutlined,
+  StickyNote2Outlined,
+} from "@mui/icons-material";
+import { Container } from "@mui/system";
 
 function Posting() {
   // infinite scrolling
@@ -11,6 +26,8 @@ function Posting() {
   const [prevPage, setPrevPage] = useState(0); // storing prev page number
   const [posts, setPosts] = useState([]);
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // infinite scroll 테스트
@@ -32,32 +49,81 @@ function Posting() {
   };
 
   return (
-    <div className="Home">
-      <div>
-        <Link to={"/"}>
-          <button className="write_button">홈으로</button>
-        </Link>
-        <Link to={"/insert"}>
-          <button className="write_button">글쓰기</button>
-        </Link>
-        <br />
+    <div className="postHome">
+      {/* <Link to={"/insert"}>
+        <button className="write_button">글쓰기</button>
+      </Link> */}
+      <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              포스팅
+            </Typography>
+          </Toolbar>
+        </Container>
+      </AppBar>
+
+      <div className="postPage">
+        <Fab
+          onClick={() => {
+            navigate("/insert");
+          }}
+          size="medium"
+          color="primary"
+          aria-label="add"
+        >
+          <AddCircle />
+        </Fab>
+        <Posts
+          onScroll={onScroll}
+          listInnerRef={listInnerRef}
+          posts={posts}
+          currentPage={currentPage}
+        ></Posts>
       </div>
-      <Posts
-        onScroll={onScroll}
-        listInnerRef={listInnerRef}
-        posts={posts}
-        currentPage={currentPage}
-      ></Posts>
-      {/* <Pagination
-        postsPerPage={data.size}
-        totalPosts={data.totalPage}
-        setCurrentPage={setCurrentPage}
-        pageList={data.pageList}
-        next={data.next}
-        prev={data.prev}
-        start={data.start}
-        end={data.end}
-      ></Pagination> */}
+      <BottomNavigation
+        sx={{
+          background: "#B6E2A1",
+          bottom: 0,
+          position: "fixed",
+          width: "100%",
+        }}
+        showLabels
+        value={0}
+      >
+        <BottomNavigationAction
+          label="Posting"
+          icon={<StickyNote2Outlined />}
+          component={Link}
+          to="/posting"
+        />
+        <BottomNavigationAction
+          label="Home"
+          icon={<HomeOutlined />}
+          component={Link}
+          to="/"
+        />
+        <BottomNavigationAction
+          label="My Page"
+          icon={<AccountCircleOutlined />}
+          component={Link}
+          to="/myPage"
+        />
+      </BottomNavigation>
     </div>
   );
 }

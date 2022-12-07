@@ -69,5 +69,5 @@ export const createDiary = async (formData) => {
       },
     })
     .then((res) => console.log("diaryNo : " + res.data))
-    .then((document.location.href = "/posting/1"));
+    .then((document.location.href = "/posting"));
 };
