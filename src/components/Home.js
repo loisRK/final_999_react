@@ -63,7 +63,7 @@ function Home() {
       </Modal>
       <Link to={"/posting"}>Post</Link>
       <br />
-      <Link to={"/myPage"}>My Page</Link>
+      {token === null ? <></> : <Link to={"/myPage"}>My Page</Link>}
       <h2 className="map">Map</h2>
       <Map />
     </div>

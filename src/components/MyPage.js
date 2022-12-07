@@ -2,6 +2,7 @@ import { Grid } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
+import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
 
 function MyPage() {
@@ -33,7 +34,12 @@ function MyPage() {
         alignItems="center"
       >
         <div>
-          <img className="profileImg" alt="gugu" src={profileImg} />
+          <Avatar
+            // className="profileImg"
+            alt="gugu"
+            src={profileImg}
+            sx={{ width: 100, height: 100 }}
+          />
         </div>
         <h3>{nickname}</h3>
         {email}
