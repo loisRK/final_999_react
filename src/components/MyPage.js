@@ -1,4 +1,18 @@
-import { Grid } from "@mui/material";
+import {
+  AccountCircleOutlined,
+  HomeOutlined,
+  StickyNote2Outlined,
+} from "@mui/icons-material";
+import {
+  AppBar,
+  Avatar,
+  BottomNavigation,
+  BottomNavigationAction,
+  Container,
+  Grid,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
@@ -19,39 +33,82 @@ function MyPage() {
 
   return (
     <div>
+      <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              마이페이지
+            </Typography>
+          </Toolbar>
+        </Container>
+      </AppBar>
       <Grid
         container
+        justifyContent="center"
         direction="column"
-        justifyContent="space-evenly"
-        alignItems="stretch"
-      >
-        <h1>myPage</h1>
-      </Grid>
-      <Grid
-        container
-        direction="column"
-        justifyContent="space-evenly"
         alignItems="center"
+        padding={3}
       >
-        <div>
+        <Grid>
           <Avatar
-            // className="profileImg"
+            className="profileImg"
             alt="gugu"
             src={profileImg}
-            sx={{ width: 100, height: 100 }}
+            sx={{
+              width: 100,
+              height: 100,
+            }}
           />
-        </div>
-        <h3>{nickname}</h3>
-        {email}
+        </Grid>
+        &nbsp;&nbsp;&nbsp;
+        <Grid>{nickname}</Grid>
+        <Grid>{email}</Grid>
       </Grid>
-      <Grid
-        container
-        direction="column"
-        justifyContent="space-evenly"
-        alignItems="stretch"
+      <button>프로필 수정</button>
+      <BottomNavigation
+        sx={{
+          background: "#B6E2A1",
+          position: "fixed",
+          width: "100%",
+          bottom: 0,
+          flex: "justify-start",
+        }}
+        showLabels
+        value={2}
       >
-        <Link to={"/"}>Home</Link>
-      </Grid>
+        <BottomNavigationAction
+          label="Posting"
+          icon={<StickyNote2Outlined />}
+          component={Link}
+          to="/posting"
+        />
+        <BottomNavigationAction
+          label="Home"
+          icon={<HomeOutlined />}
+          component={Link}
+          to="/"
+        />
+        <BottomNavigationAction
+          label="My Page"
+          icon={<AccountCircleOutlined />}
+          component={Link}
+          to="/myPage"
+        />
+      </BottomNavigation>
     </div>
   );
 }
