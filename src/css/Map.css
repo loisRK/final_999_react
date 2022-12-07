@@ -5,7 +5,7 @@
 .overlaybox {
   position: relative;
   width: 100px;
-  height: 100px;
+  height: 130px;
   background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/box_movie.png")
     no-repeat;
   padding: 15px 10px;
@@ -76,4 +76,32 @@ ul {
 
 .overlaybox li:hover .down {
   background-position: 0 -20px;
+}
+
+
+.enteroveray {
+  position: relative;
+  color: skyblue;
+  font-size: 13px;
+  font-weight: bold;
+  width: 100px;
+  height: auto;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/box_movie.png")
+    no-repeat;
+  padding: 10px 10px;
+  white-space: normal;
+}
+
+
+.blockoveray {
+  position: relative;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  width: 100px;
+  height: auto;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/box_movie.png")
+    no-repeat;
+  padding: 10px 10px;
+  white-space: normal;
 }

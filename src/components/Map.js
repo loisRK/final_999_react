@@ -4,6 +4,20 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/mockup.json";
 import { useNavigate } from "react-router-dom";
 
+// 위도, 경도로 위치 계산해서 km로 반환하는 함수
+function getDistanceFromLatLonInKm(lat1,lng1,lat2,lng2) {
+  function deg2rad(deg) {
+      return deg * (Math.PI/180)
+  }
+
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lng2-lng1);
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var d = R * c; // Distance in km
+  return d;
+}
 
 function Map() {
   const [latitude, setLatitude] = useState(0); // 위도
@@ -32,7 +46,6 @@ function Map() {
     }
   };
 
-
   useEffect(() => {
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
@@ -41,7 +54,7 @@ function Map() {
       //지도를 생성할 때 필요한 기본 옵션
       // center: new window.kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
       center: new window.kakao.maps.LatLng(latitude, longitude), //지도의 현재 사용자 좌표.
-      level: 3, //지도의 레벨(확대, 축소 정도)
+      level: 5, //지도의 레벨(확대, 축소 정도)
     };
 
     // 지도를 담을 영역 div tag를 id 값으로 지정
@@ -75,40 +88,95 @@ function Map() {
     map.setCenter(markerPosition);
 
     console.log(`latitude : ${latitude} + longitude : ${longitude}`);
-    userMarker.setMap(map);
+    userMarker.setMap(map); // 마커 객체 생성 시, map 지정해줬으면 setMap 안해줘도 됨
     // overlay.setMap(map);
 
     // 채팅방 마커 표시하기
     // 채팅방 목록을 가져와서 forEach로 마커 생성
-    chattingRooms.forEach((element) => {
-      console.log("위도 : " + element.latitude);
-      console.log("경도 : " + element.longitude);
-      console.log("태그 : " + element.tag);
+    chattingRooms.forEach((room) => {
+      console.log("위도 : " + room.latitude);
+      console.log("경도 : " + room.longitude);
+      console.log("태그 : " + room.tag);
 
-      const tag = element.tag;
-      const roomLatlng = new kakao.maps.LatLng(
-        element.latitude,
-        element.longitude
+      const tag = room.tag;
+      const roomsLatlng = new kakao.maps.LatLng(
+        room.latitude,
+        room.longitude
       );
 
       // 채팅방 마커 이미지 옵션
       const imageSrc = "bidulgi.png";
-      const imageSize = new kakao.maps.Size(30, 30); // 마커이미지의 크기
+      const imageSize = new kakao.maps.Size(50, 50); // 마커이미지의 크기
       const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
 
-      // 마커의 이미지 정보를 가지고 있는 마커이미지 생성
+      // 채팅방 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const markerImage = new kakao.maps.MarkerImage(
         imageSrc,
         imageSize
         // imageOption
       );
-      const marker = new kakao.maps.Marker({
+      // 채팅방 마커 객체 생성
+      const roomMarkers = new kakao.maps.Marker({
         map: map,
-        position: roomLatlng,
+        position: roomsLatlng,
         title: tag,
         image: markerImage,
       });
+
+    // 채팅방 마커 클릭시 오버레이 띄우기
+    kakao.maps.event.addListener(roomMarkers, 'click', function(mouseEvent) {
+      const roomMarker = roomMarkers;
+      roomEnter(roomMarker);
     });
+    });
+
+    // 채팅방 입장 오버레이 내용 지정
+    var enterElement = document.createElement('div');
+    enterElement.className = 'enteroveray';
+    enterElement.innerHTML = '<div class="boxtitle">입장하기</div>' 
+
+    // 채팅방 입장 오버레이 내용 지정
+    var blockElement = document.createElement('div');
+    blockElement.className = 'blockoveray';
+    blockElement.innerHTML = '<div class="boxtitle">입장불가</div>' 
+
+    
+    // 채팅방 입장 오버레이 생성
+    var enterOverlay = new kakao.maps.CustomOverlay({
+      position: null,
+      content: enterElement,
+      xAnchor: 0.5,
+      yAnchor: 2.3,
+      zIndex: 2,
+      clickable: true
+    });
+
+    
+    // 채팅방 오버레이 (채팅방 입장)
+    function roomEnter(roomMarker) {
+      const roomPosition = roomMarker.getPosition()
+
+      // 클릭한 채팅방의 마커 위치와 사용자의 위치 거리 계산
+      const distance = getDistanceFromLatLonInKm(latitude, longitude, roomPosition.Ma, roomPosition.La);
+      console.log("선택한 채팅방과의 거리 : " + distance + "km");
+
+      const roomLatlng = new kakao.maps.LatLng(
+        roomPosition.Ma,
+        roomPosition.La
+      );
+      var latlng = roomLatlng;
+      if(distance <= 1) {
+        enterOverlay.setContent(enterElement);
+      } else {
+        enterOverlay.setContent(blockElement);
+      }
+      enterOverlay.setPosition(latlng);
+      enterOverlay.setMap(map);
+      
+    };
+
+
+
 
       // 카카오맵-오버레이 내용 지정
     var closeElement = document.createElement('div')
@@ -120,24 +188,33 @@ function Map() {
     var postingElement = document.createElement('li')
     postingElement.className = 'posting';
     postingElement.id = 'posting';
-    postingElement.title = '포스팅';
-    postingElement.innerHTML = '<img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="15" height="15">';
+    postingElement.title = '포스팅 작성';
+    postingElement.innerHTML =  '<span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
+    '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>';
+    
+    var chattingElement = document.createElement('li')
+    chattingElement.className = 'chatting';
+    chattingElement.id = 'chatting';
+    chattingElement.title = '채팅방 생성';
+    chattingElement.innerHTML =  '<span class="icon"><img src="https://emojigraph.org/media/google/bug_1f41b.png" width="25" height="25"></span>' +
+    '            <span class="title">먹이주기</span>';
     
     var content = document.createElement('div');
     content.className = 'overlaybox';
     content.innerHTML = 
     '    <div class="boxtitle">999' +
-          '</div>' +
-    '        <li class="posting">' +
-    '            <span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
-    '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>' +
-    "        </li>" +
-    '        <li class="chatting">' +
-    '            <span class="icon"><img src="https://emojigraph.org/media/google/bug_1f41b.png" width="25" height="25"></span>' +
-    '            <span class="title">먹이주기</span>' +
-    "        </li>";
+    '    </div>' 
+    // '        <li class="posting">' +
+    // '            <span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
+    // '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>' +
+    // "        </li>" +
+    // '        <li class="chatting">' +
+    // '            <span class="icon"><img src="https://emojigraph.org/media/google/bug_1f41b.png" width="25" height="25"></span>' +
+    // '            <span class="title">먹이주기</span>' +
+    // "        </li>";
     content.appendChild(closeElement);
     content.appendChild(postingElement);
+    content.appendChild(chattingElement);
 
     // var content = 
     // '<div class="overlaybox">' +
@@ -172,10 +249,9 @@ function Map() {
       // 클릭한 위도, 경도 정보를 가져옵니다
       var latlng = mouseEvent.latLng;
       console.log("마우스 이벤트" + latlng);
-
       // 마커 위치를 클릭한 위치로 옮깁니다
       overlay.setPosition(latlng);
-      overlay.setMap(map);
+      overlay.setMap(map); 
     });
 
     // 오버레이를 닫기 위해 호출되는 함수
