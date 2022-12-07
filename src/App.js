@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Diary from "./components/Diary";
 import Posting from "./components/Posting";
 import Home from "./components/Home";
+import HomeTest from "./components/HomeTest";
 import DiaryEdit from "./components/DiaryEdit";
 import InsertDiary from "./components/InsertDiary";
 import MyPage from "./components/MyPage";
@@ -15,7 +16,8 @@ function App() {
       {/* 페이지 전환을 위한 routes 설정 */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomeTest />} />
+          {/* <Route path="/" element={<Home />} /> */}
           <Route path="/posting" element={<Posting />} />
           <Route path="/diaryFile/*" element={<Diary />} />
           <Route path="/diaryEdit/*" element={<DiaryEdit />} />
