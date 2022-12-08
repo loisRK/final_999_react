@@ -10,6 +10,7 @@ import MyPage from "./components/MyPage";
 import Chatting from "./components/Chatting";
 import KakaoRedirectLogin from "./api/KakaoRedirectLogin";
 import KakaoRedirectLogout from "./api/KakaoRedirectLogout";
+import Chat from "./components/Chat";
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
           />
           <Route path="/kakaoLogout" element={<KakaoRedirectLogout />} />
           <Route path="/myPage" element={<MyPage />} />
+          <Route path="/chatting" element={<Chatting />} />
+          <Route path={`/room/*`} element={<Chat />} />
         </Routes>
       </BrowserRouter>
     </div>
