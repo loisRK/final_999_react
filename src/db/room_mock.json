@@ -1,0 +1,29 @@
+[
+  {
+    "room_no": 1,
+    "user_id": 2559276694,
+    "latitude": "37.4682053",
+    "longitude": "126.889020",
+    "user_cnt": 5,
+    "tag": "심심",
+    "created_at": "2022-12-08 15:13:00"
+  },
+  {
+    "room_no": 2,
+    "user_id": 2559982698,
+    "latitude": "37.4691510",
+    "longitude": "126.888555",
+    "user_cnt": 5,
+    "tag": "긴급",
+    "created_at": "2022-12-08 15:15:00"
+  },
+  {
+    "room_no": 3,
+    "user_id": 2559276694,
+    "latitude": "37.4652240",
+    "longitude": "126.900045",
+    "user_cnt": 5,
+    "tag": "추천",
+    "created_at": "2022-12-08 15:20:00"
+  }
+]

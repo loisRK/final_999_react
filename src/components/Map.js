@@ -1,8 +1,10 @@
 /*global kakao*/
 import "../css/Map.css";
 import React, { useRef, useEffect, useState } from "react";
-import chattingRooms from "../db/mockup.json";
+// import chattingRooms from "../db/mockup.json";
+import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
+import { axiosRoom } from "../api/Room";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -27,6 +29,7 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
 function Map() {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
+  const [roomNo, setRoomNo] = useState(null);
   const navigate = useNavigate();
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
@@ -121,7 +124,7 @@ function Map() {
       const roomMarkers = new kakao.maps.Marker({
         map: map,
         position: roomsLatlng,
-        title: tag,
+        title: room.room_no,
         image: markerImage,
       });
 
@@ -146,6 +149,7 @@ function Map() {
     var enterOverlay = new kakao.maps.CustomOverlay({
       position: null,
       content: enterElement,
+      title: enterElement,
       xAnchor: 0.5,
       yAnchor: 2.3,
       zIndex: 2,
@@ -177,6 +181,14 @@ function Map() {
       }
       enterOverlay.setPosition(latlng);
       enterOverlay.setMap(map);
+
+      enterElement.onclick = function () {
+        const roomNo = roomMarker.getTitle();
+        console.log("ROOM NO : " + roomNo);
+        // ******************* 방으로 이동하는 함수 추가하기!!!!!!!!!! *******************
+        navigate(`/room?roomNo=${roomNo}`);
+        // ******************* 방 인원수 +1 하기 axios 함수 추가!!!!! ********************
+      };
     }
 
     // 카카오맵-오버레이 내용 지정
@@ -263,9 +275,20 @@ function Map() {
 
     // posting으로 이동 함수
     postingElement.onclick = function () {
-      var postPosition = overlay.getPosition();
-      console.log("psotPosition : " + postPosition.Ma);
-      navigate(`/insert?lat=${postPosition.Ma}&long=${postPosition.La}`);
+      navigate("/insert");
+    };
+
+    // Chatting으로 이동 함수
+    chattingElement.onclick = function () {
+      navigate("/chatting");
+    };
+
+    // Chatting으로 이동 함수
+    chattingElement.onclick = function () {
+      var roomPosition = overlay.getPosition();
+      navigate(
+        `/chatting?latitude=${roomPosition.Ma}&longitude=${roomPosition.La}`
+      );
     };
 
     // 오버레이 클릭시 자동으로 닫는 함수(v1)

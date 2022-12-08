@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // User 정보 불러오기 - GET
-export const axiosUser = async () => {
+export const axiosRoom = async () => {
   const token = window.localStorage.getItem("token");
   const response = await axios.get("http://localhost:8080/api/myPage", {
     headers: {

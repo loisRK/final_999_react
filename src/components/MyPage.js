@@ -16,6 +16,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
+// import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
 
 function MyPage() {

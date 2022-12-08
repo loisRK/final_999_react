@@ -25,8 +25,9 @@ ul {
   top: 10px;
   right: 10px;
   width: 10px;
-  height: 10px;}
-  
+  height: 10px;
+}
+
 .overlaybox .boxtitle {
   color: #fff;
   font-size: 13px;
@@ -34,10 +35,9 @@ ul {
   margin-bottom: 8px;
 }
 
-
-
 .overlaybox .boxtitle .close:hover {
-  cursor: pointer;}
+  cursor: pointer;
+}
 
 .overlaybox ul {
   width: 247px;
@@ -78,7 +78,6 @@ ul {
   background-position: 0 -20px;
 }
 
-
 .enteroveray {
   position: relative;
   color: skyblue;
@@ -92,6 +91,10 @@ ul {
   white-space: normal;
 }
 
+.enteroveray div:hover {
+  color: #fff;
+  background: #d24545;
+}
 
 .blockoveray {
   position: relative;
