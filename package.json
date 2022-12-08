@@ -9,7 +9,7 @@
     "@fontsource/roboto": "^4.5.8",
     "@mui/icons-material": "^5.10.16",
     "@mui/joy": "^5.0.0-alpha.56",
-    "@mui/material": "^5.10.16",
+    "@mui/material": "^5.10.17",
     "@mui/styled-engine-sc": "^5.10.16",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",

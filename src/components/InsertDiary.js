@@ -1,22 +1,26 @@
 import axios, { all } from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { newDiaryData, createDiary } from "../api/Diary";
+import { useParams, useSearchParams, Link } from "react-router-dom";
+import { newDiaryData, createDiary, createPost } from "../api/Diary";
 import "../App.css";
 
 function InsertDiary() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("aa");
+  // 페이지 전환 시 쿼리스트링방식으로 값 받아오기위한 searchParams 객체 생성
+  const [search, setSearch] = useSearchParams();
+
+  // post 위치 위도(lat), 경도(long)
+  const postLat = search.get("lat");
+  const postLong = search.get("long");
+
+  // post 내용
+  const [content, setContent] = useState("");
+
+  // post 첨부 이미지(1개)
   const [addedFile, setAddedFile] = useState([]);
 
+  // 데이터 전송을 위한 form, file 객체 생성
   const formData = new FormData();
   const fileArr = new Array();
-
-  const getTitle = (e) => {
-    e.preventDefault();
-    console.log(e.target.value);
-    setTitle(e.target.value);
-  };
 
   const getContent = (e) => {
     e.preventDefault();
@@ -24,17 +28,12 @@ function InsertDiary() {
     setContent(e.target.value);
   };
 
-  // const allFile = {};
   const getFile = (e) => {
     console.log(e.target.files);
-    // setAddedFile(e.target.files);
-    // console.log(addedFile);
-
     const input = document.querySelector("#newfiles");
     const files = input.files;
     const arr = Array.from(files);
-    // arr.forEach((file) => setAddedFile([...addedFile, file]));
-    console.log(arr);
+    console.log("arr : " + arr);
 
     for (let i = 0; i < arr.length; i++) {
       fileArr.push(arr[i]);
@@ -48,13 +47,15 @@ function InsertDiary() {
   const sendDiary = (e) => {
     e.preventDefault();
 
-    formData.append("title", title);
-    formData.append("content", content);
+    formData.append("postLat", postLat);
+    formData.append("postLong", postLong);
+    formData.append("postContent", content);
 
     for (let i = 0; i < fileArr.length; i++) {
       formData.append("files", fileArr[i]);
     }
     console.log(formData);
+
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
       console.log(key, ":", formData.get(key));
@@ -62,51 +63,47 @@ function InsertDiary() {
 
     console.log(addedFile);
 
-    createDiary(formData);
+    createPost(formData);
   };
 
   return (
-    <form
-      method="POST"
-      onSubmit={(e) => sendDiary(e)}
-      encType="multipart/form-data"
-    >
-      <button className="write_button" type="submit">
-        저장
+    <div>
+      <button
+        className="write_button"
+        onClick={() => (window.location.href = "/")}
+      >
+        취소
       </button>
-      <div>
-        Title :
-        <input
-          name="title"
-          placeholder="title"
-          onChange={getTitle}
-          value={title}
-        ></input>{" "}
-        <br />
-        Content :
-        <input
-          name="content"
-          placeholder="content"
-          onChange={getContent}
-          value={content}
-        ></input>
-        <br />
-        File Upload :
-        <input
-          type="file"
-          name="newfiles"
-          id="newfiles"
-          multiple
-          onChange={getFile}
-        ></input>
-        <hr />* 미리 보기 *<br />
+
+      <form
+        method="POST"
+        onSubmit={(e) => sendDiary(e)}
+        encType="multipart/form-data"
+      >
+        <button className="write_button" type="submit">
+          저장
+        </button>
+
         <div>
-          <b>Title : {title}</b> <br></br>
-          <b>content : {content}</b> <br></br>
-          <b>file : {addedFile} </b>
+          Content :
+          <input
+            name="content"
+            placeholder="content"
+            onChange={getContent}
+            value={content}
+          ></input>
+          <br />
+          File Upload :
+          <input
+            type="file"
+            name="newfiles"
+            id="newfiles"
+            multiple
+            onChange={getFile}
+          ></input>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }
 

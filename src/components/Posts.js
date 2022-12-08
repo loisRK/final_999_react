@@ -9,9 +9,10 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
         style={{ height: "100vh", overflowY: "auto" }}
       >
         {posts.map((post) => {
+          console.log(post);
           return (
             <div
-              key={post.no}
+              key={post.postNo}
               style={{
                 marginTop: "40px",
                 display: "flex",
@@ -20,8 +21,13 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                 flexDirection: "column",
               }}
             >
-              <p>Title: {post.title}</p>
-              <p>Content: {post.content}</p>
+              <p>
+                postNo: {post.postNo}
+                <br />
+                Content: {post.postContent}
+                <br />
+                <img src={`/img/${post.postImg}`} />
+              </p>
             </div>
           );
         })}

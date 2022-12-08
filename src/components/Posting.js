@@ -1,7 +1,7 @@
 import "../css/Posting.css";
 import { useEffect, useRef, useState } from "react";
 import Posts from "./Posts";
-import { axiosData } from "../api/Diary";
+import { axiosData, postData } from "../api/Diary";
 import { Link, useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -20,6 +20,9 @@ import {
 import { Container } from "@mui/system";
 
 function Posting() {
+  // ID token 확인
+  const token = window.localStorage.getItem("token");
+  console.log("userID token : " + token);
   // infinite scrolling
   const listInnerRef = useRef();
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,7 +35,7 @@ function Posting() {
   useEffect(() => {
     // infinite scroll 테스트
     if (!wasLastList && prevPage !== currentPage) {
-      axiosData(posts, setWasLastList, setPrevPage, setPosts, currentPage);
+      postData(posts, setWasLastList, setPrevPage, setPosts, currentPage);
     }
   }, [currentPage, wasLastList, prevPage]);
 
@@ -50,9 +53,6 @@ function Posting() {
 
   return (
     <div className="postHome">
-      {/* <Link to={"/insert"}>
-        <button className="write_button">글쓰기</button>
-      </Link> */}
       <AppBar position="static" sx={{ background: "#B6E2A1" }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -71,23 +71,13 @@ function Posting() {
                 textDecoration: "none",
               }}
             >
-              포스팅
+              Posting
             </Typography>
           </Toolbar>
         </Container>
       </AppBar>
 
       <div className="postPage">
-        <Fab
-          onClick={() => {
-            navigate("/insert");
-          }}
-          size="medium"
-          color="primary"
-          aria-label="add"
-        >
-          <AddCircle />
-        </Fab>
         <Posts
           onScroll={onScroll}
           listInnerRef={listInnerRef}

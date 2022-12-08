@@ -71,3 +71,42 @@ export const createDiary = async (formData) => {
     .then((res) => console.log("diaryNo : " + res.data))
     .then((document.location.href = "/posting"));
 };
+
+/////////////////////////////////post axios///////////////////////////////////////
+// insert Post - post
+export const createPost = async (formData) => {
+  axios
+    .post("http://localhost:8080/api/post", formData, {
+      headers: {
+        "Contest-Type": "multipart/form-data",
+      },
+    })
+    .then((res) => console.log("postNo : " + res.data))
+    .then((document.location.href = "/posting"));
+};
+
+// Post 전체 데이터 불러오기 - GET
+export const postData = async (
+  posts,
+  setWasLastList,
+  setPrevPage,
+  setPosts,
+  currentPage
+) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/postPage?page=${currentPage}&size=10`
+  );
+  // 데이터가 없으면 마지막 페이지였다는걸 표시
+  if (!response.data.dtoList.length) {
+    setWasLastList(true);
+    return;
+  }
+  setPrevPage(currentPage);
+  setPosts([...posts, ...response.data.dtoList]);
+};
+// export const axiosData = async (currentPage) => {
+//   const response = await axios.get(
+//     `http://localhost:8080/api/diaryPage?page=${currentPage}&size=10`
+//   );
+//   return response.data;
+// };
