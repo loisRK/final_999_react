@@ -283,6 +283,12 @@ function Map() {
       navigate("/chatting");
     };
 
+    // Chatting으로 이동 함수
+    chattingElement.onclick = function() {
+      var roomPosition = overlay.getPosition();
+      navigate(`/chatting?latitude=${roomPosition.Ma}&longitude=${roomPosition.La}`);
+    }
+
     // 오버레이 클릭시 자동으로 닫는 함수(v1)
     // content.onclick = function() {
     //   overlay.setMap(null);
