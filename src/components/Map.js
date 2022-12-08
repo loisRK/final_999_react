@@ -1,20 +1,27 @@
 /*global kakao*/
 import "../css/Map.css";
 import React, { useRef, useEffect, useState } from "react";
-import chattingRooms from "../db/mockup.json";
+// import chattingRooms from "../db/mockup.json";
+import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
+import { axiosRoom } from "../api/Room";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
-function getDistanceFromLatLonInKm(lat1,lng1,lat2,lng2) {
+function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   function deg2rad(deg) {
-      return deg * (Math.PI/180)
+    return deg * (Math.PI / 180);
   }
 
   var R = 6371; // Radius of the earth in km
-  var dLat = deg2rad(lat2-lat1);  // deg2rad below
-  var dLon = deg2rad(lng2-lng1);
-  var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon/2) * Math.sin(dLon/2);
-  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  var dLat = deg2rad(lat2 - lat1); // deg2rad below
+  var dLon = deg2rad(lng2 - lng1);
+  var a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   var d = R * c; // Distance in km
   return d;
 }
@@ -22,6 +29,7 @@ function getDistanceFromLatLonInKm(lat1,lng1,lat2,lng2) {
 function Map() {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
+  const [roomNo, setRoomNo] = useState(null);
   const navigate = useNavigate();
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
@@ -82,7 +90,7 @@ function Map() {
       map: map,
       position: markerPosition,
       // image: markerImage,
-      title: "현재 사용자의 위치"
+      title: "현재 사용자의 위치",
     });
 
     map.setCenter(markerPosition);
@@ -99,10 +107,7 @@ function Map() {
       console.log("태그 : " + room.tag);
 
       const tag = room.tag;
-      const roomsLatlng = new kakao.maps.LatLng(
-        room.latitude,
-        room.longitude
-      );
+      const roomsLatlng = new kakao.maps.LatLng(room.latitude, room.longitude);
 
       // 채팅방 마커 이미지 옵션
       const imageSrc = "bidulgi.png";
@@ -119,45 +124,49 @@ function Map() {
       const roomMarkers = new kakao.maps.Marker({
         map: map,
         position: roomsLatlng,
-        title: tag,
+        title: room.room_no,
         image: markerImage,
       });
 
-    // 채팅방 마커 클릭시 오버레이 띄우기
-    kakao.maps.event.addListener(roomMarkers, 'click', function(mouseEvent) {
-      const roomMarker = roomMarkers;
-      roomEnter(roomMarker);
-    });
+      // 채팅방 마커 클릭시 오버레이 띄우기
+      kakao.maps.event.addListener(roomMarkers, "click", function (mouseEvent) {
+        const roomMarker = roomMarkers;
+        roomEnter(roomMarker);
+      });
     });
 
     // 채팅방 입장 오버레이 내용 지정
-    var enterElement = document.createElement('div');
-    enterElement.className = 'enteroveray';
-    enterElement.innerHTML = '<div class="boxtitle">입장하기</div>' 
+    var enterElement = document.createElement("div");
+    enterElement.className = "enteroveray";
+    enterElement.innerHTML = '<div class="boxtitle">입장하기</div>';
 
     // 채팅방 입장 오버레이 내용 지정
-    var blockElement = document.createElement('div');
-    blockElement.className = 'blockoveray';
-    blockElement.innerHTML = '<div class="boxtitle">입장불가</div>' 
+    var blockElement = document.createElement("div");
+    blockElement.className = "blockoveray";
+    blockElement.innerHTML = '<div class="boxtitle">입장불가</div>';
 
-    
     // 채팅방 입장 오버레이 생성
     var enterOverlay = new kakao.maps.CustomOverlay({
       position: null,
       content: enterElement,
+      title: enterElement,
       xAnchor: 0.5,
       yAnchor: 2.3,
       zIndex: 2,
-      clickable: true
+      clickable: true,
     });
 
-    
     // 채팅방 오버레이 (채팅방 입장)
     function roomEnter(roomMarker) {
-      const roomPosition = roomMarker.getPosition()
+      const roomPosition = roomMarker.getPosition();
 
       // 클릭한 채팅방의 마커 위치와 사용자의 위치 거리 계산
-      const distance = getDistanceFromLatLonInKm(latitude, longitude, roomPosition.Ma, roomPosition.La);
+      const distance = getDistanceFromLatLonInKm(
+        latitude,
+        longitude,
+        roomPosition.Ma,
+        roomPosition.La
+      );
       console.log("선택한 채팅방과의 거리 : " + distance + "km");
 
       const roomLatlng = new kakao.maps.LatLng(
@@ -165,45 +174,50 @@ function Map() {
         roomPosition.La
       );
       var latlng = roomLatlng;
-      if(distance <= 1) {
+      if (distance <= 1) {
         enterOverlay.setContent(enterElement);
       } else {
         enterOverlay.setContent(blockElement);
       }
       enterOverlay.setPosition(latlng);
       enterOverlay.setMap(map);
-      
-    };
 
+      enterElement.onclick = function () {
+        const roomNo = roomMarker.getTitle();
+        console.log("ROOM NO : " + roomNo);
+        // ******************* 방으로 이동하는 함수 추가하기!!!!!!!!!! *******************
+        navigate(`/room?roomNo=${roomNo}`);
+        // ******************* 방 인원수 +1 하기 axios 함수 추가!!!!! ********************
+      };
+    }
 
+    // 카카오맵-오버레이 내용 지정
+    var closeElement = document.createElement("div");
+    closeElement.className = "close";
+    closeElement.id = "close";
+    closeElement.title = "닫기";
+    closeElement.innerHTML =
+      '<img src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png" width="15" height="15">';
 
+    var postingElement = document.createElement("li");
+    postingElement.className = "posting";
+    postingElement.id = "posting";
+    postingElement.title = "포스팅 작성";
+    postingElement.innerHTML =
+      '<span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
+      '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>';
 
-      // 카카오맵-오버레이 내용 지정
-    var closeElement = document.createElement('div')
-    closeElement.className = 'close';
-    closeElement.id = 'close';
-    closeElement.title = '닫기';
-    closeElement.innerHTML = '<img src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png" width="15" height="15">';
+    var chattingElement = document.createElement("li");
+    chattingElement.className = "chatting";
+    chattingElement.id = "chatting";
+    chattingElement.title = "채팅방 생성";
+    chattingElement.innerHTML =
+      '<span class="icon"><img src="https://emojigraph.org/media/google/bug_1f41b.png" width="25" height="25"></span>' +
+      '            <span class="title">먹이주기</span>';
 
-    var postingElement = document.createElement('li')
-    postingElement.className = 'posting';
-    postingElement.id = 'posting';
-    postingElement.title = '포스팅 작성';
-    postingElement.innerHTML =  '<span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
-    '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>';
-    
-    var chattingElement = document.createElement('li')
-    chattingElement.className = 'chatting';
-    chattingElement.id = 'chatting';
-    chattingElement.title = '채팅방 생성';
-    chattingElement.innerHTML =  '<span class="icon"><img src="https://emojigraph.org/media/google/bug_1f41b.png" width="25" height="25"></span>' +
-    '            <span class="title">먹이주기</span>';
-    
-    var content = document.createElement('div');
-    content.className = 'overlaybox';
-    content.innerHTML = 
-    '    <div class="boxtitle">999' +
-    '    </div>' 
+    var content = document.createElement("div");
+    content.className = "overlaybox";
+    content.innerHTML = '    <div class="boxtitle">999' + "    </div>";
     // '        <li class="posting">' +
     // '            <span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
     // '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>' +
@@ -216,7 +230,7 @@ function Map() {
     content.appendChild(postingElement);
     content.appendChild(chattingElement);
 
-    // var content = 
+    // var content =
     // '<div class="overlaybox">' +
     // '    <div class="boxtitle">999' +
     // '            <div class="close" onclick="closeOverlay()" title="닫기">' +
@@ -240,7 +254,7 @@ function Map() {
       xAnchor: 0.3,
       yAnchor: 0.91,
       zIndex: 1,
-      clickable: true
+      clickable: true,
     });
 
     // 지도에 클릭 이벤트를 등록합니다
@@ -251,30 +265,34 @@ function Map() {
       console.log("마우스 이벤트" + latlng);
       // 마커 위치를 클릭한 위치로 옮깁니다
       overlay.setPosition(latlng);
-      overlay.setMap(map); 
+      overlay.setMap(map);
     });
 
     // 오버레이를 닫기 위해 호출되는 함수
-    closeElement.onclick = function() {
-      overlay.setMap(null);     
-    }
-
+    closeElement.onclick = function () {
+      overlay.setMap(null);
+    };
 
     // posting으로 이동 함수
-    postingElement.onclick = function() {
-      navigate('/insert');
-    }
+    postingElement.onclick = function () {
+      navigate("/insert");
+    };
+
+    // Chatting으로 이동 함수
+    chattingElement.onclick = function () {
+      navigate("/chatting");
+    };
 
     // 오버레이 클릭시 자동으로 닫는 함수(v1)
     // content.onclick = function() {
-    //   overlay.setMap(null);     
+    //   overlay.setMap(null);
     // }
-    
+
     // 원본 코드(origin)
     // var closeOverlay = function() {
-    //   overlay.setMap(null);     
+    //   overlay.setMap(null);
     // }
-    
+
     // 웹브라우저 사이즈 크기에 따라서 지도의 중심값 변경
     function mapResize() {
       map.relayout();
@@ -297,11 +315,7 @@ function Map() {
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
-
   }, [latitude, longitude]);
-
-  
-
 
   return (
     <div
