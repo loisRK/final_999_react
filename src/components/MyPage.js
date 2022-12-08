@@ -58,7 +58,7 @@ function MyPage() {
       </AppBar>
       <Grid
         container
-        justifyContent="center"
+        justifycontent="center"
         direction="column"
         alignItems="center"
         padding={3}

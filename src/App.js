@@ -24,7 +24,7 @@ function App() {
           <Route path="/chatting/*" element={<Chatting />} />
           <Route path="/diaryFile/*" element={<Diary />} />
           <Route path="/diaryEdit/*" element={<DiaryEdit />} />
-          <Route path="/insert" element={<InsertDiary />} />
+          <Route path="/insert/*" element={<InsertDiary />} />
           <Route
             path="/oauth/callback/kakao"
             element={<KakaoRedirectLogin />}

@@ -26,7 +26,7 @@ import {
 import { KAKAO_AUTH_URL } from "./KakaoLoginData";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
 import { KAKAO_LOGOUT_URL } from "./KakaoLogoutData";
-import gugu from "../img/dulgi.jpg";
+import gugu from "../img/bidulgi.png";
 import gugu_tilt from "../img/dulgi_headtilt.png";
 import gugu_login from "../img/dulgi_login.jpg";
 import { Container } from "@mui/system";
@@ -61,6 +61,7 @@ function Home() {
   const logout = () => {
     window.location.href = KAKAO_LOGOUT_URL;
   };
+
   const [open, setOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
 
@@ -140,7 +141,7 @@ function Home() {
                     <Button
                       sx={{ right: 0 }}
                       onClick={() => setOpen(true)}
-                      justifyContent="flex-end"
+                      justifycontent="flex-end"
                       variant="contained"
                       color="success"
                     >
@@ -150,7 +151,7 @@ function Home() {
                     <Button
                       sx={{ right: 0 }}
                       onClick={() => setLogoutOpen(true)}
-                      justifyContent="flex-end"
+                      justifycontent="flex-end"
                       variant="contained"
                       color="success"
                     >
