@@ -7,6 +7,7 @@ import HomeTest from "./components/HomeTest";
 import DiaryEdit from "./components/DiaryEdit";
 import InsertDiary from "./components/InsertDiary";
 import MyPage from "./components/MyPage";
+import Chatting from "./components/Chatting";
 import KakaoRedirectLogin from "./api/KakaoRedirectLogin";
 import KakaoRedirectLogout from "./api/KakaoRedirectLogout";
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/" element={<HomeTest />} />
           {/* <Route path="/" element={<Home />} /> */}
           <Route path="/posting" element={<Posting />} />
+          <Route path="/chatting/*" element={<Chatting />} />
           <Route path="/diaryFile/*" element={<Diary />} />
           <Route path="/diaryEdit/*" element={<DiaryEdit />} />
           <Route path="/insert" element={<InsertDiary />} />
