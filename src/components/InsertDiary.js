@@ -1,6 +1,9 @@
+import axios, { all } from "axios";
 import React, { useState } from "react";
-import { useSearchParams } from "react-router-dom";
-import { createPost } from "../api/Diary";
+import { useParams, useSearchParams, Link } from "react-router-dom";
+import { newDiaryData, createDiary, createPost } from "../api/Post";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
 import "../App.css";
 
 function InsertDiary() {
@@ -22,27 +25,26 @@ function InsertDiary() {
   const formData = new FormData();
   const fileArr = new Array();
 
-  const token = window.localStorage.getItem("token");
-
   const getContent = (e) => {
     e.preventDefault();
     console.log(e.target.value);
     setContent(e.target.value);
   };
 
-  const getFile = () => {
-    const input = document.querySelector("#imgFile");
+  const getFile = (e) => {
+    console.log(e.target.files);
+    const input = document.querySelector("#newfiles");
     const files = input.files;
     const arr = Array.from(files);
-    console.log(arr);
+    console.log("arr : " + arr);
 
     for (let i = 0; i < arr.length; i++) {
       fileArr.push(arr[i]);
-      console.log("arr[i] : " + arr[i]);
+      console.log(arr[i]);
     }
 
-    console.log("addedFile : " + addedFile);
-    console.log("fileArr : " + fileArr);
+    console.log(addedFile);
+    console.log(fileArr);
   };
 
   const sendDiary = (e) => {
@@ -58,13 +60,15 @@ function InsertDiary() {
     for (let i = 0; i < fileArr.length; i++) {
       formData.append("files", fileArr[i]);
     }
+    console.log(formData);
 
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
       console.log(key, ":", formData.get(key));
     }
 
-    console.log("addedfile : " + addedFile);
+    console.log(addedFile);
+
     createPost(formData);
     console.log("formData" + formData);
   };
@@ -88,19 +92,44 @@ function InsertDiary() {
         </button>
 
         <div>
-          Content :
-          <input
+          {/* Content :<br /> */}
+          <Stack
+            component="form"
+            sx={{
+              width: "25ch",
+            }}
+            spacing={2}
+            noValidate
+            autoComplete="off"
+          >
+            <TextField
+              fullWidth
+              label="content"
+              id="content"
+              name="content"
+              defaultValue={content}
+              variant="filled"
+              onChange={getContent}
+            />
+            <TextField
+              hiddenLabel
+              id="filled-hidden-label-normal"
+              defaultValue="Normal"
+              variant="filled"
+            />
+          </Stack>
+          {/* <input
             name="content"
             placeholder="content"
             onChange={getContent}
             value={content}
-          ></input>
+          ></input> */}
           <br />
           File Upload :
           <input
             type="file"
-            name="imgFile"
-            id="imgFile"
+            name="newfiles"
+            id="newfiles"
             multiple
             onChange={getFile}
           ></input>
