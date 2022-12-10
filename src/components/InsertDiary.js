@@ -1,7 +1,7 @@
 import axios, { all } from "axios";
 import React, { useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
-import { newDiaryData, createDiary, createPost } from "../api/Diary";
+import { useSearchParams } from "react-router-dom";
+import { createPost } from "../api/Diary";
 import "../App.css";
 
 function InsertDiary() {
@@ -29,7 +29,7 @@ function InsertDiary() {
   };
 
   const getFile = (e) => {
-    console.log(e.target.files);
+    console.log("inside getFile 함수 : " + e.target.files);
     const input = document.querySelector("#newfiles");
     const files = input.files;
     const arr = Array.from(files);
@@ -37,11 +37,11 @@ function InsertDiary() {
 
     for (let i = 0; i < arr.length; i++) {
       fileArr.push(arr[i]);
-      console.log(arr[i]);
+      console.log("arr[i] : " + arr[i]);
     }
 
-    console.log(addedFile);
-    console.log(fileArr);
+    console.log("addedFile : " + addedFile);
+    console.log("fileArr : " + fileArr);
   };
 
   const sendDiary = (e) => {

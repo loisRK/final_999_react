@@ -96,6 +96,7 @@ export const postData = async (
   const response = await axios.get(
     `http://localhost:8080/api/postPage?page=${currentPage}&size=10`
   );
+  console.log("Diary.js : " + response.data.dtoList);
   // 데이터가 없으면 마지막 페이지였다는걸 표시
   if (!response.data.dtoList.length) {
     setWasLastList(true);

@@ -1,15 +1,49 @@
-import React from "react";
+import React, { useState } from "react";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { axiosDeletePost } from "../api/Post";
+import { Container } from "@mui/material";
+
+const options = ["수정하기", "삭제하기"];
+
+const ITEM_HEIGHT = 20;
 
 const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
+  const [postNo, setPostNo] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const token = window.localStorage.getItem("token");
+
+  const handleClick = (event, postNo) => {
+    setAnchorEl(event.currentTarget);
+    setPostNo(postNo);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const editOrDelete = (event) => {
+    if (event.currentTarget.innerText === "수정하기") {
+      // axiosEditPost();
+    } else {
+      axiosDeletePost(postNo);
+    }
+  };
+
   return (
     <div>
       <div
         onScroll={onScroll}
         ref={listInnerRef}
-        style={{ height: "100vh", overflowY: "auto" }}
+        display="flex"
+        flexDirection="column"
+        style={{ height: "auto", overflowY: "auto" }}
       >
         {posts.map((post) => {
-          console.log(post);
+          // console.log(post);
           return (
             <div
               key={post.postNo}
@@ -23,6 +57,16 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
             >
               <p>
                 postNo: {post.postNo}
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-controls={open ? "long-menu" : undefined}
+                  aria-expanded={open ? "true" : undefined}
+                  aria-haspopup="true"
+                  onClick={(e) => handleClick(e, post.postNo)}
+                >
+                  <MoreVertIcon />
+                </IconButton>
                 <br />
                 Content: {post.postContent}
                 <br />
@@ -32,6 +76,31 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
           );
         })}
       </div>
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          "aria-labelledby": "long-button",
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            maxHeight: ITEM_HEIGHT * 4.5,
+            width: "20ch",
+          },
+        }}
+      >
+        {options.map((option) => (
+          <MenuItem
+            key={option}
+            selected={option === "Pyxis"}
+            onClick={(e) => editOrDelete(e)}
+          >
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
     </div>
   );
 };
