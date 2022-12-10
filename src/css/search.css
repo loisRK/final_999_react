@@ -1,0 +1,47 @@
+/* 검색 칸이랑 버튼을 하나로 묶은 것 */
+.searchDiv {
+  position: relative;
+  height: 50px;
+  overflow-x: hidden;
+}
+
+/* 가로 스택 설정 */
+#search {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  margin-left: 0;
+  margin-right: -5px;
+}
+
+/* 검색 칸 크기 설정 */
+.item1 {
+  width: 50%;
+}
+
+/* 검색 버튼 간격 설정 */
+.item2 {
+  margin: 0 20px;
+}
+
+/* 검색 창 설정 */
+.searchBar {
+  width: 100%;
+  height: 30px;
+
+  background: #def5e5;
+  border-radius: 20px;
+  padding-left: 10px;
+}
+
+/* 검색 버튼 크기 조정 */
+.magGlass {
+  width: 30px;
+  height: 30px;
+}
+
+/* 버튼 스타일변경 */
+.magBtn {
+  background-color: white;
+  border: none;
+}

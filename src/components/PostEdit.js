@@ -34,7 +34,11 @@ function PostEdit() {
   const [content, setContent] = useState("");
   const [postImg, setPostImg] = useState("");
   const [fileImage, setFileImage] = useState("");
+<<<<<<< HEAD
   const [addedFile, setAddedFile] = useState("");
+=======
+  const [addedFile, setAddedFile] = useState([]);
+>>>>>>> f0885306007e494928d6045b6beecd72098a402c
 
   // 동기로 diary 데이터 불러오는 useEffect
   useEffect(() => {
