@@ -1,6 +1,7 @@
 import "../css/Posting.css";
 import { useEffect, useRef, useState } from "react";
 import Posts from "./Posts";
+import SearchBar from "./SearchBar";
 import { axiosData, postData } from "../api/Diary";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -41,48 +42,49 @@ function Posting() {
   const onScroll = () => {
     if (listInnerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      // console.log(`${scrollTop + clientHeight} >= ${scrollHeight}`);
       if (scrollTop + clientHeight >= scrollHeight) {
-        console.log("inside if");
         setCurrentPage(currentPage + 1);
       }
     }
   };
 
   return (
-    <div className="postHome">
-      <div>
-        <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-          <Container maxWidth="xl">
-            <Toolbar disableGutters>
-              <Typography
-                variant="h6"
-                noWrap
-                component="a"
-                href="/"
-                sx={{
-                  mr: 2,
-                  display: { xs: "none", md: "flex" },
-                  fontFamily: "monospace",
-                  fontWeight: 700,
-                  letterSpacing: ".3rem",
-                  color: "inherit",
-                  textDecoration: "none",
-                }}
-              >
-                Posting
-              </Typography>
-            </Toolbar>
-          </Container>
-        </AppBar>
-      </div>
-
-      <div className="postPage">
-        <Posts
-          onScroll={onScroll}
-          listInnerRef={listInnerRef}
-          posts={posts}
-        ></Posts>
-      </div>
+    <div>
+      <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "monospace",
+                fontWeight: 700,
+                letterSpacing: ".3rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Posting
+            </Typography>
+          </Toolbar>
+        </Container>
+      </AppBar>
+      <SearchBar />
+      {/* <PostsTest
+        onScroll={onScroll}
+        listInnerRef={listInnerRef}
+        posts={posts}
+      ></PostsTest> */}
+      <Posts
+        onScroll={onScroll}
+        listInnerRef={listInnerRef}
+        posts={posts}
+      ></Posts>
       <BottomNavigation
         sx={{
           background: "#B6E2A1",
