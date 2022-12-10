@@ -22,9 +22,9 @@ export const postUpdate = async (postNo, formData) => {
         "Contest-Type": "multipart/form-data",
       },
     })
-    // .then(
-    //   (document.location.href = `/posting`)
-    // );
+    .then(
+      (document.location.href = `/posting`)
+    );
 };
 
 // delete Diary - delete
@@ -34,4 +34,3 @@ export const axiosDeletePost = async (postNo) => {
     .then((document.location.href = `/posting`));
   return response.data;
 };
-

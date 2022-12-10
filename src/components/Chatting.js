@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { axiosUser } from "../api/User";
 
 function Chatting() {
+    // useNavigate() : 양식이 제출되거나 특정 event가 발생할 때, url 조작
     const navigate = useNavigate();
     const formData = new FormData();
     
