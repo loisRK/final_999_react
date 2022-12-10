@@ -75,13 +75,10 @@ export const createDiary = async (formData) => {
 /////////////////////////////////post axios///////////////////////////////////////
 // insert Post - post
 export const createPost = async (formData) => {
-  const token = window.localStorage.getItem("token");
-  console.log(token);
   axios
     .post("http://localhost:8080/api/post", formData, {
       headers: {
         "Contest-Type": "multipart/form-data",
-        Authorization: token,
       },
     })
     .then((res) => console.log("postNo : " + res.data))
@@ -99,7 +96,6 @@ export const postData = async (
   const response = await axios.get(
     `http://localhost:8080/api/postPage?page=${currentPage}&size=10`
   );
-  console.log("Diary.js : " + response.data.dtoList);
   // 데이터가 없으면 마지막 페이지였다는걸 표시
   if (!response.data.dtoList.length) {
     setWasLastList(true);
@@ -108,3 +104,9 @@ export const postData = async (
   setPrevPage(currentPage);
   setPosts([...posts, ...response.data.dtoList]);
 };
+// export const axiosData = async (currentPage) => {
+//   const response = await axios.get(
+//     `http://localhost:8080/api/diaryPage?page=${currentPage}&size=10`
+//   );
+//   return response.data;
+// };

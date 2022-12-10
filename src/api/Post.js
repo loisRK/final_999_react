@@ -22,9 +22,9 @@ export const postUpdate = async (postNo, formData) => {
         "Contest-Type": "multipart/form-data",
       },
     })
-    // .then(
-    //   (document.location.href = `/posting`)
-    // );
+    .then(
+      (document.location.href = `/posting`)
+    );
 };
 
 // delete Diary - delete
@@ -35,3 +35,10 @@ export const axiosDeletePost = async (postNo) => {
   return response.data;
 };
 
+// 모든 post 불러오기(깃털꽂기) - GET
+export const axiosGetAllPosts = async () => {
+    const response = await axios.get(
+        `http://localhost:8080/api/postList`
+        );
+return response.data;
+};
