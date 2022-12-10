@@ -70,7 +70,11 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                 <br />
                 Content: {post.postContent}
                 <br />
-                <img src={`/img/${post.postImg}`} />
+                {post.postImg === "" ? (
+                  <></>
+                ) : (
+                  <img src={`/img/${post.postImg}`} />
+                )}
               </p>
             </div>
           );

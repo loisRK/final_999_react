@@ -296,7 +296,8 @@ function Map() {
       console.log("OPEN : " + open); // false
 
       if (token !== null) {
-        navigate(`/insert?lat=${latitude}&long=${longitude}`);
+        var roomPosition = overlay.getPosition();
+        navigate(`/insert?lat=${roomPosition.Ma}&long=${roomPosition.La}`);
       } else {
         alertClick();
         console.log("??? :" + open);
