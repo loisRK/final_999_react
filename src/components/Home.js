@@ -165,7 +165,6 @@ function Home() {
         </AppBar>
         <div className="headerLeft"></div>
       </div>
-      <btn></btn>
       <br />
       <Map />
       <br />

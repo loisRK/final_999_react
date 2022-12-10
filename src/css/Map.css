@@ -3,9 +3,9 @@
   margin-left: auto;
 }
 .overlaybox {
-  position: relative;
-  width: 100px;
-  height: 130px;
+  position: absolute;
+  width: 120px;
+  height: auto;
   background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/box_movie.png")
     no-repeat;
   padding: 15px 10px;
@@ -35,7 +35,7 @@ ul {
   margin-bottom: 8px;
 }
 
-.overlaybox .boxtitle .close:hover {
+.close:hover {
   cursor: pointer;
 }
 
