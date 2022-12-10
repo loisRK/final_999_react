@@ -4,7 +4,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { axiosDeletePost } from "../api/Post";
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Container } from "@mui/material";
 
 const options = ["수정하기", "삭제하기"];
