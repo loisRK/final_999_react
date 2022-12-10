@@ -6,6 +6,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { axiosDeletePost } from "../api/Post";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Container } from "@mui/material";
+import heart from "../img/heart.png";
+import heart_filled from "../img/heart_filled.png";
 import { axiosLike } from "../api/Post";
 import { FavoriteOutlined } from "@mui/icons-material";
 
@@ -27,6 +29,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const heartClick = (postNum, userId, heartToggle) => {
     // 데이터 전송을 위한 form, file 객체 생성
     const formData = new FormData();
+
     // console.log("postNo : " +postNum +"  kakaoId : " +userId +"  heartToggle : " +heartToggle);
     formData.append("postNo", postNum);
     formData.append("userId", userId);
