@@ -1,7 +1,6 @@
-import axios, { all } from "axios";
 import React, { useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
-import { newDiaryData, createDiary, createPost } from "../api/Diary";
+import { useSearchParams } from "react-router-dom";
+import { createPost } from "../api/Diary";
 import "../App.css";
 
 function InsertDiary() {
@@ -22,18 +21,19 @@ function InsertDiary() {
   const formData = new FormData();
   const fileArr = new Array();
 
+  const token = window.localStorage.getItem("token");
+
   const getContent = (e) => {
     e.preventDefault();
     console.log(e.target.value);
     setContent(e.target.value);
   };
 
-  const getFile = (e) => {
-    console.log(e.target.files);
-    const input = document.querySelector("#newfiles");
+  const getFile = () => {
+    const input = document.querySelector("#imgFile");
     const files = input.files;
     const arr = Array.from(files);
-    console.log("arr : " + arr);
+    console.log(arr);
 
     for (let i = 0; i < arr.length; i++) {
       fileArr.push(arr[i]);
@@ -54,15 +54,13 @@ function InsertDiary() {
     for (let i = 0; i < fileArr.length; i++) {
       formData.append("files", fileArr[i]);
     }
-    console.log(formData);
 
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
       console.log(key, ":", formData.get(key));
     }
 
-    console.log(addedFile);
-
+    console.log("addedfile : " + addedFile);
     createPost(formData);
   };
 
@@ -96,8 +94,8 @@ function InsertDiary() {
           File Upload :
           <input
             type="file"
-            name="newfiles"
-            id="newfiles"
+            name="imgFile"
+            id="imgFile"
             multiple
             onChange={getFile}
           ></input>
