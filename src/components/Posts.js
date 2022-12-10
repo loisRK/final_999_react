@@ -4,6 +4,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { axiosDeletePost } from "../api/Post";
+import { useNavigate} from "react-router-dom";
 import { Container } from "@mui/material";
 
 const options = ["수정하기", "삭제하기"];
@@ -11,6 +12,7 @@ const options = ["수정하기", "삭제하기"];
 const ITEM_HEIGHT = 20;
 
 const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
+  const navigate = useNavigate();
   const [postNo, setPostNo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -18,6 +20,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
 
   const handleClick = (event, postNo) => {
     setAnchorEl(event.currentTarget);
+    console.log("handleClick : " + postNo);
     setPostNo(postNo);
   };
 
@@ -26,9 +29,14 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   };
 
   const editOrDelete = (event) => {
+    console.log(event.currentTarget);
     if (event.currentTarget.innerText === "수정하기") {
+      console.log("수정 눌렀을 때 : " + postNo);
+      navigate(`/postEdit?postNo=${postNo}`);
+
       // axiosEditPost();
     } else {
+      console.log("삭제 눌렀을 때 : " + postNo);
       axiosDeletePost(postNo);
     }
   };
@@ -38,9 +46,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
       <div
         onScroll={onScroll}
         ref={listInnerRef}
-        display="flex"
-        flexDirection="column"
-        style={{ height: "auto", overflowY: "auto" }}
+        style={{ height: "50vh", overflowY: "auto" }}
       >
         {posts.map((post) => {
           // console.log(post);
