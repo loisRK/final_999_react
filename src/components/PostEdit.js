@@ -34,7 +34,11 @@ function PostEdit() {
   const [content, setContent] = useState("");
   const [postImg, setPostImg] = useState("");
   const [fileImage, setFileImage] = useState("");
+<<<<<<< HEAD
+  const [addedFile, setAddedFile] = useState("");
+=======
   const [addedFile, setAddedFile] = useState([]);
+>>>>>>> f0885306007e494928d6045b6beecd72098a402c
 
   // 동기로 diary 데이터 불러오는 useEffect
   useEffect(() => {
@@ -87,6 +91,7 @@ function PostEdit() {
     console.log(e.target.files);
     // const input = document.querySelector("#newfiles");
     const files = e.target.files;
+    setAddedFile(e.target.files);
     const arr = Array.from(files);
     console.log("arr : " + arr);
 
@@ -104,7 +109,7 @@ function PostEdit() {
     formData.append("content", content);
     // formData.append("postImg", postImg);
 
-    console.log("파일 데이터 확인 " + fileArr[0]);
+    console.log("파일 데이터 확인 " + addedFile);
 
     // 반복문을 이용해 파일들을 formdata에 추가
     for (let i = 0; i < fileArr.length; i++) {
