@@ -11,6 +11,7 @@ function InsertDiary() {
   // post 위치 위도(lat), 경도(long)
   const postLat = search.get("lat");
   const postLong = search.get("long");
+  console.log(postLat);
 
   // post 내용
   const [content, setContent] = useState("");
@@ -47,6 +48,9 @@ function InsertDiary() {
   const sendDiary = (e) => {
     e.preventDefault();
 
+    console.log("postLat" + postLat);
+    console.log("content" + content);
+
     formData.append("postLat", postLat);
     formData.append("postLong", postLong);
     formData.append("postContent", content);
@@ -64,6 +68,7 @@ function InsertDiary() {
     console.log(addedFile);
 
     createPost(formData);
+    console.log("formData" + formData);
   };
 
   return (

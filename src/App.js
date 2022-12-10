@@ -11,6 +11,7 @@ import Chatting from "./components/Chatting";
 import KakaoRedirectLogin from "./api/KakaoRedirectLogin";
 import KakaoRedirectLogout from "./api/KakaoRedirectLogout";
 import Chat from "./components/Chat";
+import PostEdit from "./components/PostEdit";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
           <Route path="/posting" element={<Posting />} />
           <Route path="/chatting/*" element={<Chatting />} />
           <Route path="/diaryFile/*" element={<Diary />} />
-          <Route path="/diaryEdit/*" element={<DiaryEdit />} />
+          <Route path="/diaryEdit/*" element={<DiaryEdit />} /> 
+          <Route path="/postEdit/*" element={<PostEdit />} /> 
           <Route path="/insert/*" element={<InsertDiary />} />
           <Route
             path="/oauth/callback/kakao"
