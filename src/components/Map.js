@@ -5,6 +5,8 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
+import io from "socket.io-client";
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
