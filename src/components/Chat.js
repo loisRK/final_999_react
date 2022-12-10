@@ -31,7 +31,8 @@ const options = [
 ];
 
 const ITEM_HEIGHT = 48;
-const socket = io.connect("http://192.168.0.25:9999");
+// const socket = io.connect("http://192.168.0.25:9999");
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -47,7 +48,7 @@ const Chat = () => {
 
   // 상대방이 보낸 메세지를 신호를 감지해 내 리스트에 추가하여 말풍선을 뿌려주는 함수.
   useEffect(() => {
-    socket.on("return", (data) => {
+    socket.on("messageReturn", (data) => {
       // console.log(data);
       setMessageList((prev) => [...prev, data]);
     });
