@@ -76,16 +76,16 @@ function Posting() {
         </Container>
       </AppBar>
       <SearchBar />
-      <PostsTest
+      {/* <PostsTest
         onScroll={onScroll}
         listInnerRef={listInnerRef}
         posts={posts}
-      ></PostsTest>
-      {/* <Posts
-          onScroll={onScroll}
-          listInnerRef={listInnerRef}
-          posts={posts}
-        ></Posts> */}
+      ></PostsTest> */}
+      <Posts
+        onScroll={onScroll}
+        listInnerRef={listInnerRef}
+        posts={posts}
+      ></Posts>
       <BottomNavigation
         sx={{
           background: "#B6E2A1",

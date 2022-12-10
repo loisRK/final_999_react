@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { createPost } from "../api/Diary";
+import { createPost } from "../api/Post";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
 import "../App.css";
 
 function InsertDiary() {
@@ -88,13 +90,38 @@ function InsertDiary() {
         </button>
 
         <div>
-          Content :
-          <input
+          {/* Content :<br /> */}
+          <Stack
+            component="form"
+            sx={{
+              width: "25ch",
+            }}
+            spacing={2}
+            noValidate
+            autoComplete="off"
+          >
+            <TextField
+              fullWidth
+              label="content"
+              id="content"
+              name="content"
+              defaultValue={content}
+              variant="filled"
+              onChange={getContent}
+            />
+            <TextField
+              hiddenLabel
+              id="filled-hidden-label-normal"
+              defaultValue="Normal"
+              variant="filled"
+            />
+          </Stack>
+          {/* <input
             name="content"
             placeholder="content"
             onChange={getContent}
             value={content}
-          ></input>
+          ></input> */}
           <br />
           File Upload :
           <input

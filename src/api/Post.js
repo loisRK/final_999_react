@@ -2,13 +2,49 @@ import axios from "axios";
 import React, { FormEvent } from "react";
 import { Form } from "react-router-dom";
 
+// post 작성하기 - create
+export const createPost = async (formData) => {
+  const token = window.localStorage.getItem("token");
+  console.log(token);
+  axios
+    .post("http://localhost:8080/api/post", formData, {
+      headers: {
+        "Contest-Type": "multipart/form-data",
+        Authorization: token,
+      },
+    })
+    .then((res) => console.log("postNo : " + res.data))
+    .then((document.location.href = "/posting"));
+};
+
+// Post 전체 데이터 불러오기 - GET
+export const postAllData = async (
+  posts,
+  setWasLastList,
+  setPrevPage,
+  setPosts,
+  currentPage
+) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/postPage?page=${currentPage}&size=10`
+  );
+  console.log("Diary.js : " + response.data.dtoList);
+  // 데이터가 없으면 마지막 페이지였다는걸 표시
+  if (!response.data.dtoList.length) {
+    setWasLastList(true);
+    return;
+  }
+  setPrevPage(currentPage);
+  setPosts([...posts, ...response.data.dtoList]);
+};
+
 // Post 한개 객체 불러오기 - GET
 export const postData = async (postNo) => {
   const response = await axios.get(`http://localhost:8080/api/post/${postNo}`);
   return response.data;
 };
 
-// Post update - PUT
+// post 수정하기 - PUT
 export const postUpdate = async (postNo, formData) => {
   console.log("수정하기!!!!" + formData);
   console.log(postNo);
@@ -23,7 +59,7 @@ export const postUpdate = async (postNo, formData) => {
   // );
 };
 
-// delete Diary - delete
+// post 삭제하기 - delete
 export const axiosDeletePost = async (postNo) => {
   const response = await axios
     .delete(`http://localhost:8080/api/postDelete?postNo=${postNo}`)
