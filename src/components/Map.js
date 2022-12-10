@@ -277,7 +277,8 @@ function Map() {
 
     // posting으로 이동 함수
     postingElement.onclick = function () {
-      navigate("/insert");
+      var roomPosition = overlay.getPosition();
+      navigate(`/insert?lat=${roomPosition.Ma}&long=${roomPosition.La}`);
     };
 
     // Chatting으로 이동 함수
