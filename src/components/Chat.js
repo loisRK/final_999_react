@@ -31,7 +31,8 @@ const options = [
 ];
 
 const ITEM_HEIGHT = 48;
-const socket = io.connect("http://192.168.0.25:9999");
+// const socket = io.connect("http://192.168.0.25:9999");
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -47,7 +48,7 @@ const Chat = () => {
 
   // 상대방이 보낸 메세지를 신호를 감지해 내 리스트에 추가하여 말풍선을 뿌려주는 함수.
   useEffect(() => {
-    socket.on("return", (data) => {
+    socket.on("messageReturn", (data) => {
       // console.log(data);
       setMessageList((prev) => [...prev, data]);
     });
@@ -87,10 +88,12 @@ const Chat = () => {
   };
 
   const onKeyPress = (e) => {
-    if (e.key === "Enter") {
-      sendMessage();
-    } else {
-      setMessage(e.target.value);
+    if (message != "") {
+      if (e.key === "Enter") {
+        sendMessage();
+      } else {
+        setMessage(e.target.value);
+      }
     }
   };
 
@@ -99,77 +102,92 @@ const Chat = () => {
   // mui 적용
 
   return (
-    <div className="flex items-center justify-center h-full">
-      <div className="w-1/3 h-[600px] bg-white relative">
+    <div className="flex items-center justify-center h-fit overflow-y-hidden">
+      <div className="w-full h-[600px] bg-white relative">
         <div className="w-full h-16 bg-gray-700 flex items-center p-3">
           {/* <div className="w-12 h-12 bg-white rounded-full"></div> */}
           {/* 프로필 지정 */}
           <Avatar alt={username} src={profileImg} className="w-12 h-12" />
+          <div class="m-5 text-white">
+            <a class="flex">1명</a>
+            <a>#GUGU</a> &nbsp;
+            <a>#GUGU</a> &nbsp;
+            <a>#GUGU</a> &nbsp;
+          </div>
+        <button class="ml-auto text-white">나가기</button>
         </div>
 
-        <div id="chat" className="w-full h-[400px] overflow-y-auto">
-          {messageList &&
-            messageList.map((msg, i) => (
-              <PopupState key={i} variant="popover" popupId="demo-popup-menu">
-                {(popupState) => (
-                  <React.Fragment key={i}>
-                    <div
-                      key={i}
-                      className={`${
-                        username === msg.username ? "flex justify-end" : ""
-                      }`}
-                      variant="contained"
-                      {...bindTrigger(popupState)}
-                    >
+        <div class="bg-gradient-to-tr from-red-500 via-orange-200 via-yellow-500 via-green-500 to-blue-500 /... ">
+          <div id="chat" className="w-full h-screen overflow-y-auto">
+            {messageList &&
+              messageList.map((msg, i) => (
+                <PopupState key={i} variant="popover" popupId="demo-popup-menu">
+                  {(popupState) => (
+                    <React.Fragment key={i}>
                       <div
+                        key={i}
                         className={`${
-                          username === msg.username
-                            ? "bg-green-600"
-                            : "bg-blue-600"
-                        } w-2/3 h-auto p-2 text-white m-2 rounded-xl rounded-br-none`}
+                          username === msg.username ? "flex justify-end" : ""
+                        }`}
+                        variant="contained"
+                        {...bindTrigger(popupState)}
                       >
-                        <div>{msg.message}</div>
-                        <div className="w-full flex justify-end text-xs">
-                          {msg.username}
+                        <div
+                          className={`${
+                            username === msg.username
+                              ? "bg-green-600 "
+                              : "bg-blue-600"
+                            } w-1/3 h-auto p-2 text-white m-2 rounded-xl rounded-br-none`}
+                        >
+                          <div>{msg.message}</div>
+                          <div className="w-full flex justify-end text-xs">
+                            {msg.username}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <Menu {...bindMenu(popupState)}>
-                      <box
-                        component="MenuItem"
-                        sx={{ display: "inline" }}
-                        onClick={popupState.close}
-                      >
-                        🤐
-                      </box>
-                      <box
-                        component="MenuItem"
-                        sx={{ display: "inline" }}
-                        onClick={popupState.close}
-                      >
-                        🚨
-                      </box>
-                    </Menu>
-                  </React.Fragment>
-                )}
-              </PopupState>
-            ))}
+                      <Menu {...bindMenu(popupState)}>
+                        <box
+                          component="MenuItem"
+                          sx={{ display: "inline" }}
+                          onClick={popupState.close}
+                        >
+                          🤐
+                        </box>
+                        <box
+                          component="MenuItem"
+                          sx={{ display: "inline" }}
+                          onClick={popupState.close}
+                        >
+                          🚨
+                        </box>
+                      </Menu>
+                    </React.Fragment>
+                  )}
+                </PopupState>
+              ))}
+          </div>
         </div>
         <div className="absolute bottom-0 left-0 w-full">
           <input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-3/4 h-12 border p-3 outline-none"
+            className="w-3/4 border p-3 outline-none"
             type="text"
             placeholder="message send"
             onKeyPress={onKeyPress}
           />
+          {message != "" ? (
           <button
             onClick={sendMessage}
-            className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70"
+            className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
           >
             SEND
           </button>
+        ) : (
+          <button className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl">
+            SEND
+          </button>
+        )}
         </div>
       </div>
     </div>
