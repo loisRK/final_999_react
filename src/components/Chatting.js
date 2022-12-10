@@ -73,7 +73,7 @@ function Chatting() {
                 카테고리    : <input name="category" onChange={getCategory} value={category} placeholder="카테고리" /><br/>
                 익명 닉네임 : <input name="newNickname" onChange={getNewNickname} value={newNickname} placeholder="익명 닉네임" /><br/>
                 채팅방 태그 : <input name="tag" onChange={getTag} value={tag} placeholder= "해시태그 입력" /><br/>
-                <button onClick={(e) => createRoom(e, nickname, newNickname, tag)}>채팅방 만들기</button>
+                <button onClick={(e) => createRoom(e, nickname, newNickname, tag, category)}>채팅방 만들기</button>
                 </div>
             
         ) : (

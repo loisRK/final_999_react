@@ -1,7 +1,6 @@
-import axios, { all } from "axios";
 import React, { useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
-import { newDiaryData, createDiary, createPost } from "../api/Diary";
+import { useSearchParams } from "react-router-dom";
+import { createPost } from "../api/Diary";
 import "../App.css";
 
 function InsertDiary() {
@@ -11,6 +10,7 @@ function InsertDiary() {
   // post 위치 위도(lat), 경도(long)
   const postLat = search.get("lat");
   const postLong = search.get("long");
+  console.log(postLat);
 
   // post 내용
   const [content, setContent] = useState("");
@@ -22,30 +22,34 @@ function InsertDiary() {
   const formData = new FormData();
   const fileArr = new Array();
 
+  const token = window.localStorage.getItem("token");
+
   const getContent = (e) => {
     e.preventDefault();
     console.log(e.target.value);
     setContent(e.target.value);
   };
 
-  const getFile = (e) => {
-    console.log(e.target.files);
-    const input = document.querySelector("#newfiles");
+  const getFile = () => {
+    const input = document.querySelector("#imgFile");
     const files = input.files;
     const arr = Array.from(files);
-    console.log("arr : " + arr);
+    console.log(arr);
 
     for (let i = 0; i < arr.length; i++) {
       fileArr.push(arr[i]);
-      console.log(arr[i]);
+      console.log("arr[i] : " + arr[i]);
     }
 
-    console.log(addedFile);
-    console.log(fileArr);
+    console.log("addedFile : " + addedFile);
+    console.log("fileArr : " + fileArr);
   };
 
   const sendDiary = (e) => {
     e.preventDefault();
+
+    console.log("postLat" + postLat);
+    console.log("content" + content);
 
     formData.append("postLat", postLat);
     formData.append("postLong", postLong);
@@ -54,16 +58,15 @@ function InsertDiary() {
     for (let i = 0; i < fileArr.length; i++) {
       formData.append("files", fileArr[i]);
     }
-    console.log(formData);
 
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
       console.log(key, ":", formData.get(key));
     }
 
-    console.log(addedFile);
-
+    console.log("addedfile : " + addedFile);
     createPost(formData);
+    console.log("formData" + formData);
   };
 
   return (
@@ -96,8 +99,8 @@ function InsertDiary() {
           File Upload :
           <input
             type="file"
-            name="newfiles"
-            id="newfiles"
+            name="imgFile"
+            id="imgFile"
             multiple
             onChange={getFile}
           ></input>

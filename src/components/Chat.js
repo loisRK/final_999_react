@@ -40,11 +40,10 @@ const Chat = () => {
   const [messageList, setMessageList] = useState([]);
   const [username, setUsername] = useState("gugu");
   const [profileImg, setProfileImg] = useState("../img/dulgi.jpg");
+  const [clients, setClients] = useState("");
 
   const [search, setSearch] = useSearchParams();
   const room = search.get("roomNo");
-  console.log("CHATTING # : " + room);
-  socket.emit("room", room);
 
   // 상대방이 보낸 메세지를 신호를 감지해 내 리스트에 추가하여 말풍선을 뿌려주는 함수.
   useEffect(() => {
@@ -56,6 +55,24 @@ const Chat = () => {
     const data = axiosUser();
     data.then((res) => setUsername(res.kakaoNickname));
     data.then((res) => setProfileImg(res.kakaoProfileImg));
+  }, [socket]);
+
+  // // 첫 입장시 데이터 정보 저장.
+  useEffect(() => {
+    console.log("CHATTING # : " + room);
+    socket.emit("room", room);
+    socket.on("clients", (data) => {
+      console.log(data);
+      setClients(data);
+    });
+  }, [room]);
+
+  // 룸의 입장 인원을 카운트해주는 함수
+  useEffect(() => {
+    socket.on("clients", (data) => {
+      console.log(data);
+      setClients(data);
+    });
   }, [socket]);
 
   // 새로운 채팅이 생성되면 스크롤를 최하단으로 내려줌.
@@ -102,81 +119,104 @@ const Chat = () => {
   // mui 적용
 
   return (
-    <div className="flex items-center justify-center h-fit overflow-y-hidden">
-      <div className="w-full h-[600px] bg-white relative">
+    // items-center justify-center
+    <div className="flex flex-col h-fit ">
+      <div className="w-full h-screen bg-white relative overflow-y-auto">
         <div className="w-full h-16 bg-gray-700 flex items-center p-3">
           {/* <div className="w-12 h-12 bg-white rounded-full"></div> */}
           {/* 프로필 지정 */}
           <Avatar alt={username} src={profileImg} className="w-12 h-12" />
-          <div class="m-5 text-white">
-            <a class="flex">1명</a>
-            <a>#GUGU</a> &nbsp;
-            <a>#GUGU</a> &nbsp;
-            <a>#GUGU</a> &nbsp;
+          <div className="m-5 text-white">
+            {clients !== "" ? (
+              <div className="flex">{`${clients} 명`}</div>
+            ) : (
+              <></>
+            )}
+            <div className="flex">
+              <div>#민기짱</div> &nbsp;
+              <div>#민기천재</div> &nbsp;
+              <div>#민기훈남</div> &nbsp;
+            </div>
           </div>
-        <button class="ml-auto text-white">나가기</button>
+          <a
+            href="/"
+            className="ml-auto text-white w-14 bg-gray-600 text-white h-8 rounded-xl"
+          >
+            EXIT
+          </a>
         </div>
-
-        <div class="bg-gradient-to-tr from-red-500 via-orange-200 via-yellow-500 via-green-500 to-blue-500 /... ">
-          <div id="chat" className="w-full h-screen overflow-y-auto">
-            {messageList &&
-              messageList.map((msg, i) => (
-                <PopupState key={i} variant="popover" popupId="demo-popup-menu">
-                  {(popupState) => (
-                    <React.Fragment key={i}>
+        <div id="chat" className="w-auto h-[80%] overflow-y-auto">
+          {messageList &&
+            messageList.map((msg, i) => (
+              <PopupState key={i} variant="popover" popupId="demo-popup-menu">
+                {(popupState) => (
+                  <React.Fragment key={i}>
+                    {/* {username === msg.username ? ( */}
+                    {/* <div className="flex"> */}
+                    {username !== msg.username ? (
                       <div
-                        key={i}
-                        className={`${
-                          username === msg.username ? "flex justify-end" : ""
-                        }`}
-                        variant="contained"
-                        {...bindTrigger(popupState)}
+                        className={
+                          // username === msg.username
+                          //   ? "flex justify-end text-xs mr-4 font-semibold"
+                          "flex text-xs m-3 font-semibold"
+                        }
                       >
-                        <div
-                          className={`${
-                            username === msg.username
-                              ? "bg-green-600 "
-                              : "bg-blue-600"
-                            } w-1/3 h-auto p-2 text-white m-2 rounded-xl rounded-br-none`}
-                        >
-                          <div>{msg.message}</div>
-                          <div className="w-full flex justify-end text-xs">
-                            {msg.username}
-                          </div>
-                        </div>
+                        {msg.username}
                       </div>
-                      <Menu {...bindMenu(popupState)}>
-                        <box
-                          component="MenuItem"
-                          sx={{ display: "inline" }}
-                          onClick={popupState.close}
-                        >
-                          🤐
-                        </box>
-                        <box
-                          component="MenuItem"
-                          sx={{ display: "inline" }}
-                          onClick={popupState.close}
-                        >
-                          🚨
-                        </box>
-                      </Menu>
-                    </React.Fragment>
-                  )}
-                </PopupState>
-              ))}
-          </div>
+                    ) : (
+                      <></>
+                    )}
+                    <div
+                      key={i}
+                      className={`${
+                        username === msg.username ? "flex justify-end" : ""
+                      }`}
+                      variant="contained"
+                      {...bindTrigger(popupState)}
+                    >
+                      <div
+                        className={` ${
+                          username === msg.username
+                            ? "bg-green-600 rounded-xl rounded-tr-none"
+                            : "bg-blue-600 rounded-xl rounded-tl-none"
+                        } max-w-[30%] h-auto p-2 text-white m-2 w-auto `}
+                      >
+                        <div className="flex">{msg.message}</div>
+                      </div>
+                    </div>
+
+                    <Menu {...bindMenu(popupState)}>
+                      <box
+                        component="MenuItem"
+                        sx={{ display: "inline" }}
+                        onClick={popupState.close}
+                      >
+                        🤐
+                      </box>
+                      <box
+                        component="MenuItem"
+                        sx={{ display: "inline" }}
+                        onClick={popupState.close}
+                      >
+                        🚨
+                      </box>
+                    </Menu>
+                  </React.Fragment>
+                )}
+              </PopupState>
+            ))}
         </div>
-        <div className="absolute bottom-0 left-0 w-full">
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-3/4 border p-3 outline-none"
-            type="text"
-            placeholder="message send"
-            onKeyPress={onKeyPress}
-          />
-          {message != "" ? (
+      </div>
+      <div className="absolute bottom-0 left-0 w-full h-[10%]">
+        <input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="w-3/4 h-12 border p-3 outline-none rounded-xl"
+          type="text"
+          placeholder="message send"
+          onKeyPress={onKeyPress}
+        />
+        {message != "" ? (
           <button
             onClick={sendMessage}
             className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
@@ -188,7 +228,6 @@ const Chat = () => {
             SEND
           </button>
         )}
-        </div>
       </div>
     </div>
   );

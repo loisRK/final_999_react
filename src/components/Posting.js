@@ -22,7 +22,6 @@ import { Container } from "@mui/system";
 function Posting() {
   // ID token 확인
   const token = window.localStorage.getItem("token");
-  console.log("userID token : " + token);
   // infinite scrolling
   const listInnerRef = useRef();
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,9 +40,7 @@ function Posting() {
 
   const onScroll = () => {
     if (listInnerRef.current) {
-      console.log("inside onScroll");
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      console.log(scrollTop + clientHeight, scrollHeight);
       if (scrollTop + clientHeight >= scrollHeight) {
         console.log("inside if");
         setCurrentPage(currentPage + 1);
@@ -53,36 +50,37 @@ function Posting() {
 
   return (
     <div className="postHome">
-      <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              Posting
-            </Typography>
-          </Toolbar>
-        </Container>
-      </AppBar>
+      <div>
+        <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+          <Container maxWidth="xl">
+            <Toolbar disableGutters>
+              <Typography
+                variant="h6"
+                noWrap
+                component="a"
+                href="/"
+                sx={{
+                  mr: 2,
+                  display: { xs: "none", md: "flex" },
+                  fontFamily: "monospace",
+                  fontWeight: 700,
+                  letterSpacing: ".3rem",
+                  color: "inherit",
+                  textDecoration: "none",
+                }}
+              >
+                Posting
+              </Typography>
+            </Toolbar>
+          </Container>
+        </AppBar>
+      </div>
 
       <div className="postPage">
         <Posts
           onScroll={onScroll}
           listInnerRef={listInnerRef}
           posts={posts}
-          currentPage={currentPage}
         ></Posts>
       </div>
       <BottomNavigation

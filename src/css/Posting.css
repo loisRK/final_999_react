@@ -10,6 +10,7 @@
 } */
 
 .postPage {
+  position: relative;
   padding-bottom: 100px;
   background: white;
   height: 100%;
