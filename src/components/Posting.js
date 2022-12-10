@@ -1,6 +1,7 @@
 import "../css/Posting.css";
 import { useEffect, useRef, useState } from "react";
 import Posts from "./Posts";
+import PostsTest from "./PostsTest";
 import SearchBar from "./SearchBar";
 import { axiosData, postData } from "../api/Diary";
 import { Link, useNavigate } from "react-router-dom";

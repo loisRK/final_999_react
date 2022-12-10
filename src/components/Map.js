@@ -16,10 +16,9 @@ import {
 } from "@mui/material";
 import { Box } from "@mui/system";
 
-const socket = io.connect("https://server.bnmnil96.repl.co");
-
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
+  const socket = io.connect("https://server.bnmnil96.repl.co");
   function deg2rad(deg) {
     return deg * (Math.PI / 180);
   }
