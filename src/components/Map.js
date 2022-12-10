@@ -15,10 +15,6 @@ import {
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-<<<<<<< HEAD
-const socket = io.connect("https://server.bnmnil96.repl.co");
-=======
->>>>>>> f0885306007e494928d6045b6beecd72098a402c
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
