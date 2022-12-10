@@ -37,11 +37,11 @@ function InsertDiary() {
 
     for (let i = 0; i < arr.length; i++) {
       fileArr.push(arr[i]);
-      console.log(arr[i]);
+      console.log("arr[i] : " + arr[i]);
     }
 
-    console.log(addedFile);
-    console.log(fileArr);
+    console.log("addedFile : " + addedFile);
+    console.log("fileArr : " + fileArr);
   };
 
   const sendDiary = (e) => {

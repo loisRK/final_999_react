@@ -5,8 +5,20 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
+<<<<<<< HEAD
 import io from "socket.io-client";
 const socket = io.connect("https://server.bnmnil96.repl.co");
+=======
+import {
+  Alert,
+  Dialog,
+  Modal,
+  Portal,
+  Snackbar,
+  Typography,
+} from "@mui/material";
+import { Box } from "@mui/system";
+>>>>>>> b93cb841f1a8994e8ba00e33f03b40d781a82207
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -32,12 +44,18 @@ function Map() {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
   const [roomNo, setRoomNo] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const alertClick = () => {
+    setOpen(!open);
+  };
+
   const navigate = useNavigate();
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
   // geolocation으로 현재 위치 가져오는 함수 (Geolocation.getCurrentPosition(success, error, [options]))
   const currentPosition = () => {
-    console.log("navigator.geolocation : " + navigator.geolocation);
+    // console.log("navigator.geolocation : " + navigator.geolocation);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         function (position) {
@@ -97,16 +115,16 @@ function Map() {
 
     map.setCenter(markerPosition);
 
-    console.log(`latitude : ${latitude} + longitude : ${longitude}`);
+    // console.log(`latitude : ${latitude} + longitude : ${longitude}`);
     userMarker.setMap(map); // 마커 객체 생성 시, map 지정해줬으면 setMap 안해줘도 됨
     // overlay.setMap(map);
 
     // 채팅방 마커 표시하기
     // 채팅방 목록을 가져와서 forEach로 마커 생성
     chattingRooms.forEach((room) => {
-      console.log("위도 : " + room.latitude);
-      console.log("경도 : " + room.longitude);
-      console.log("태그 : " + room.tag);
+      // console.log("위도 : " + room.latitude);
+      // console.log("경도 : " + room.longitude);
+      // console.log("태그 : " + room.tag);
 
       const tag = room.tag;
       const roomsLatlng = new kakao.maps.LatLng(room.latitude, room.longitude);
@@ -219,7 +237,7 @@ function Map() {
 
     var content = document.createElement("div");
     content.className = "overlaybox";
-    content.innerHTML = '    <div class="boxtitle">999' + "    </div>";
+    content.innerHTML = "    <div class=boxtitle>999</div>";
     // '        <li class="posting">' +
     // '            <span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
     // '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>' +
@@ -255,7 +273,7 @@ function Map() {
       content: content,
       xAnchor: 0.3,
       yAnchor: 0.91,
-      zIndex: 1,
+      zIndex: 3,
       clickable: true,
     });
 
@@ -277,8 +295,25 @@ function Map() {
 
     // posting으로 이동 함수
     postingElement.onclick = function () {
-      var roomPosition = overlay.getPosition();
-      navigate(`/insert?lat=${roomPosition.Ma}&long=${roomPosition.La}`);
+      let token = window.localStorage.getItem("token");
+
+      console.log("TOKEN : " + token);
+      console.log("OPEN : " + open); // false
+
+      if (token !== null) {
+        var roomPosition = overlay.getPosition();
+        navigate(`/insert?lat=${roomPosition.Ma}&long=${roomPosition.La}`);
+      } else {
+        alertClick();
+        console.log("??? :" + open);
+      }
+      // {
+      //   token !== null
+      //     ? navigate(`/insert?lat=${latitude}&long=${longitude}`)
+      //     : setOpen(true);
+      //   console.log("INSIDE FALSE STATEMENT: " + open);
+      // }
+      console.log(open); // true
     };
 
     // Chatting으로 이동 함수
@@ -334,7 +369,22 @@ function Map() {
       className="map"
       style={{ width: `"${window.innerWidth}"`, height: "500px" }}
       //   ref={container}
-    ></div>
+    >
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={2000}
+        onClose={alertClick}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          로그인이 필요한 기능입니다.
+        </Alert>
+      </Snackbar>
+    </div>
   );
 }
 
