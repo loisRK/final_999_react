@@ -9,6 +9,7 @@ import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import io from "socket.io-client";
 import { axiosUser } from "../api/User";
 import { useSearchParams } from "react-router-dom";
+// import { roomInfo } from "../api/Chatting";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
@@ -41,6 +42,7 @@ const Chat = () => {
   const [username, setUsername] = useState("gugu");
   const [profileImg, setProfileImg] = useState("../img/dulgi.jpg");
   const [clients, setClients] = useState("");
+  const [tags, setTags] = useState("");
 
   const [search, setSearch] = useSearchParams();
   const room = search.get("roomNo");
@@ -61,10 +63,11 @@ const Chat = () => {
   useEffect(() => {
     console.log("CHATTING # : " + room);
     socket.emit("room", room);
-    socket.on("clients", (data) => {
-      console.log(data);
-      setClients(data);
-    });
+    // // 참여 인원 조회
+    // const data = roomInfo(room);
+    // data.then((response) => setClients(response.roomNo));
+    // // 방의 태그 내용 조회
+    // data.then((response) => setTags(response.tag));
   }, [room]);
 
   // 룸의 입장 인원을 카운트해주는 함수
@@ -133,7 +136,7 @@ const Chat = () => {
               <></>
             )}
             <div className="flex">
-              <div>#민기짱</div> &nbsp;
+              <div>{tags}</div>
               <div>#민기천재</div> &nbsp;
               <div>#민기훈남</div> &nbsp;
             </div>

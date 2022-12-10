@@ -210,7 +210,7 @@ import React, {
         </form>
   
     </div>
-    );
-  }
-  
-  export default PostEdit;
+  );
+}
+
+export default PostEdit;

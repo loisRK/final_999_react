@@ -11,10 +11,19 @@ import {
   Snackbar,
   Alert
 } from "@mui/material";
+<<<<<<< HEAD
 const socket = io.connect("https://server.bnmnil96.repl.co");
+=======
+import { Box } from "@mui/system";
+<<<<<<< HEAD
+const socket = io.connect("https://server.bnmnil96.repl.co");
+=======
+>>>>>>> f0885306007e494928d6045b6beecd72098a402c
+>>>>>>> 345f28f06dc9a2c0cf19cb4052e4c7d96aba088f
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
+  const socket = io.connect("https://server.bnmnil96.repl.co");
   function deg2rad(deg) {
     return deg * (Math.PI / 180);
   }
