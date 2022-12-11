@@ -49,14 +49,13 @@ export const postUpdate = async (postNo, formData) => {
   console.log("수정하기!!!!" + formData);
   console.log(postNo);
 
-  await axios.put(`http://localhost:8080/api/updatePost/${postNo}`, formData, {
-    headers: {
-      "Contest-Type": "multipart/form-data",
-    },
-  });
-  // .then(
-  //   (document.location.href = `/posting`)
-  // );
+  await axios
+    .put(`http://localhost:8080/api/updatePost/${postNo}`, formData, {
+      headers: {
+        "Contest-Type": "multipart/form-data",
+      },
+    })
+    .then((document.location.href = `/posting`));
 };
 
 // post 삭제하기 - delete
@@ -64,6 +63,12 @@ export const axiosDeletePost = async (postNo) => {
   const response = await axios
     .delete(`http://localhost:8080/api/postDelete?postNo=${postNo}`)
     .then((document.location.href = `/posting`));
+  return response.data;
+};
+
+// 모든 post 불러오기(깃털꽂기) - GET
+export const axiosGetAllPosts = async () => {
+  const response = await axios.get(`http://localhost:8080/api/postList`);
   return response.data;
 };
 
