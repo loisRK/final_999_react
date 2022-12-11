@@ -34,11 +34,7 @@ function PostEdit() {
   const [content, setContent] = useState("");
   const [postImg, setPostImg] = useState("");
   const [fileImage, setFileImage] = useState("");
-<<<<<<< HEAD
   const [addedFile, setAddedFile] = useState("");
-=======
-  const [addedFile, setAddedFile] = useState([]);
->>>>>>> f0885306007e494928d6045b6beecd72098a402c
 
   // 동기로 diary 데이터 불러오는 useEffect
   useEffect(() => {
@@ -66,6 +62,7 @@ function PostEdit() {
   const fileArr = new Array();
 
   // 수정하려는 이미지 미리보기
+  // typescript 언어 이기 때문에 빨간 줄이 뜨는 것임 !
   const saveFileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFileImage(URL.createObjectURL(e.target.files[0]));
     console.log(setFileImage);
