@@ -8,6 +8,8 @@ import { axiosRoom } from "../api/Room";
 import { axiosGetAllPosts } from "../api/Post";
 import io from "socket.io-client";
 import { Snackbar, Alert } from "@mui/material";
+import { axiosUser } from "../api/User";
+
 import { Box } from "@mui/system";
 
 const socket = io.connect("https://server.bnmnil96.repl.co");
@@ -40,6 +42,7 @@ function Map() {
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [username, setUsername] = useState("gugu");
 
   const alertClick = () => {
     setOpen(!open);
@@ -74,6 +77,9 @@ function Map() {
   };
 
   useEffect(() => {
+    const data = axiosUser();
+    data.then((res) => setUsername(res.kakaoNickname));
+
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
 
@@ -394,6 +400,7 @@ function Map() {
 
     // 사용자의 위치를 기준으로 원 생성
     // 원 객체를 생성합니다
+
     var circle = new kakao.maps.Circle({
       center: markerPosition, // 원의 중심좌표입니다
       radius: 1000, // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
@@ -405,7 +412,7 @@ function Map() {
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
-  }, [latitude, longitude]);
+  }, [latitude, longitude, posts.length]);
 
   return (
     <div
