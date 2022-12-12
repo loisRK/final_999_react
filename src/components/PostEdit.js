@@ -14,6 +14,7 @@ import React, {
   import { green } from "@mui/material/colors";
   import { Directions } from "@mui/icons-material";
   
+  
   const styles = {
     bar : {
       backgroundColor : "#B6E2A1" 
@@ -113,8 +114,7 @@ import React, {
   };
   
     // 수정하려는 이미지 미리보기
-    // React.ChangeEvent<HTMLInputElement> 타입스크립트 언어라 오류처럼 보이지만 작동
-    const saveFileImage = (e: React.ChangeEvent<HTMLInputElement>)  => {
+    const saveFileImage = (e)  => {
     setFileImage(URL.createObjectURL(e.target.files[0]));
     };
   

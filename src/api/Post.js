@@ -73,7 +73,9 @@ export const axiosGetAllPosts = async () => {
     const response = await axios.get(
         `http://localhost:8080/api/postList`
         );
-return response.data;
+    return response.data;
+};
+
 // Like 정보 보내기 - POST
 export const axiosLike = async (formData) => {
   await axios.post(`http://localhost:8080/api/addLike`, formData, {

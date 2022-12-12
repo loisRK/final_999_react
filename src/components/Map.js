@@ -11,15 +11,11 @@ import {
   Snackbar,
   Alert
 } from "@mui/material";
-<<<<<<< HEAD
-const socket = io.connect("https://server.bnmnil96.repl.co");
-=======
 import { Box } from "@mui/system";
-<<<<<<< HEAD
+import SelectInput from "@mui/material/Select/SelectInput";
 const socket = io.connect("https://server.bnmnil96.repl.co");
-=======
->>>>>>> f0885306007e494928d6045b6beecd72098a402c
->>>>>>> 345f28f06dc9a2c0cf19cb4052e4c7d96aba088f
+
+
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -126,36 +122,7 @@ function Map() {
     // console.log(`latitude : ${latitude} + longitude : ${longitude}`);
     userMarker.setMap(map); // 마커 객체 생성 시, map 지정해줬으면 setMap 안해줘도 됨
     // overlay.setMap(map);
-
-    // 포스팅 마커 표시하기 
-    const postData = axiosGetAllPosts();
-    postData.then((res) => console.log(res));
-    postData.then((res) => setPosts(res));
-
-    posts.forEach((post) => {
-      const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
-
-    // 포스트 마커 이미지 옵션
-    const imageSrc = "feather.png";
-    const imageSize = new kakao.maps.Size(30, 30); // 마커이미지의 크기
-    const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
-
-    // 포스트 마커의 이미지 정보를 가지고 있는 마커이미지 생성
-    const postImage = new kakao.maps.MarkerImage(
-      imageSrc,
-      imageSize
-      // imageOption
-    );
-    // 채팅방 마커 객체 생성
-    const postMarkers = new kakao.maps.Marker({
-      map: map,
-      position: postLatlng,
-      image: postImage,
-    });
-
-    });
-
-
+  
     // 채팅방 마커 표시하기
     // 채팅방 목록을 가져와서 forEach로 마커 생성
     chattingRooms.forEach((room) => {
@@ -248,6 +215,36 @@ function Map() {
         // ******************* 방 인원수 +1 하기 axios 함수 추가!!!!! ********************
       };
     }
+
+  // 포스팅 마커 표시하기 
+  const postData = axiosGetAllPosts();
+  // postData.then((res) => console.log(res));
+  postData.then((res) => setPosts(res));
+
+  posts.forEach((post) => {
+    const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
+
+  // 포스트 마커 이미지 옵션
+  const imageSrc = "feather.png";
+  const imageSize = new kakao.maps.Size(30, 30); // 마커이미지의 크기
+  const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
+
+  // 포스트 마커의 이미지 정보를 가지고 있는 마커이미지 생성
+  const postImage = new kakao.maps.MarkerImage(
+    imageSrc,
+    imageSize
+    // imageOption
+  );
+  // 채팅방 마커 객체 생성
+  const postMarkers = new kakao.maps.Marker({
+    map: map,
+    position: postLatlng,
+    image: postImage,
+  });
+
+  postMarkers.setPosition(postLatlng);
+  postMarkers.setMap(map);
+  });
 
     // 카카오맵-오버레이 내용 지정
     var closeElement = document.createElement("div");
@@ -419,7 +416,8 @@ function Map() {
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
-  }, [latitude, longitude]);
+  }, [latitude, longitude, posts.length]);
+
 
   return (
     <div
