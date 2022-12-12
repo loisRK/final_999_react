@@ -96,6 +96,15 @@ function PostEdit() {
 
   // 데이터 전송을 위한 form, file 객체 생성
   const formData = new FormData();
+  const fileArr = new Array();
+
+  // 수정하려는 이미지 미리보기
+  // typescript 언어 이기 때문에 빨간 줄이 뜨는 것임 !
+  const saveFileImage = (e) => {
+    setFileImage(URL.createObjectURL(e.target.files[0]));
+    console.log(setFileImage);
+    getFile(e);
+  };
 
   // 미리보기 삭제
   const deleteFileImage = () => {
@@ -105,12 +114,6 @@ function PostEdit() {
 
   const inputFromHandlerContent = (e) => {
     setContent(e.target.value);
-  };
-
-  // 수정하려는 이미지 미리보기
-  // React.ChangeEvent<HTMLInputElement> 타입스크립트 언어라 오류처럼 보이지만 작동
-  const saveFileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFileImage(URL.createObjectURL(e.target.files[0]));
   };
 
   function getFile(e) {
@@ -124,7 +127,6 @@ function PostEdit() {
     console.log("files : " + postImg);
     formData.append("content", content);
     formData.append("files", addedFile[0]);
-    // formData.append("files", addedFile[0]);
 
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
