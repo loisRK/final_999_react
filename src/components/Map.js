@@ -124,7 +124,7 @@ function Map() {
     userMarker.setMap(map); // 마커 객체 생성 시, map 지정해줬으면 setMap 안해줘도 됨
     // overlay.setMap(map);
 
-    // // 포스팅 마커 표시하기
+    // 포스팅 마커 표시하기
     const postData = axiosGetAllPosts();
     postData.then((res) => console.log(res));
     postData.then((res) => setPosts(res));
