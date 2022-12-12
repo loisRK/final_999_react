@@ -100,7 +100,7 @@ function PostEdit() {
 
   // 수정하려는 이미지 미리보기
   // typescript 언어 이기 때문에 빨간 줄이 뜨는 것임 !
-  const saveFileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const saveFileImage = (e) => {
     setFileImage(URL.createObjectURL(e.target.files[0]));
     console.log(setFileImage);
     getFile(e);
