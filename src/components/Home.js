@@ -1,4 +1,4 @@
-import "../App.css";
+import "../css/Home.css";
 import { Link, useNavigate } from "react-router-dom";
 import Map from "./Map";
 import { useEffect, useState } from "react";
@@ -15,6 +15,7 @@ import {
   BottomNavigationAction,
   Box,
   Button,
+  FormGroup,
   Grid,
   IconButton,
   Modal,
@@ -22,6 +23,7 @@ import {
   Toolbar,
   Tooltip,
   Typography,
+  Switch,
 } from "@mui/material";
 import { KAKAO_AUTH_URL } from "./KakaoLoginData";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
@@ -32,6 +34,7 @@ import gugu_login from "../img/dulgi_login.jpg";
 import { Container } from "@mui/system";
 import styled from "@emotion/styled";
 import { axiosUser } from "../api/User";
+import ChatList from "./ChatList";
 
 const style = {
   position: "absolute",
@@ -64,6 +67,7 @@ function Home() {
 
   const [open, setOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [toggled, setToggled] = useState(false);
 
   const token = window.localStorage.getItem("token");
   const navigate = useNavigate();
@@ -73,8 +77,10 @@ function Home() {
   );
 
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setProfileImg(res.kakaoProfileImg));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setProfileImg(res.kakaoProfileImg));
+    }
   }, []);
 
   return (
@@ -166,7 +172,22 @@ function Home() {
         <div className="headerLeft"></div>
       </div>
       <br />
-      <Map />
+      <div>
+        <FormGroup sx={{ alignContent: "center" }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography>Map</Typography>
+            <Switch
+              checked={toggled}
+              size="large"
+              inputProps={{ "aria-label": "ant design" }}
+              onChange={(e) => setToggled(e.target.checked)}
+            />
+            <Typography>List</Typography>
+          </Stack>
+        </FormGroup>
+      </div>
+      {toggled === false ? <Map /> : <ChatList />}
+      {/* <Map /> */}
       <br />
       <BottomNavigation
         sx={{

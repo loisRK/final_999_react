@@ -76,9 +76,13 @@ function Map() {
     }
   };
 
+  const token = window.localStorage.getItem("token");
+
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setUsername(res.kakaoNickname));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+    }
 
     // 페이지 로드 시 현재 위치 지정
     currentPosition();

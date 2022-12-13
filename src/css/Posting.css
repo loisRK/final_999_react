@@ -90,7 +90,10 @@
 /* 수정/삭제 점점점 버튼 스타일 */
 .heart_btn {
   position: absolute;
-  right: 50px;
+  right: 40px;
+}
+
+.like_btn {
 }
 
 /* 수정/삭제 점점점 버튼 스타일 */

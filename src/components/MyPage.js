@@ -24,11 +24,15 @@ function MyPage() {
   const [profileImg, setProfileImg] = useState("../img/dulgi.jpg");
   const [email, setEmail] = useState("gugu@999.com");
 
+  const token = window.localStorage.getItem("token");
+
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setNickname(res.kakaoNickname));
-    data.then((res) => setProfileImg(res.kakaoProfileImg));
-    data.then((res) => setEmail(res.kakaoEmail));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setNickname(res.kakaoNickname));
+      data.then((res) => setProfileImg(res.kakaoProfileImg));
+      data.then((res) => setEmail(res.kakaoEmail));
+    }
   }, []);
 
   return (
