@@ -55,7 +55,7 @@ const Chat = () => {
   const [tags, setTags] = useState("");
 
   const [search, setSearch] = useSearchParams();
-  const room = search.get("roomNo");
+  const room = search.get("roomNo");  
 
   // 상대방이 보낸 메세지를 신호를 감지해 내 리스트에 추가하여 말풍선을 뿌려주는 함수.
   useEffect(() => {
@@ -158,18 +158,16 @@ const Chat = () => {
                     }}
                     sx={{ p: 0 }}
                   >
-                    <Avatar alt="gugu" src="C:\Dev\gugu\final_999_react\src\img\bidulgi.png" />
+                    <Avatar alt="profileImg" src={profileImg} />
                   </IconButton>
                 </Tooltip>
               </Box>
-            <div className="h-12 text-white text-lg" style={{color:"#4d5749"}}>
+            <div className="h-12 text-white text-lg m-3" style={{color:"#4d5749"}}>
               
               {clients !== null ? (
                 <>
                 <div className="flex">{`${clients} 명`}</div>
                 <div>{tags}</div>
-                <span>#민기천재</span> &nbsp;
-                <span>#민기훈남</span> &nbsp;
                 </>
               ) : (
                 <></>

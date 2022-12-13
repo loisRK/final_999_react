@@ -58,6 +58,7 @@ function Posting() {
             <Typography
               variant="h6"
               noWrap
+              position="static"
               component="a"
               href="/"
               sx={{

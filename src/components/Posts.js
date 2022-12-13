@@ -5,10 +5,9 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { axiosDeletePost } from "../api/Post";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Container, Box, AppBar, Tooltip, Toolbar } from "@mui/material";
+import { Avatar } from "@mui/material";
 import { axiosLike } from "../api/Post";
 import { FavoriteOutlined } from "@mui/icons-material";
-import gugu from "../img/bidulgi.png";
 
 const options = ["수정하기", "삭제하기"];
 const ITEM_HEIGHT = 20;
