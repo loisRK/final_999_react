@@ -82,3 +82,12 @@ export const axiosLike = async (formData) => {
     },
   });
 };
+
+// 특정 유저의 post 불러오기(깃털꽂기) - GET
+export const axioUserPosts = async (userId) => {
+  const response = await axios.get(
+      `http://localhost:8080/api/userPosts/${userId}`
+      );
+
+return response.data;
+}

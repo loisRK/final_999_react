@@ -5,11 +5,12 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
-import { axiosGetAllPosts } from "../api/Post";
+import { axiosGetAllPosts, postData} from "../api/Post";
 import io from "socket.io-client";
-import { Snackbar, Alert } from "@mui/material";
+import { Snackbar, Alert, Button, Typography, Modal } from "@mui/material";
 import { axiosUser } from "../api/User";
 import { Box } from "@mui/system";
+import MyPage from "./MyPage";
 const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
@@ -74,6 +75,7 @@ function Map() {
     }
   };
 
+
   useEffect(() => {
     const data = axiosUser();
     data.then((res) => setUsername(res.kakaoNickname));
@@ -93,6 +95,7 @@ function Map() {
 
     // 지도 생성
     const map = new kakao.maps.Map(container, options);
+
 
     // // 사용자 위치 마커 이미지 옵션
     // const imageSrc = "bidulgi.png"; // 나중에 우리 비둘기 이미지로 변경
@@ -123,12 +126,13 @@ function Map() {
     // overlay.setMap(map);
 
     // 포스팅 마커 표시하기
-    const postData = axiosGetAllPosts();
-    postData.then((res) => console.log(res));
-    postData.then((res) => setPosts(res));
+    const postsData = axiosGetAllPosts();
+    postsData.then((res) => console.log(res));
+    postsData.then((res) => setPosts(res));
 
     posts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
+      const postNo = post.postNo;
 
       // 포스트 마커 이미지 옵션
       const imageSrc = "feather.png";
@@ -141,11 +145,19 @@ function Map() {
         imageSize
         // imageOption
       );
-      // 채팅방 마커 객체 생성
+      // 포스트 마커 객체 생성
       const postMarkers = new kakao.maps.Marker({
         map: map,
         position: postLatlng,
         image: postImage,
+        title: postNo,
+      });
+
+      // 포스트 마커 클릭시 modal 띄우기
+      kakao.maps.event.addListener(postMarkers, "click", function (mouseEvent) {
+        console.log("postNo" + postNo);
+        const onePost = postData(postNo);
+        onePost.then((res) => console.log("포스트 모달 : " + res.content));
       });
     });
 
@@ -419,6 +431,7 @@ function Map() {
       style={{ width: `"${window.innerWidth}"`, height: "500px" }}
       //   ref={container}
     >
+      {/* <MyPage map = {propMap}/> */}
       <Snackbar
         className="mapAlert"
         anchorOrigin={{

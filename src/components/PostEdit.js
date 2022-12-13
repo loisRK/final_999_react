@@ -99,7 +99,7 @@ function PostEdit() {
   const fileArr = new Array();
 
   // 미리보기 삭제
-  const deleteFileImage = () => {
+  const deleteFileImage = (e) => {
     URL.revokeObjectURL(fileImage);
     setFileImage("");
   };
@@ -201,7 +201,7 @@ function PostEdit() {
           />
           <button
             style={styles.fileDeleteBotton}
-            onClick={() => deleteFileImage()}
+            onClick={(e) => deleteFileImage(e)}
           >
             {" "}
             삭제{" "}
