@@ -78,14 +78,6 @@ function PostEdit() {
   const formData = new FormData();
   const fileArr = new Array();
 
-  // 수정하려는 이미지 미리보기
-  // typescript 언어 이기 때문에 빨간 줄이 뜨는 것임 !
-  const saveFileImage = (e) => {
-    setFileImage(URL.createObjectURL(e.target.files[0]));
-    // console.log(setFileImage);
-    // getFile(e);
-  };
-
   // 미리보기 삭제
   function deleteFileImage  (e) {
     console.log(fileImage)
@@ -95,6 +87,11 @@ function PostEdit() {
 
   const inputFromHandlerContent = (e) => {
     setContent(e.target.value);
+  };
+
+  // 수정하려는 이미지 미리보기
+  const saveFileImage = (e)  => {
+  setFileImage(URL.createObjectURL(e.target.files[0]));
   };
 
   function getFile(e) {
