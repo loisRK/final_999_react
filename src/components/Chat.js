@@ -9,29 +9,11 @@ import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import io from "socket.io-client";
 import { axiosUser } from "../api/User";
 import { useSearchParams } from "react-router-dom";
-// import { roomInfo } from "../api/Chatting";
+import { roomInfo } from "../api/Chatting";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-const options = [
-  "None",
-  "Atria",
-  "Callisto",
-  "Dione",
-  "Ganymede",
-  "Hangouts Call",
-  "Luna",
-  "Oberon",
-  "Phobos",
-  "Pyxis",
-  "Sedna",
-  "Titania",
-  "Triton",
-  "Umbriel",
-];
-
-const ITEM_HEIGHT = 48;
 // const socket = io.connect("http://192.168.0.25:9999");
 const socket = io.connect("https://server.bnmnil96.repl.co");
 
@@ -63,11 +45,13 @@ const Chat = () => {
   useEffect(() => {
     console.log("CHATTING # : " + room);
     socket.emit("room", room);
-    // // 참여 인원 조회
-    // const data = roomInfo(room);
-    // data.then((response) => setClients(response.roomNo));
-    // // 방의 태그 내용 조회
-    // data.then((response) => setTags(response.tag));
+
+    // 방의 상세정보 조회
+    const data = roomInfo(room);
+    // 참여 인원 입력
+    data.then((response) => setClients(response.roomNo));
+    // 방의 태그 내용 입력
+    data.then((response) => setTags(response.title));
   }, [room]);
 
   // 룸의 입장 인원을 카운트해주는 함수
@@ -92,9 +76,6 @@ const Chat = () => {
       message: message,
       room: room,
       date: new Date().toLocaleString(), // 2022. 12. 7. 오전 11:24:42
-      // new Date(Date.now()).getHours() +
-      // ":" +
-      // new Date(Date.now()).getMinutes(),
     };
     // messageContent 값이 먼저 정의 된 후 메세지 전달.
     await socket.emit("message", messageContent);
@@ -137,8 +118,6 @@ const Chat = () => {
             )}
             <div className="flex">
               <div>{tags}</div>
-              <div>#민기천재</div> &nbsp;
-              <div>#민기훈남</div> &nbsp;
             </div>
           </div>
           <a
