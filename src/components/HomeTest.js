@@ -77,8 +77,10 @@ function Home() {
   );
 
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setProfileImg(res.kakaoProfileImg));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setProfileImg(res.kakaoProfileImg));
+    }
   }, []);
 
   return (
@@ -252,9 +254,6 @@ function Home() {
             }}
           />
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            {/* <input placeholder="아이디"></input> <br />
-                <input type={"password"} placeholder="비밀번호"></input> <br />
-                <button type="submit">Login</button> */}
             <img
               src={kakao_login_medium_wide}
               alt="kakao_login"
