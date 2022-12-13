@@ -13,6 +13,7 @@ import { roomInfo } from "../api/Chatting";
 // const data = axiosUser();
 
 function Chatting() {
+  // useNavigate() : 양식이 제출되거나 특정 event가 발생할 때, url 조작
   const navigate = useNavigate();
   const formData = new FormData();
 
@@ -22,7 +23,6 @@ function Chatting() {
   const [category, setCategory] = useState("");
   const [userId, setUserId] = useState("");
   const [tag, setTag] = useState("");
-  const [roomNo, setRoomNo] = useState("");
 
   useEffect(() => {
     if (token !== null) {
