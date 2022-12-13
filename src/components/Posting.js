@@ -81,6 +81,8 @@ function Posting() {
         listInnerRef={listInnerRef}
         posts={posts}
       ></PostsTest> */}
+
+      {/* Posts원본 */}
       <Posts
         onScroll={onScroll}
         listInnerRef={listInnerRef}

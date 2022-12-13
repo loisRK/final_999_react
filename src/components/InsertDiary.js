@@ -1,10 +1,15 @@
-import axios, { all } from "axios";
 import React, { useState } from "react";
-import { useParams, useSearchParams, Link } from "react-router-dom";
-import { newDiaryData, createDiary, createPost } from "../api/Post";
-import Stack from "@mui/material/Stack";
+import { useSearchParams } from "react-router-dom";
+import { createPost } from "../api/Post";
 import TextField from "@mui/material/TextField";
 import "../App.css";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SendIcon from "@mui/icons-material/Send";
 
 function InsertDiary() {
   // 페이지 전환 시 쿼리스트링방식으로 값 받아오기위한 searchParams 객체 생성
@@ -74,68 +79,60 @@ function InsertDiary() {
   };
 
   return (
-    <div>
-      <button
-        className="write_button"
-        onClick={() => (window.location.href = "/")}
-      >
-        취소
-      </button>
-
-      <form
-        method="POST"
-        onSubmit={(e) => sendDiary(e)}
-        encType="multipart/form-data"
-      >
-        <button className="write_button" type="submit">
-          저장
-        </button>
-
-        <div>
-          {/* Content :<br /> */}
-          <Stack
-            component="form"
-            sx={{
-              width: "25ch",
-            }}
-            spacing={2}
-            noValidate
-            autoComplete="off"
+    <Box
+      component="form"
+      sx={{
+        "& .MuiTextField-root": { m: 2, width: "50ch" },
+        flexGrow: 1,
+      }}
+      noValidate
+      autoComplete="off"
+      method="POST"
+      onSubmit={(e) => sendDiary(e)}
+      encType="multipart/form-data"
+    >
+      <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <img
+              src="https://emojigraph.org/media/openmoji/feather_1fab6.png"
+              width="30"
+              height="30"
+            />
+          </Typography>
+          <Button color="success" endIcon={<SendIcon />} type="submit">
+            Send
+          </Button>
+          <Button
+            color="error"
+            endIcon={<DeleteIcon />}
+            onClick={() => (window.location.href = "/")}
           >
-            <TextField
-              fullWidth
-              label="content"
-              id="content"
-              name="content"
-              defaultValue={content}
-              variant="filled"
-              onChange={getContent}
-            />
-            <TextField
-              hiddenLabel
-              id="filled-hidden-label-normal"
-              defaultValue="Normal"
-              variant="filled"
-            />
-          </Stack>
-          {/* <input
-            name="content"
-            placeholder="content"
-            onChange={getContent}
-            value={content}
-          ></input> */}
-          <br />
-          File Upload :
-          <input
-            type="file"
-            name="newfiles"
-            id="newfiles"
-            multiple
-            onChange={getFile}
-          ></input>
-        </div>
-      </form>
-    </div>
+            Delete
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <div>
+        <TextField
+          id="outlined-multiline-static"
+          label="Content"
+          name="content"
+          multiline
+          rows={4}
+          onChange={getContent}
+          defaultValue={content}
+        />
+      </div>
+      <div>
+        <input
+          type="file"
+          name="newfiles"
+          id="newfiles"
+          multiple
+          onChange={getFile}
+        ></input>
+      </div>
+    </Box>
   );
 }
 

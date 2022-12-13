@@ -100,33 +100,6 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                       >
                         <FavoriteOutlined color="secondary" />
                       </Avatar>
-                      {/* <button onClick={heartBtnClick}>
-                        {heartToggle === 0 ? (
-                          <Avatar
-                            src={heart}
-                            alt="heart"
-                            onClick={() =>
-                              heartClick(
-                                post.postNo,
-                                post.userDTO.kakaoId,
-                                heartToggle
-                              )
-                            }
-                          />
-                        ) : (
-                          <Avatar
-                            src={heart_filled}
-                            alt="heart"
-                            onClick={() =>
-                              heartClick(
-                                post.postNo,
-                                post.userDTO.kakaoId,
-                                heartToggle
-                              )
-                            }
-                          />
-                        )}
-                      </button> */}
                     </span>
                     <span className="dot_btn">
                       {" "}
