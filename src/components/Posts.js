@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { axiosDeletePost } from "../api/Post";
+import { axiosDeletePost, axiosGetLike, axiosLike } from "../api/Post";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Container } from "@mui/material";
-import { axiosLike } from "../api/Post";
-import { FavoriteOutlined } from "@mui/icons-material";
+import { Avatar, Checkbox } from "@mui/material";
+import {
+  Favorite,
+  FavoriteBorder,
+  FavoriteOutlined,
+} from "@mui/icons-material";
 
 const options = ["수정하기", "삭제하기"];
 const ITEM_HEIGHT = 20;
@@ -16,15 +19,23 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const navigate = useNavigate();
   const [postNo, setPostNo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [heartToggle, setHeartToggle] = useState(1);
+  const [heartToggle, setHeartToggle] = useState(0);
   const open = Boolean(anchorEl);
   const token = window.localStorage.getItem("token");
+  // const heartToggle = 0;
 
-  const heartBtnClick = () => {
-    setHeartToggle(!heartToggle);
+  const heartOnOff = (postNum, userId) => {
+    {
+      heartToggle === 1
+        ? heartClick(postNum, userId, 0) // 좋아요 눌러진 상태일 때
+        : heartClick(postNum, userId, 1); // 좋아요 없는 상태일 때
+    }
   };
 
   const heartClick = (postNum, userId, heartToggle) => {
+    {
+      heartToggle === 1 ? setHeartToggle(0) : setHeartToggle(1);
+    }
     // 데이터 전송을 위한 form, file 객체 생성
     const formData = new FormData();
     // console.log("postNo : " +postNum +"  kakaoId : " +userId +"  heartToggle : " +heartToggle);
@@ -32,9 +43,10 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     formData.append("userId", userId);
     formData.append("afterLike", heartToggle);
 
-    console.log("formdata : " + formData);
-
-    axiosLike(formData);
+    // formdata 값 확인해 보는 법 !
+    for (let key of formData.keys()) {
+      console.log("formdata확인" + key, ":", formData.get(key));
+    }
   };
 
   const handleClick = (event, postNo) => {
@@ -60,6 +72,10 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     }
   };
 
+  useEffect(() => {
+    //
+  }, [heartToggle]);
+
   return (
     <div>
       <div
@@ -70,6 +86,8 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
         {posts.map((post) => {
           console.log(post);
           console.log(post.userDTO.kakaoId);
+          let liked = axiosGetLike(post.userDTO.kakaoId, post.postNo);
+          console.log("get liked : " + post.postNo + " " + liked);
 
           return (
             <div key={post.postNo} className="post_box">
@@ -89,17 +107,17 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                     <span className="post_detail">{post.postDate}</span>
                     <span className="post_detail">post#{post.postNo}</span>
                     <span className="heart_btn">
-                      <Avatar
-                        onClick={() =>
-                          heartClick(
-                            post.postNo,
-                            post.userDTO.kakaoId,
-                            heartToggle
-                          )
+                      <Checkbox
+                        // checked={liked >= 1 ? true : false}
+                        defaultChecked={liked >= 1 ? true : false}
+                        icon={<FavoriteBorder />}
+                        checkedIcon={<Favorite />}
+                        onChange={() =>
+                          heartOnOff(post.postNo, post.userDTO.kakaoId, liked)
                         }
-                      >
-                        <FavoriteOutlined color="secondary" />
-                      </Avatar>
+                        color="warning"
+                      />
+                      {/* <span>{post.likeCnt}</span> */}
                     </span>
                     <span className="dot_btn">
                       {" "}

@@ -76,13 +76,6 @@ function Posting() {
         </Container>
       </AppBar>
       <SearchBar />
-      {/* <PostsTest
-        onScroll={onScroll}
-        listInnerRef={listInnerRef}
-        posts={posts}
-      ></PostsTest> */}
-
-      {/* Posts원본 */}
       <Posts
         onScroll={onScroll}
         listInnerRef={listInnerRef}
