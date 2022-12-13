@@ -1,37 +1,30 @@
 import { useEffect } from "react";
 import { useState } from "react";
 import * as React from "react";
-import { Avatar } from "@mui/material";
-import { Button } from "@mui/material/Button";
+import { Avatar, IconButton, Tooltip } from "@mui/material";
+import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import io from "socket.io-client";
 import { axiosUser } from "../api/User";
 import { useSearchParams } from "react-router-dom";
+import { roomInfo } from "../api/Chatting";
 // import { roomInfo } from "../api/Chatting";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import MenuIcon from "@mui/icons-material/Menu";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-const options = [
-  "None",
-  "Atria",
-  "Callisto",
-  "Dione",
-  "Ganymede",
-  "Hangouts Call",
-  "Luna",
-  "Oberon",
-  "Phobos",
-  "Pyxis",
-  "Sedna",
-  "Titania",
-  "Triton",
-  "Umbriel",
-];
-
-const ITEM_HEIGHT = 48;
 // const socket = io.connect("http://192.168.0.25:9999");
 const socket = io.connect("https://server.bnmnil96.repl.co");
 
@@ -63,11 +56,13 @@ const Chat = () => {
   useEffect(() => {
     console.log("CHATTING # : " + room);
     socket.emit("room", room);
-    // // 참여 인원 조회
-    // const data = roomInfo(room);
-    // data.then((response) => setClients(response.roomNo));
-    // // 방의 태그 내용 조회
-    // data.then((response) => setTags(response.tag));
+
+    // 방의 상세정보 조회
+    const data = roomInfo(room);
+    // 참여 인원 입력
+    data.then((response) => setClients(response.roomNo));
+    // 방의 태그 내용 입력
+    data.then((response) => setTags(response.title));
   }, [room]);
 
   // 룸의 입장 인원을 카운트해주는 함수
@@ -92,9 +87,6 @@ const Chat = () => {
       message: message,
       room: room,
       date: new Date().toLocaleString(), // 2022. 12. 7. 오전 11:24:42
-      // new Date(Date.now()).getHours() +
-      // ":" +
-      // new Date(Date.now()).getMinutes(),
     };
     // messageContent 값이 먼저 정의 된 후 메세지 전달.
     await socket.emit("message", messageContent);
@@ -119,16 +111,79 @@ const Chat = () => {
 
   console.log("messageList", messageList);
 
+  // EXIT 버튼을 누르면 채팅방을 나가거나 채팅방에 남거나 선택하는 modal
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   // mui 적용
 
   return (
     // items-center justify-center
     <div className="flex flex-col h-fit ">
       <div className="w-full h-screen bg-white relative overflow-y-auto">
-        <div className="w-full h-16 bg-gray-700 flex items-center p-3">
-          {/* <div className="w-12 h-12 bg-white rounded-full"></div> */}
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+            <Toolbar>
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title="Home">
+                  <IconButton
+                    onClick={() => {
+                      document.location.href = "/";
+                    }}
+                    sx={{ p: 0 }}
+                  >
+                    <Avatar
+                      alt="gugu"
+                      src="C:\Dev\gugu\final_999_react\src\img\bidulgi.png"
+                    />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+              <div
+                className="h-12 text-white text-lg"
+                style={{ color: "#4d5749" }}
+              >
+                {clients !== null ? (
+                  <>
+                    <div className="flex">{`${clients} 명`}</div>
+                    <div>{tags}</div>
+                    <span>#민기천재</span> &nbsp;
+                    <span>#민기훈남</span> &nbsp;
+                  </>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{ flexGrow: 1 }}
+              ></Typography>
+              <Button
+                color="inherit"
+                variant="outlined"
+                className="write_button"
+                type="submit"
+                defaultValue="save"
+                onClick={handleClickOpen}
+                style={{ backgroundColor: "#89ab79" }}
+              >
+                EXIT
+              </Button>
+            </Toolbar>
+          </AppBar>
+        </Box>
+        {/* <div className="w-full h-16 bg-gray-600 flex items-center p-3">
+          {/* <div className="w-12 h-12 bg-white rounded-full"></div>
           {/* 프로필 지정 */}
-          <Avatar alt={username} src={profileImg} className="w-12 h-12" />
+        {/* <Avatar alt={username} src={profileImg} className="w-12 h-12" />
           <div className="m-5 text-white">
             {clients !== "" ? (
               <div className="flex">{`${clients} 명`}</div>
@@ -137,17 +192,46 @@ const Chat = () => {
             )}
             <div className="flex">
               <div>{tags}</div>
-              <div>#민기천재</div> &nbsp;
-              <div>#민기훈남</div> &nbsp;
             </div>
-          </div>
-          <a
+          </div> */}
+        {/* <a
             href="/"
             className="ml-auto text-white w-14 bg-gray-600 text-white h-8 rounded-xl"
           >
             EXIT
-          </a>
-        </div>
+          </a> */}
+        {/* <div className="ml-auto"> */}
+        {/* <Button variant="contained" style={{backgroundColor : "gray"}} onClick={handleClickOpen}>
+            EXIT
+          </Button> */}
+        {/* </div> */}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"조금 더 자유로워지시겠습니까?"}
+          </DialogTitle>
+          {/* <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                홈으로 이동합니다
+              </DialogContentText>
+            </DialogContent> */}
+          <DialogActions>
+            <Button
+              onClick={() => {
+                document.location.href = "/";
+              }}
+              autoFocus
+            >
+              날아가기
+            </Button>
+            <Button onClick={handleClose}>둥지틀기</Button>
+          </DialogActions>
+        </Dialog>
+        {/* </div> */}
         <div id="chat" className="w-auto h-[80%] overflow-y-auto">
           {messageList &&
             messageList.map((msg, i) => (
@@ -219,15 +303,19 @@ const Chat = () => {
           placeholder="message send"
           onKeyPress={onKeyPress}
         />
-        {message != "" ? (
+        {message != null ? (
           <button
             onClick={sendMessage}
             className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+            style={{ backgroundColor: "#89ab79" }}
           >
             SEND
           </button>
         ) : (
-          <button className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl">
+          <button
+            className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+            style={{ backgroundColor: "#89ab79" }}
+          >
             SEND
           </button>
         )}

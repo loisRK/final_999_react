@@ -68,10 +68,12 @@ export const axiosDeletePost = async (postNo) => {
 
 // 모든 post 불러오기(깃털꽂기) - GET
 export const axiosGetAllPosts = async () => {
-  const response = await axios.get(`http://localhost:8080/api/postList`);
-  return response.data;
-};
+    const response = await axios.get(
+        `http://localhost:8080/api/postList`
+        );
 
+return response.data;
+}
 // Like 정보 보내기 - POST
 export const axiosLike = async (formData) => {
   const response = await axios.post(
@@ -116,3 +118,12 @@ export const axiosAllPostAndLike = async (
   setPrevPage(currentPage);
   setPosts([...posts, ...response.data.dtoList]);
 };
+
+// 특정 유저의 post 불러오기(깃털꽂기) - GET
+export const axioUserPosts = async (userId) => {
+  const response = await axios.get(
+      `http://localhost:8080/api/userPosts/${userId}`
+      );
+
+return response.data;
+}

@@ -3,17 +3,14 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { axiosDeletePost, axiosGetLike } from "../api/Post";
+import { axiosDeletePost, axiosGetLike, axiosLike } from "../api/Post";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Badge, Checkbox, Container, Fab } from "@mui/material";
-import { axiosLike, axisoGetLike } from "../api/Post";
+import { Avatar, Checkbox } from "@mui/material";
 import {
   Favorite,
   FavoriteBorder,
   FavoriteOutlined,
 } from "@mui/icons-material";
-import { BadgeProps } from "@mui/material/Badge";
-import { styled } from "@mui/material/styles";
 
 const options = ["수정하기", "삭제하기"];
 const ITEM_HEIGHT = 20;
