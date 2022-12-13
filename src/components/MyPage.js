@@ -17,12 +17,11 @@ import {
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
-import {axioUserPosts} from "../api/Post"
+import { axioUserPosts } from "../api/Post";
 // import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
 import { currentPositions } from "../api/Map";
 // import Map from "./Map";
-
 
 function MyPage() {
   const [nickname, setNickname] = useState("gugu");
@@ -35,20 +34,21 @@ function MyPage() {
 
   function currentPositions() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function (position) {
-              setLatitude(position.coords.latitude);
-              setLongitude(position.coords.longitude);
-            },
-            function (error) {
-            console.error(error);
-            }
-        );
-    
-        } else {
-        console.log("GPS를 지원하지 않습니다.");
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        function (error) {
+          console.error(error);
         }
-  };
+      );
+    } else {
+      console.log("GPS를 지원하지 않습니다.");
+    }
+  }
+
+  const token = window.localStorage.getItem("token");
 
   useEffect(() => {
     const data = axiosUser();
@@ -56,7 +56,7 @@ function MyPage() {
     data.then((res) => setProfileImg(res.kakaoProfileImg));
     data.then((res) => setEmail(res.kakaoEmail));
     data.then((res) => setUserId(res.kakaoId));
-    
+
     currentPositions();
     const userPosition = new kakao.maps.LatLng(latitude, longitude);
     const options = {
@@ -80,7 +80,7 @@ function MyPage() {
     // 웹브라우저의 사이즈가 변경될 때 마다 함수 실행
     window.onresize = mapResize;
 
-    // 마이페이지 포스팅 마커 표시하기 
+    // 마이페이지 포스팅 마커 표시하기
     const postsData = axioUserPosts(userId);
     postsData.then((res) => setUserPosts(res));
     console.log("userId" + userId);
@@ -106,10 +106,7 @@ function MyPage() {
         position: postLatlng,
         image: postImage,
       });
-
     });
-
-
   }, [latitude, longitude, userPosts.length]);
 
   return (
@@ -164,8 +161,7 @@ function MyPage() {
         id="map"
         className="map"
         style={{ width: `"${window.innerWidth}"`, height: "350px" }}
-    >
-      </div>
+      ></div>
       <BottomNavigation
         sx={{
           background: "#B6E2A1",

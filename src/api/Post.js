@@ -76,11 +76,47 @@ return response.data;
 }
 // Like 정보 보내기 - POST
 export const axiosLike = async (formData) => {
-  await axios.post(`http://localhost:8080/api/addLike`, formData, {
-    headers: {
-      "Contest-Type": "multipart/form-data",
-    },
-  });
+  const response = await axios.post(
+    `http://localhost:8080/api/addLike`,
+    formData,
+    {
+      headers: {
+        "Contest-Type": "multipart/form-data",
+      },
+    }
+  );
+  console.log("like 개수 : " + response.data);
+  return response.data;
+};
+
+// 해당 user의 포스팅 like 정보 가져오기 - GET
+export const axiosGetLike = async (postNo, userId) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/getLike?postNo=${postNo}&userId=${userId}`
+  );
+  return response.data;
+};
+
+// 전체 포스트랑 like 정보 다 가져오는거 도전!!!!
+export const axiosAllPostAndLike = async (
+  posts,
+  setWasLastList,
+  setPrevPage,
+  setPosts,
+  currentPage,
+  userId
+) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/postPage?page=${currentPage}&size=10&userId=${userId}`
+  );
+  console.log("Diary.js : " + response.data.dtoList);
+  // 데이터가 없으면 마지막 페이지였다는걸 표시
+  if (!response.data.dtoList.length) {
+    setWasLastList(true);
+    return;
+  }
+  setPrevPage(currentPage);
+  setPosts([...posts, ...response.data.dtoList]);
 };
 
 // 특정 유저의 post 불러오기(깃털꽂기) - GET

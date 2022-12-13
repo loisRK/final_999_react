@@ -5,7 +5,7 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
-import { axiosGetAllPosts, postData} from "../api/Post";
+import { axiosGetAllPosts, postData } from "../api/Post";
 import io from "socket.io-client";
 import { Snackbar, Alert, Button, Typography, Modal } from "@mui/material";
 import { axiosUser } from "../api/User";
@@ -76,10 +76,13 @@ function Map() {
     }
   };
 
+  const token = window.localStorage.getItem("token");
 
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setUsername(res.kakaoNickname));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+    }
 
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
@@ -96,7 +99,6 @@ function Map() {
 
     // 지도 생성
     const map = new kakao.maps.Map(container, options);
-
 
     // // 사용자 위치 마커 이미지 옵션
     // const imageSrc = "bidulgi.png"; // 나중에 우리 비둘기 이미지로 변경
