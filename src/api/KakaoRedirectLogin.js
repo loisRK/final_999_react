@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const KakaoRedirectLogin = () => {
   const code = new URL(window.location.href).searchParams.get("code");
+  console.log(code)
 
   // 로그인 성공시 MyPage로 이동시키기위해 useNavigate 사용
   const navigate = useNavigate();

@@ -55,9 +55,7 @@ export const postUpdate = async (postNo, formData) => {
         "Contest-Type": "multipart/form-data",
       },
     })
-    .then(
-      (document.location.href = `/posting`)
-    );
+    .then((document.location.href = `/posting`));
 };
 
 // post 삭제하기 - delete
@@ -70,11 +68,10 @@ export const axiosDeletePost = async (postNo) => {
 
 // 모든 post 불러오기(깃털꽂기) - GET
 export const axiosGetAllPosts = async () => {
-    const response = await axios.get(
-        `http://localhost:8080/api/postList`
-        );
-return response.data;
-    }
+  const response = await axios.get(`http://localhost:8080/api/postList`);
+  return response.data;
+};
+
 // Like 정보 보내기 - POST
 export const axiosLike = async (formData) => {
   await axios.post(`http://localhost:8080/api/addLike`, formData, {

@@ -7,12 +7,12 @@ import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
 import { axiosGetAllPosts } from "../api/Post";
 import io from "socket.io-client";
-import {
-  Snackbar,
-  Alert
-} from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
+import { axiosUser } from "../api/User";
 
+import { Box } from "@mui/system";
 
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -42,6 +42,7 @@ function Map() {
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [username, setUsername] = useState("gugu");
 
   const alertClick = () => {
     setOpen(!open);
@@ -49,7 +50,7 @@ function Map() {
 
   const errorAlertClick = () => {
     setErrorOpen(!errorOpen);
-  }
+  };
 
   const navigate = useNavigate();
 
@@ -76,6 +77,9 @@ function Map() {
   };
 
   useEffect(() => {
+    const data = axiosUser();
+    data.then((res) => setUsername(res.kakaoNickname));
+
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
 
@@ -120,7 +124,7 @@ function Map() {
     userMarker.setMap(map); // 마커 객체 생성 시, map 지정해줬으면 setMap 안해줘도 됨
     // overlay.setMap(map);
 
-    // 포스팅 마커 표시하기 
+    // 포스팅 마커 표시하기
     const postData = axiosGetAllPosts();
     postData.then((res) => console.log(res));
     postData.then((res) => setPosts(res));
@@ -128,26 +132,24 @@ function Map() {
     posts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
 
-    // 포스트 마커 이미지 옵션
-    const imageSrc = "feather.png";
-    const imageSize = new kakao.maps.Size(30, 30); // 마커이미지의 크기
-    const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
+      // 포스트 마커 이미지 옵션
+      const imageSrc = "feather.png";
+      const imageSize = new kakao.maps.Size(30, 30); // 마커이미지의 크기
+      const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
 
-    // 포스트 마커의 이미지 정보를 가지고 있는 마커이미지 생성
-    const postImage = new kakao.maps.MarkerImage(
-      imageSrc,
-      imageSize
-      // imageOption
-    );
-    // 채팅방 마커 객체 생성
-    const postMarkers = new kakao.maps.Marker({
-      map: map,
-      position: postLatlng,
-      image: postImage,
+      // 포스트 마커의 이미지 정보를 가지고 있는 마커이미지 생성
+      const postImage = new kakao.maps.MarkerImage(
+        imageSrc,
+        imageSize
+        // imageOption
+      );
+      // 채팅방 마커 객체 생성
+      const postMarkers = new kakao.maps.Marker({
+        map: map,
+        position: postLatlng,
+        image: postImage,
+      });
     });
-
-    });
-
 
     // 채팅방 마커 표시하기
     // 채팅방 목록을 가져와서 forEach로 마커 생성
@@ -308,7 +310,6 @@ function Map() {
       clickable: true,
     });
 
-
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
     kakao.maps.event.addListener(map, "click", function (mouseEvent) {
@@ -326,17 +327,15 @@ function Map() {
         latlng.La
       );
 
-      if(mouseDistance > 1) {
+      if (mouseDistance > 1) {
         overlay.setMap(null);
         enterOverlay.setMap(null);
         console.log("거리범위 초과" + mouseDistance);
         errorAlertClick();
-
       } else {
         overlay.setPosition(latlng);
         overlay.setMap(map);
       }
-
     });
 
     // 오버레이를 닫기 위해 호출되는 함수
@@ -401,6 +400,7 @@ function Map() {
 
     // 사용자의 위치를 기준으로 원 생성
     // 원 객체를 생성합니다
+
     var circle = new kakao.maps.Circle({
       center: markerPosition, // 원의 중심좌표입니다
       radius: 1000, // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
@@ -412,7 +412,7 @@ function Map() {
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
-  }, [latitude, longitude]);
+  }, [latitude, longitude, posts.length]);
 
   return (
     <div
@@ -434,7 +434,6 @@ function Map() {
         <Alert severity="success" sx={{ width: "100%" }}>
           로그인이 필요한 기능입니다.
         </Alert>
-        
       </Snackbar>
 
       <Snackbar
@@ -450,7 +449,6 @@ function Map() {
         <Alert severity="error" sx={{ width: "100%" }}>
           1km 밖에서는 이용 불가
         </Alert>
-        
       </Snackbar>
     </div>
   );
