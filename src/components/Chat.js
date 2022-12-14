@@ -21,6 +21,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import MenuIcon from "@mui/icons-material/Menu";
+import flyGugu from "../img/cutyDulgi.jpg"
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
@@ -139,6 +140,7 @@ const Chat = () => {
                     }}
                     sx={{ p: 0 }}
                   >
+
                     <Avatar alt="profileImg" src={profileImg} />
                   </IconButton>
                 </Tooltip>
@@ -207,11 +209,8 @@ const Chat = () => {
           <DialogTitle id="alert-dialog-title">
             {"조금 더 자유로워지시겠습니까?"}
           </DialogTitle>
-          {/* <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                홈으로 이동합니다
-              </DialogContentText>
-            </DialogContent> */}
+          <img alt="flyGugu" src={flyGugu}></img>
+        
           <DialogActions>
             <Button
               onClick={() => {
@@ -257,9 +256,9 @@ const Chat = () => {
                       <div
                         className={` ${
                           username === msg.username
-                            ? "bg-green-600 rounded-xl rounded-tr-none"
-                            : "bg-blue-600 rounded-xl rounded-tl-none"
-                        } max-w-[30%] h-auto p-2 text-white m-2 w-auto `}
+                            ? "bg-yellow-200 rounded-xl rounded-tr-none"
+                            : "bg-sky-200 rounded-xl rounded-tl-none"
+                        } max-w-[30%] w-fit h-auto p-2 text-yellow-900 m-2`}
                       >
                         <div className="flex">{msg.message}</div>
                       </div>
