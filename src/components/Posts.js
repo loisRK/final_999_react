@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { axiosDeletePost, axiosGetLike, axiosLike } from "../api/Post";
+import { axiosDeletePost, axiosLike } from "../api/Post";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Checkbox, Snackbar, Alert } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
