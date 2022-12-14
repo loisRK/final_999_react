@@ -16,7 +16,7 @@ import { axiosUser } from "../api/User";
 const options = ["수정하기", "삭제하기"];
 const ITEM_HEIGHT = 20;
 
-const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
+const PostsTest = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const navigate = useNavigate();
   const [postNo, setPostNo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -67,6 +67,22 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     }
   };
 
+  function time(postedDate) {
+    const today = new Date();
+    const postDate = new Date(postedDate);
+    const postedTime = Math.ceil(
+      (today.getTime() - postDate.getTime()) / (1000 * 60)
+    );
+
+    if (postedTime >= 1440) {
+      return "" + Math.round(postedTime / 3600) + "일 전";
+    } else if (postedTime >= 60) {
+      return "" + Math.round(postedTime / 60) + "시간 전";
+    } else {
+      return "" + Math.round(postedTime) + "분 전";
+    }
+  }
+
   useEffect(() => {
     const data = axiosUser();
     data.then((res) => setUserId(res.kakaoId));
@@ -102,6 +118,11 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                     <span className="post_detail">@{post.kakaoNickname}</span>
                     <span className="post_detail">{post.postDate}</span>
                     {/* <span className="post_detail">post#{post.postNo}</span> */}
+                    <span className="post_detail">
+                      {time(post.postDate)} 포스팅
+                    </span>
+                    <br />
+
                     <span className="heart_btn">
                       <Checkbox
                         // checked={liked >= 1 ? true : false}
@@ -168,4 +189,4 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   );
 };
 
-export default Posts;
+export default PostsTest;
