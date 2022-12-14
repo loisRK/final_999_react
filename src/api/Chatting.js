@@ -17,7 +17,7 @@ export const createRooms = async (formData) => {
 // DB 내에 존재하는 모든 채팅방 리스트 불러오기
 export const roomList = async () => {
   const response = await axios.get("http://localhost:8080/api/roomList");
-  console.log(response.data);
+  // console.log(response.data);
   return response.data;
 };
 

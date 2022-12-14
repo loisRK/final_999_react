@@ -13,11 +13,13 @@ import {
   Grid,
   Toolbar,
   Typography,
+  Modal
 } from "@mui/material";
+import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
-import {axioUserPosts} from "../api/Post"
+import {axioUserPosts, postData} from "../api/Post"
 // import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
 import { currentPositions } from "../api/Map";
@@ -32,6 +34,8 @@ function MyPage() {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
   const [userPosts, setUserPosts] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [postDetail, setPostDetail] = useState(null);
 
   function currentPositions() {
     if (navigator.geolocation) {
@@ -55,8 +59,12 @@ function MyPage() {
     data.then((res) => setNickname(res.kakaoNickname));
     data.then((res) => setProfileImg(res.kakaoProfileImg));
     data.then((res) => setEmail(res.kakaoEmail));
-    data.then((res) => setUserId(res.kakaoId));
+    data.then((res) => axioUserPosts(res.kakaoId))
+        .then((res) => setUserPosts(res));
     
+    // const postsData = axioUserPosts(userId);
+
+    // 지도생성
     currentPositions();
     const userPosition = new kakao.maps.LatLng(latitude, longitude);
     const options = {
@@ -81,13 +89,10 @@ function MyPage() {
     window.onresize = mapResize;
 
     // 마이페이지 포스팅 마커 표시하기 
-    const postsData = axioUserPosts(userId);
-    postsData.then((res) => setUserPosts(res));
-    console.log("userId" + userId);
-    console.log(postsData);
+    // 포스트 마커 forEach로 표시
     userPosts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
-      console.log("userId" + post.userId);
+      const postNo = post.postNo;
 
       // 포스트 마커 이미지 옵션
       const imageSrc = "feather.png";
@@ -100,12 +105,22 @@ function MyPage() {
         imageSize,
         imageOption
       );
-      // 채팅방 마커 객체 생성
+      // 포스트 마커 객체 생성
       const postMarkers = new kakao.maps.Marker({
         map: map,
         position: postLatlng,
         image: postImage,
+        title: postNo,
       });
+
+      // 포스트 마커 클릭시 modal 띄우기
+      kakao.maps.event.addListener(postMarkers, "click", function (mouseEvent) {
+        const onePost = postData(postNo);
+        onePost.then((res) => setPostDetail(res));
+        setModalOpen(true);
+      });
+
+
 
     });
 
@@ -114,6 +129,54 @@ function MyPage() {
 
   return (
     <div>
+      <div>
+      {/* <Button onClick={() =>{setModalOpen(true)}}>Open modal</Button> */}
+      <Modal
+        open={modalOpen}
+        onClose={() => {setModalOpen(false)}}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 400,
+              bgcolor: 'white',
+              border: '2px solid #000',
+              boxShadow: 24,
+              p: 4,
+          }}>
+
+          {postDetail === null ? (
+          <></>
+          ) : (
+            <div>
+              <Typography id="modal-modal-title" variant="h6" component="h2"></Typography>
+              
+              <Avatar
+                  className="profile_img"
+                  src={postDetail.userDTO.kakaoProfileImg}
+                  width="100px"
+                  height="100px"
+                />
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>{postDetail.userDTO.kakaoNickname}</Typography>
+              <span className="post_detail">@{postDetail.userDTO.kakaoNickname}</span>&nbsp;
+              <span className="post_detail">{postDetail.postDate}</span>&nbsp;
+              <span className="post_detail">post#{postDetail.postNo}</span>&nbsp;
+              <div className="post_content">{postDetail.postContent}</div>
+                      {postDetail.postImg === "" ? (
+                        <></>
+                      ) : (
+                        <img className="post_img" src={`/img/${postDetail.postImg}`} />
+                      )}
+            </div>
+          )}
+          
+        </Box>
+      </Modal>
+    </div>
       <AppBar position="static" sx={{ background: "#B6E2A1" }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -158,8 +221,8 @@ function MyPage() {
         &nbsp;&nbsp;&nbsp;
         <Grid>{nickname}</Grid>
         <Grid>{email}</Grid>
+        <Grid>{userId}</Grid>
       </Grid>
-      <button>프로필 수정</button>
       <div
         id="map"
         className="map"

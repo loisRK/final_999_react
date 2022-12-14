@@ -7,12 +7,12 @@ import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
 import { axiosGetAllPosts, postData} from "../api/Post";
 import io from "socket.io-client";
-import { Snackbar, Alert, Button, Typography, Modal } from "@mui/material";
+import { Snackbar, Alert, Button, Typography, Modal, Avatar } from "@mui/material";
 import { axiosUser } from "../api/User";
 import { Box } from "@mui/system";
 import MyPage from "./MyPage";
-const socket = io.connect("https://server.bnmnil96.repl.co");
 import { roomList } from "../api/Chatting";
+// const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -43,6 +43,8 @@ function Map() {
   const [posts, setPosts] = useState([]);
   const [username, setUsername] = useState("gugu");
   const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
+  const [modalOpen, setModalOpen] = useState(false);
+  const [postDetail, setPostDetail] = useState(null);
 
   const alertClick = () => {
     setOpen(!open);
@@ -128,7 +130,7 @@ function Map() {
 
     // 포스팅 마커 표시하기
     const postsData = axiosGetAllPosts();
-    postsData.then((res) => console.log(res));
+    // postsData.then((res) => console.log(res));
     postsData.then((res) => setPosts(res));
 
     posts.forEach((post) => {
@@ -156,10 +158,12 @@ function Map() {
 
       // 포스트 마커 클릭시 modal 띄우기
       kakao.maps.event.addListener(postMarkers, "click", function (mouseEvent) {
-        console.log("postNo" + postNo);
         const onePost = postData(postNo);
-        onePost.then((res) => console.log("포스트 모달 : " + res.content));
+        onePost.then((res) => setPostDetail(res));
+        setModalOpen(true);
       });
+
+  
     });
     // chattingRooms - mock.data
     const datas = roomList();
@@ -431,15 +435,78 @@ function Map() {
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
+    // gps 버튼 동작
+    const gps = document.getElementById("gps_bnt");
+    gps.addEventListener('click', () => {
+      console.log("gps 작동");
+      currentPosition();
+    });
   }, [latitude, longitude, posts.length, chatList.length]);
 
+
+
   return (
-    <div
-      id="map"
-      className="map"
-      style={{ width: `"${window.innerWidth}"`, height: "500px" }}
-      //   ref={container}
-    >
+    <div>
+      <div>
+      {/* <Button onClick={() =>{setModalOpen(true)}}>Open modal</Button> */}
+      <Modal
+        open={modalOpen}
+        onClose={() => {setModalOpen(false)}}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: 400,
+              bgcolor: 'white',
+              border: '2px solid #000',
+              boxShadow: 24,
+              p: 4,
+          }}>
+
+          {postDetail === null ? (
+          <></>
+          ) : (
+            <div>
+              <Typography id="modal-modal-title" variant="h6" component="h2"></Typography>
+              
+              <Avatar
+                  className="profile_img"
+                  src={postDetail.userDTO.kakaoProfileImg}
+                  width="100px"
+                  height="100px"
+                />
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>{postDetail.userDTO.kakaoNickname}</Typography>
+              <span className="post_detail">@{postDetail.userDTO.kakaoNickname}</span>&nbsp;
+              <span className="post_detail">{postDetail.postDate}</span>&nbsp;
+              <span className="post_detail">post#{postDetail.postNo}</span>&nbsp;
+              <div className="post_content">{postDetail.postContent}</div>
+                      {postDetail.postImg === "" ? (
+                        <></>
+                      ) : (
+                        <img className="post_img" src={`/img/${postDetail.postImg}`} />
+                      )}
+            </div>
+          )}
+          
+        </Box>
+      </Modal>
+    </div>
+
+    <div className="map_wrap" style={{position: "relative"}}>
+      <div
+        id="map"
+        className="map"
+        style={{ width: `"${window.innerWidth}"`, height: "500px" }}
+      ><img id="gps_bnt" className="gps_bnt" src="gps.png" />
+       
+      </div>
+    </div>
+
+      <div>
       {/* <MyPage map = {propMap}/> */}
       <Snackbar
         className="mapAlert"
@@ -451,6 +518,7 @@ function Map() {
         autoHideDuration={2000}
         onClose={alertClick}
       >
+
         <Alert severity="success" sx={{ width: "100%" }}>
           로그인이 필요한 기능입니다.
         </Alert>
@@ -470,7 +538,12 @@ function Map() {
           1km 밖에서는 이용 불가
         </Alert>
       </Snackbar>
+      
+      </div>
+      
+
     </div>
+    
   );
 }
 

@@ -1,7 +1,23 @@
+.map_wrap {
+  position: relative;
+}
 .map {
   margin-right: auto;
   margin-left: auto;
 }
+
+.gps_bnt {
+  height: 30px;
+  width: 30px;
+  position: absolute;
+  z-index: 100;
+  display: block;
+
+}
+.gps_bnt:hover {
+  cursor: pointer;
+}
+
 .overlaybox {
   position: absolute;
   width: 120px;
@@ -108,3 +124,4 @@ ul {
   padding: 10px 10px;
   white-space: normal;
 }
+
