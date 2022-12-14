@@ -10,8 +10,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { TableFooter, TablePagination } from "@material-ui/core";
 import chat from "../db/room_mock.json";
-import { roomList } from "../api/Chatting";
-import { useNavigate } from "react-router-dom";
+// import { roomList } from "../api/Chatting";
+// import { useNavigate } from "react-router-dom";
 
 // 임시로만든 db내 채팅 리스트 data 가져오기
 const chatList = chat;
@@ -62,8 +62,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function ChatList() {
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
+  const [chatLat, setLatitude] = useState(0);
+  const [chatLong, setchatLong] = useState(0);
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
   // geolocation으로 현재 위치 가져오는 함수 (Geolocation.getCurrentPosition(success, error, [options]))
@@ -72,10 +72,10 @@ function ChatList() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         function (position) {
-          setLatitude(position.coords.latitude);
-          setLongitude(position.coords.longitude);
+          setLatitude(position.coords.chatLat);
+          setchatLong(position.coords.chatLong);
           // console.log(
-          //   `latitude : ${position.coords.latitude} longitude : ${position.coords.longitude}`
+          //   `chatLat : ${position.coords.chatLat} chatLong : ${position.coords.chatLong}`
           // );
         },
         function (error) {
@@ -88,7 +88,7 @@ function ChatList() {
   };
 
   useEffect(() => {
-    console.log(latitude);
+    console.log(chatLat);
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
     {
@@ -100,27 +100,27 @@ function ChatList() {
           console.log(
             `${i}`,
             getDistanceFromLatLonInKm(
-              latitude,
-              longitude,
-              chatList[i].latitude,
-              chatList[i].longitude
+              chatLat,
+              chatLong,
+              chatList[i].chatLat,
+              chatList[i].chatLong
             )
           ),
           (distanceList[i] = [
             chatList[i],
             getDistanceFromLatLonInKm(
-              latitude,
-              longitude,
-              chatList[i].latitude,
-              chatList[i].longitude
+              chatLat,
+              chatLong,
+              chatList[i].chatLat,
+              chatList[i].chatLong
             ),
           ]),
           console.log(
             getDistanceFromLatLonInKm(
-              latitude,
-              longitude,
-              chatList[0].latitude,
-              chatList[0].longitude
+              chatLat,
+              chatLong,
+              chatList[0].chatLat,
+              chatList[0].chatLong
             )
           )
         )

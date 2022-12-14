@@ -3,14 +3,10 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { axiosDeletePost, axiosGetLike, axiosLike } from "../api/Post";
+import { axiosDeletePost, axiosLike } from "../api/Post";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Checkbox, Snackbar, Alert } from "@mui/material";
-import {
-  Favorite,
-  FavoriteBorder,
-  FavoriteOutlined,
-} from "@mui/icons-material";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { axiosUser } from "../api/User";
 
 const ITEM_HEIGHT = 20;
@@ -132,18 +128,16 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
               <section className="section_view">
                 <Avatar
                   className="profile_img"
-                  src={post.userDTO.kakaoProfileImg}
+                  src={post.kakaoProfileImg}
                   width="100px"
                   height="100px"
                 />
                 <div className="posts">
                   <div className="post_name">
-                    <span>{post.userDTO.kakaoNickname}</span>
-                    <span className="post_detail">
-                      @{post.userDTO.kakaoNickname}
-                    </span>
+                    {/* <span>{post.kakaoNickname}</span> */}
+                    <span className="post_detail">@{post.kakaoNickname}</span>
                     <span className="post_detail">{post.postDate}</span>
-                    <span className="post_detail">post#{post.postNo}</span>
+                    {/* <span className="post_detail">post#{post.postNo}</span> */}
                     <br />
                     <span className="post_detail">
                       {time(post.postDate)} 포스팅
@@ -151,14 +145,28 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                     <br />
 
                     <span className="heart_btn">
-                      <Checkbox
-                        // checked={liked >= 1 ? true : false}
-                        defaultChecked={post.afterLike === 1 ? true : false}
-                        icon={<FavoriteBorder />}
-                        checkedIcon={<Favorite />}
-                        onChange={() => heartClick(post.postNo, post.afterLike)}
-                        color="warning"
-                      />
+                      {token !== null ? (
+                        <Checkbox
+                          defaultChecked={post.afterLike === 1 ? true : false}
+                          icon={<FavoriteBorder />}
+                          checkedIcon={<Favorite />}
+                          onChange={() =>
+                            heartClick(post.postNo, post.afterLike)
+                          }
+                          color="warning"
+                        />
+                      ) : (
+                        <Checkbox
+                          defaultChecked={post.afterLike === 1 ? true : false}
+                          disabled
+                          icon={<FavoriteBorder />}
+                          checkedIcon={<Favorite />}
+                          onChange={() =>
+                            heartClick(post.postNo, post.afterLike)
+                          }
+                          color="warning"
+                        />
+                      )}
                       <span>{post.likeCnt}</span>
                     </span>
                     <span className="dot_btn">

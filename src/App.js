@@ -17,8 +17,8 @@ function App() {
       {/* 페이지 전환을 위한 routes 설정 */}
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomeTest />} />
-          {/* <Route path="/" element={<Home />} /> */}
+          {/* <Route path="/" element={<HomeTest />} /> */}
+          <Route path="/" element={<Home />} />
           <Route path="/posting" element={<Posting />} />
           <Route path="/chatting/*" element={<Chatting />} />
           <Route path="/postEdit/*" element={<PostEdit />} />

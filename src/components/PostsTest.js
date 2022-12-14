@@ -22,6 +22,8 @@ const PostsTest = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userId, setUserId] = useState("");
   const open = Boolean(anchorEl);
+  const token = window.localStorage.getItem("token");
+  const [alertStatus, setAlertStatus] = useState(false);
 
   const heartClick = (postNum, liked) => {
     // 데이터 전송을 위한 form, file 객체 생성
@@ -54,16 +56,23 @@ const PostsTest = ({ onScroll, listInnerRef, posts, currentPage }) => {
     setAnchorEl(null);
   };
 
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
+
+  const options = ["수정하기", "삭제하기"];
   const editOrDelete = (event) => {
     console.log(event.currentTarget);
-    if (event.currentTarget.innerText === "수정하기") {
-      console.log("수정 눌렀을 때 : " + postNo);
-      navigate(`/postEdit?postNo=${postNo}`);
-
-      // axiosEditPost();
+    if (userId === "") {
+      alertClick();
     } else {
-      console.log("삭제 눌렀을 때 : " + postNo);
-      axiosDeletePost(postNo);
+      if (event.currentTarget.innerText === "수정하기") {
+        console.log("수정 눌렀을 때 : " + postNo);
+        navigate(`/postEdit?postNo=${postNo}`);
+      } else {
+        console.log("삭제 눌렀을 때 : " + postNo);
+        axiosDeletePost(postNo);
+      }
     }
   };
 
@@ -84,8 +93,11 @@ const PostsTest = ({ onScroll, listInnerRef, posts, currentPage }) => {
   }
 
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setUserId(res.kakaoId));
+    // userId 가져오기
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUserId(res.kakaoId));
+    }
   }, []);
 
   return (

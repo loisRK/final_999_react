@@ -55,21 +55,30 @@ function Posting() {
   useEffect(() => {
     // infinite scroll 테스트
     if (!wasLastList && prevPage !== currentPage) {
-      axiosUser().then((res) => {
-        console.log("##### id : " + res.kakaoId);
-        axiosPostLike(
-          posts,
-          setWasLastList,
-          setPrevPage,
-          setPosts,
-          currentPage,
-          res.kakaoId
-        );
-      });
+      token !== null
+        ? axiosUser().then((res) => {
+            console.log("##### id : " + res.kakaoId);
+            axiosPostLike(
+              posts,
+              setWasLastList,
+              setPrevPage,
+              setPosts,
+              currentPage,
+              res.kakaoId
+            );
+          })
+        : axiosPostLike(
+            posts,
+            setWasLastList,
+            setPrevPage,
+            setPosts,
+            currentPage,
+            999
+          );
       // postData(posts, setWasLastList, setPrevPage, setPosts, currentPage);
-      console.log("######## POSTS : " + posts);
     }
   }, [currentPage, wasLastList, prevPage]);
+  console.log("######## POSTS : " + posts);
 
   const onScroll = () => {
     if (listInnerRef.current) {

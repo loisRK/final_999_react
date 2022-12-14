@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState } from "react";
 // import chattingRooms from "../db/mockup.json";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
-import { axiosRoom } from "../api/Room";
+import { axiosUser } from "../api/User";
 import { axiosGetAllPosts, postData } from "../api/Post";
 import io from "socket.io-client";
 import {
@@ -15,10 +15,7 @@ import {
   Modal,
   Avatar,
 } from "@mui/material";
-import { axiosUser } from "../api/User";
 import { Box } from "@mui/system";
-import MyPage from "./MyPage";
-import { roomList } from "../api/Chatting";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
