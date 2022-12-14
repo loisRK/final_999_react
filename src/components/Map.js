@@ -11,8 +11,8 @@ import { Snackbar, Alert, Button, Typography, Modal } from "@mui/material";
 import { axiosUser } from "../api/User";
 import { Box } from "@mui/system";
 import MyPage from "./MyPage";
-const socket = io.connect("https://server.bnmnil96.repl.co");
 import { roomList } from "../api/Chatting";
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
