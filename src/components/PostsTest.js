@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { axiosDeletePost } from "../api/Post";
+import { axiosDeletePost, axiosGetLike, axiosLike } from "../api/Post";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Container } from "@mui/material";
-import heart from "../img/heart.png";
-import heart_filled from "../img/heart_filled.png";
-import { axiosLike } from "../api/Post";
-import { FavoriteOutlined } from "@mui/icons-material";
+import { Avatar, Checkbox } from "@mui/material";
+import {
+  Favorite,
+  FavoriteBorder,
+  FavoriteOutlined,
+} from "@mui/icons-material";
+import { axiosUser } from "../api/User";
 
 const options = ["수정하기", "삭제하기"];
 const ITEM_HEIGHT = 20;
@@ -18,24 +20,26 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const navigate = useNavigate();
   const [postNo, setPostNo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [heartToggle, setHeartToggle] = useState(1);
+  const [userId, setUserId] = useState("");
   const open = Boolean(anchorEl);
-  const token = window.localStorage.getItem("token");
 
-  const heartBtnClick = () => {
-    setHeartToggle(!heartToggle);
-  };
-
-  const heartClick = (postNum, userId, heartToggle) => {
+  const heartClick = (postNum, liked) => {
     // 데이터 전송을 위한 form, file 객체 생성
     const formData = new FormData();
-
-    // console.log("postNo : " +postNum +"  kakaoId : " +userId +"  heartToggle : " +heartToggle);
+    console.log("postNo : " + postNum + "  kakaoId : " + userId);
     formData.append("postNo", postNum);
     formData.append("userId", userId);
-    formData.append("afterLike", heartToggle);
 
-    console.log("formdata : " + formData);
+    let changeLike = 0;
+    {
+      liked === 0 ? (changeLike = 1) : (changeLike = 0);
+    }
+    formData.append("afterLike", changeLike);
+
+    // formdata 값 확인해 보는 법 !
+    for (let key of formData.keys()) {
+      console.log("formdata확인" + key, ":", formData.get(key));
+    }
 
     axiosLike(formData);
   };
@@ -63,6 +67,11 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     }
   };
 
+  useEffect(() => {
+    const data = axiosUser();
+    data.then((res) => setUserId(res.kakaoId));
+  }, []);
+
   return (
     <div>
       <div
@@ -72,64 +81,37 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
       >
         {posts.map((post) => {
           console.log(post);
-          console.log(post.userDTO.kakaoId);
+          console.log(userId);
+          // like가 Promise 객체로 불러와지기 때문에 이렇게 사용할 수가 없다
+          // posts 자체를 불러올 때 afterLike 변수값까지 같이 가져올 수 있는 DTO를 새로 만들어야 한다.
+          // let liked = axiosGetLike(userId, post.postNo);
+          // console.log("get liked : " + post.postNo + " " + liked);
 
           return (
             <div key={post.postNo} className="post_box">
               <section className="section_view">
                 <Avatar
                   className="profile_img"
-                  src={post.userDTO.kakaoProfileImg}
+                  src={post.kakaoProfileImg}
                   width="100px"
                   height="100px"
                 />
                 <div className="posts">
                   <div className="post_name">
-                    <span>{post.userDTO.kakaoNickname}</span>
-                    <span className="post_detail">
-                      @{post.userDTO.kakaoNickname}
-                    </span>
+                    {/* <span>{post.kakaoNickname}</span> */}
+                    <span className="post_detail">@{post.kakaoNickname}</span>
                     <span className="post_detail">{post.postDate}</span>
-                    <span className="post_detail">post#{post.postNo}</span>
+                    {/* <span className="post_detail">post#{post.postNo}</span> */}
                     <span className="heart_btn">
-                      <Avatar
-                        onClick={() =>
-                          heartClick(
-                            post.postNo,
-                            post.userDTO.kakaoId,
-                            heartToggle
-                          )
-                        }
-                      >
-                        <FavoriteOutlined color="secondary" />
-                      </Avatar>
-                      {/* <button onClick={heartBtnClick}>
-                        {heartToggle === 0 ? (
-                          <Avatar
-                            src={heart}
-                            alt="heart"
-                            onClick={() =>
-                              heartClick(
-                                post.postNo,
-                                post.userDTO.kakaoId,
-                                heartToggle
-                              )
-                            }
-                          />
-                        ) : (
-                          <Avatar
-                            src={heart_filled}
-                            alt="heart"
-                            onClick={() =>
-                              heartClick(
-                                post.postNo,
-                                post.userDTO.kakaoId,
-                                heartToggle
-                              )
-                            }
-                          />
-                        )}
-                      </button> */}
+                      <Checkbox
+                        // checked={liked >= 1 ? true : false}
+                        defaultChecked={post.afterLike === 1 ? true : false}
+                        icon={<FavoriteBorder />}
+                        checkedIcon={<Favorite />}
+                        onChange={() => heartClick(post.postNo, post.afterLike)}
+                        color="warning"
+                      />
+                      <span>{post.likeCnt}</span>
                     </span>
                     <span className="dot_btn">
                       {" "}
