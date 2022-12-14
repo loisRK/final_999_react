@@ -63,8 +63,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function ChatList() {
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
+  const [chatLat, setLatitude] = useState(0);
+  const [chatLong, setLongitude] = useState(0);
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
   // geolocation으로 현재 위치 가져오는 함수 (Geolocation.getCurrentPosition(success, error, [options]))
@@ -73,10 +73,10 @@ function ChatList() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         function (position) {
-          setLatitude(position.coords.latitude);
-          setLongitude(position.coords.longitude);
+          setLatitude(position.coords.chatLat);
+          setLongitude(position.coords.chatLong);
           // console.log(
-          //   `latitude : ${position.coords.latitude} longitude : ${position.coords.longitude}`
+          //   `chatLat : ${position.coords.chatLat} chatLong : ${position.coords.chatLong}`
           // );
         },
         function (error) {
@@ -89,7 +89,7 @@ function ChatList() {
   };
 
   useEffect(() => {
-    console.log(latitude);
+    console.log(chatLat);
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
     {
@@ -101,33 +101,33 @@ function ChatList() {
           console.log(
             `${i}`,
             getDistanceFromLatLonInKm(
-              latitude,
-              longitude,
-              chatList[i].latitude,
-              chatList[i].longitude
+              chatLat,
+              chatLong,
+              chatList[i].chatLat,
+              chatList[i].chatLong
             )
           ),
           (distanceList[i] = [
             chatList[i],
             getDistanceFromLatLonInKm(
-              latitude,
-              longitude,
-              chatList[i].latitude,
-              chatList[i].longitude
+              chatLat,
+              chatLong,
+              chatList[i].chatLat,
+              chatList[i].chatLong
             ),
           ]),
           console.log(
             getDistanceFromLatLonInKm(
-              latitude,
-              longitude,
-              chatList[0].latitude,
-              chatList[0].longitude
+              chatLat,
+              chatLong,
+              chatList[0].chatLat,
+              chatList[0].chatLong
             )
           )
         )
       );
     }
-
+    console.log(distanceList)
     // distanceList를 거리순으로 정렬
     distanceList.sort(compareSecondColumn);
 
@@ -140,8 +140,13 @@ function ChatList() {
     }
 
     // distanceList에서 data만 가져옴
-    distanceList.map((dli, i) => (chatInfo[i] = distanceList[i][0]));
-  }, []);
+    distanceList.map((dli, i) => (
+      chatInfo[i] = distanceList[i][0]
+      ),
+      console.log("chatInfo",chatInfo)
+      );
+    }, []);
+
 
   // 첫 페이지 0번
   const [page, setPage] = useState(0);
@@ -156,7 +161,6 @@ function ChatList() {
     setPage(0);
   };
   return (
-    <>
       <TableContainer component={Paper}>
         <br />
         <Table
@@ -169,6 +173,7 @@ function ChatList() {
               <StyledTableCell align="center">category</StyledTableCell>
               <StyledTableCell align="center">title</StyledTableCell>
               <StyledTableCell align="center">peoples</StyledTableCell>
+              <StyledTableCell align="center">Go</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -181,6 +186,7 @@ function ChatList() {
                   <StyledTableCell align="center">
                     {`${c.user_cnt} 人`}{" "}
                   </StyledTableCell>
+                  <StyledTableCell align="center"> <button onClick={()=>{window.location.href =`room?roomNo=${c.roomNo}`}}>{c.roomNo}</button></StyledTableCell>
                 </StyledTableRow>
               ))}
           </TableBody>
@@ -197,7 +203,6 @@ function ChatList() {
           </TableFooter>
         </Table>
       </TableContainer>
-    </>
   );
 }
 
