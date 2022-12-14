@@ -12,6 +12,7 @@ import { TableFooter, TablePagination } from "@material-ui/core";
 import chat from "../db/room_mock.json";
 import {roomList} from "../api/Chatting";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 // 임시로만든 db내 채팅 리스트 data 가져오기
 const chatList = chat;
@@ -151,6 +152,7 @@ function ChatList() {
             <StyledTableCell align="center">category</StyledTableCell>
             <StyledTableCell align="center">title</StyledTableCell>
             <StyledTableCell align="center">peoples</StyledTableCell>
+            <StyledTableCell align="center">GO</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -159,9 +161,14 @@ function ChatList() {
             .map((c, idx) => (
               <StyledTableRow key={idx}>
                 <StyledTableCell align="center">{c.category}</StyledTableCell>
-                <StyledTableCell align="center">{c.tag}</StyledTableCell>
+                <StyledTableCell align="center">{c.title}</StyledTableCell>
                 <StyledTableCell align="center">
                   {`${c.user_cnt} 人`}{" "}
+                </StyledTableCell>
+                <StyledTableCell href="https://google.com">
+
+                  <button>Go</button>
+       
                 </StyledTableCell>
               </StyledTableRow>
             ))}

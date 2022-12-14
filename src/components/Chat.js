@@ -11,6 +11,7 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
 import { report, client_in, client_out } from "../api/Chatting";
+import flyGugu from "../img/cutyDulgi.jpg"
 import {
   AppBar,
   Avatar,
