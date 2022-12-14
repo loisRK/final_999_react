@@ -5,10 +5,11 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
-import { axiosGetAllPosts, postData } from "../api/Post";
+import { axiosGetAllPosts } from "../api/Post";
 import io from "socket.io-client";
-import { Snackbar, Alert, Button, Typography, Modal } from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
 import { axiosUser } from "../api/User";
+
 import { Box } from "@mui/system";
 import MyPage from "./MyPage";
 import { roomList } from "../api/Chatting";
@@ -16,6 +17,7 @@ const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
+  const socket = io.connect("https://server.bnmnil96.repl.co");
   function deg2rad(deg) {
     return deg * (Math.PI / 180);
   }
@@ -42,7 +44,6 @@ function Map() {
   const [errorOpen, setErrorOpen] = useState(false);
   const [posts, setPosts] = useState([]);
   const [username, setUsername] = useState("gugu");
-  const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
 
   const alertClick = () => {
     setOpen(!open);
@@ -76,13 +77,9 @@ function Map() {
     }
   };
 
-  const token = window.localStorage.getItem("token");
-
   useEffect(() => {
-    if (token !== null) {
-      const data = axiosUser();
-      data.then((res) => setUsername(res.kakaoNickname));
-    }
+    const data = axiosUser();
+    data.then((res) => setUsername(res.kakaoNickname));
 
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
@@ -129,13 +126,12 @@ function Map() {
     // overlay.setMap(map);
 
     // 포스팅 마커 표시하기
-    const postsData = axiosGetAllPosts();
-    postsData.then((res) => console.log(res));
-    postsData.then((res) => setPosts(res));
+    const postData = axiosGetAllPosts();
+    postData.then((res) => console.log(res));
+    postData.then((res) => setPosts(res));
 
     posts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
-      const postNo = post.postNo;
 
       // 포스트 마커 이미지 옵션
       const imageSrc = "feather.png";
@@ -148,39 +144,23 @@ function Map() {
         imageSize
         // imageOption
       );
-      // 포스트 마커 객체 생성
+      // 채팅방 마커 객체 생성
       const postMarkers = new kakao.maps.Marker({
         map: map,
         position: postLatlng,
         image: postImage,
-        title: postNo,
-      });
-
-      // 포스트 마커 클릭시 modal 띄우기
-      kakao.maps.event.addListener(postMarkers, "click", function (mouseEvent) {
-        console.log("postNo" + postNo);
-        const onePost = postData(postNo);
-        onePost.then((res) => console.log("포스트 모달 : " + res.content));
       });
     });
-    // chattingRooms - mock.data
-    const datas = roomList();
-    // datas.then((response) => console.log(response));
-    datas.then((response) => setChatList(response));
 
     // 채팅방 마커 표시하기
     // 채팅방 목록을 가져와서 forEach로 마커 생성
-    chatList.forEach((room) => {
+    chattingRooms.forEach((room) => {
       // console.log("위도 : " + room.latitude);
       // console.log("경도 : " + room.longitude);
       // console.log("태그 : " + room.tag);
 
-      // 추후 태그로 변경될 부분.
-      const tag = room.title;
-      const roomsLatlng = new kakao.maps.LatLng(
-        String(room.chatLat),
-        String(room.chatLong)
-      );
+      const tag = room.tag;
+      const roomsLatlng = new kakao.maps.LatLng(room.latitude, room.longitude);
 
       // 채팅방 마커 이미지 옵션
       const imageSrc = "bidulgi.png";
@@ -197,7 +177,7 @@ function Map() {
       const roomMarkers = new kakao.maps.Marker({
         map: map,
         position: roomsLatlng,
-        title: room.roomNo,
+        title: room.room_no,
         image: markerImage,
       });
 
@@ -433,7 +413,7 @@ function Map() {
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
-  }, [latitude, longitude, posts.length, chatList.length]);
+  }, [latitude, longitude, posts.length]);
 
   return (
     <div
@@ -442,7 +422,6 @@ function Map() {
       style={{ width: `"${window.innerWidth}"`, height: "500px" }}
       //   ref={container}
     >
-      {/* <MyPage map = {propMap}/> */}
       <Snackbar
         className="mapAlert"
         anchorOrigin={{
@@ -472,6 +451,7 @@ function Map() {
           1km 밖에서는 이용 불가
         </Alert>
       </Snackbar>
+
     </div>
   );
 }
