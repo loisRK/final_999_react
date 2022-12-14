@@ -1,3 +1,4 @@
+import { roomList } from "../api/Chatting";
 /*global kakao*/
 import "../css/Map.css";
 import React, { useRef, useEffect, useState } from "react";
