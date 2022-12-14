@@ -22,6 +22,8 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userId, setUserId] = useState("");
   const open = Boolean(anchorEl);
+  const token = window.localStorage.getItem("token");
+  const [alertStatus, setAlertStatus] = useState(false);
 
   const heartClick = (postNum, liked) => {
     // 데이터 전송을 위한 form, file 객체 생성
@@ -54,22 +56,48 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     setAnchorEl(null);
   };
 
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
+
+  const options = ["수정하기", "삭제하기"];
   const editOrDelete = (event) => {
     console.log(event.currentTarget);
-    if (event.currentTarget.innerText === "수정하기") {
-      console.log("수정 눌렀을 때 : " + postNo);
-      navigate(`/postEdit?postNo=${postNo}`);
-
-      // axiosEditPost();
+    if (userId === "") {
+      alertClick();
     } else {
-      console.log("삭제 눌렀을 때 : " + postNo);
-      axiosDeletePost(postNo);
+      if (event.currentTarget.innerText === "수정하기") {
+        console.log("수정 눌렀을 때 : " + postNo);
+        navigate(`/postEdit?postNo=${postNo}`);
+      } else {
+        console.log("삭제 눌렀을 때 : " + postNo);
+        axiosDeletePost(postNo);
+      }
     }
   };
 
+  function time(postedDate) {
+    const today = new Date();
+    const postDate = new Date(postedDate);
+    const postedTime = Math.ceil(
+      (today.getTime() - postDate.getTime()) / (1000 * 60)
+    );
+
+    if (postedTime >= 1440) {
+      return "" + Math.round(postedTime / 3600) + "일 전";
+    } else if (postedTime >= 60) {
+      return "" + Math.round(postedTime / 60) + "시간 전";
+    } else {
+      return "" + Math.round(postedTime) + "분 전";
+    }
+  }
+
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setUserId(res.kakaoId));
+    // userId 가져오기
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUserId(res.kakaoId));
+    }
   }, []);
 
   return (
@@ -102,6 +130,11 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                     <span className="post_detail">@{post.kakaoNickname}</span>
                     <span className="post_detail">{post.postDate}</span>
                     {/* <span className="post_detail">post#{post.postNo}</span> */}
+                    <span className="post_detail">
+                      {time(post.postDate)} 포스팅
+                    </span>
+                    <br />
+
                     <span className="heart_btn">
                       <Checkbox
                         // checked={liked >= 1 ? true : false}

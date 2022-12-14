@@ -61,18 +61,16 @@ function InsertDiary() {
     formData.append("postLat", postLat);
     formData.append("postLong", postLong);
     formData.append("postContent", content);
+    // formData.append("files", fileArr[0]);
 
     for (let i = 0; i < fileArr.length; i++) {
       formData.append("files", fileArr[i]);
     }
-    console.log(formData);
 
     // formdata 값 확인해 보는 법 !
-    for (let key of formData.keys()) {
-      console.log(key, ":", formData.get(key));
-    }
-
-    console.log(addedFile);
+    // for (let key of formData.keys()) {
+    //   console.log(key, ":", formData.get(key));
+    // }
 
     createPost(formData);
     console.log("formData" + formData);
@@ -108,7 +106,7 @@ function InsertDiary() {
             endIcon={<DeleteIcon />}
             onClick={() => (window.location.href = "/")}
           >
-            Delete
+            Cancle
           </Button>
         </Toolbar>
       </AppBar>

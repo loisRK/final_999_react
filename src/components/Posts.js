@@ -3,17 +3,12 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { axiosDeletePost, axiosGetLike, axiosLike } from "../api/Post";
+import { axiosDeletePost, axiosLike } from "../api/Post";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Checkbox } from "@mui/material";
-import {
-  Favorite,
-  FavoriteBorder,
-  FavoriteOutlined,
-} from "@mui/icons-material";
+import { Avatar, Checkbox, Snackbar, Alert } from "@mui/material";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { axiosUser } from "../api/User";
 
-const options = ["수정하기", "삭제하기"];
 const ITEM_HEIGHT = 20;
 
 const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
@@ -22,6 +17,16 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userId, setUserId] = useState("");
   const open = Boolean(anchorEl);
+  const token = window.localStorage.getItem("token");
+  const [alertStatus, setAlertStatus] = useState(false);
+
+  useEffect(() => {
+    // userId 가져오기
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUserId(res.kakaoId));
+    }
+  }, []);
 
   const heartClick = (postNum, liked) => {
     // 데이터 전송을 위한 form, file 객체 생성
@@ -29,7 +34,12 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     console.log("postNo : " + postNum + "  kakaoId : " + userId);
     formData.append("postNo", postNum);
     formData.append("userId", userId);
-    formData.append("afterLike", liked);
+
+    let changeLike = 0;
+    {
+      liked === 0 ? (changeLike = 1) : (changeLike = 0);
+    }
+    formData.append("afterLike", changeLike);
 
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
@@ -49,31 +59,40 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     setAnchorEl(null);
   };
 
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
+
+  const options = ["수정하기", "삭제하기"];
   const editOrDelete = (event) => {
     console.log(event.currentTarget);
-    if (event.currentTarget.innerText === "수정하기") {
-      console.log("수정 눌렀을 때 : " + postNo);
-      navigate(`/postEdit?postNo=${postNo}`);
-
-      // axiosEditPost();
+    if (userId === "") {
+      alertClick();
     } else {
-      console.log("삭제 눌렀을 때 : " + postNo);
-      axiosDeletePost(postNo);
+      if (event.currentTarget.innerText === "수정하기") {
+        console.log("수정 눌렀을 때 : " + postNo);
+        navigate(`/postEdit?postNo=${postNo}`);
+      } else {
+        console.log("삭제 눌렀을 때 : " + postNo);
+        axiosDeletePost(postNo);
+      }
     }
   };
 
   function time(postedDate) {
     const today = new Date();
     const postDate = new Date(postedDate);
-    const postedTime = Math.ceil((today.getTime() - postDate.getTime()) /(1000 * 60));
+    const postedTime = Math.ceil(
+      (today.getTime() - postDate.getTime()) / (1000 * 60)
+    );
 
-    if((postedTime >=1440)) {
-      return ''+Math.round((postedTime / 3600))+"일 전";
-    } else if((postedTime >= 60)) {
-      return ''+Math.round((postedTime / 60))+"시간 전";
+    if (postedTime >= 1440) {
+      return "" + Math.round(postedTime / 3600) + "일 전";
+    } else if (postedTime >= 60) {
+      return "" + Math.round(postedTime / 60) + "시간 전";
     } else {
-      return ''+Math.round(postedTime)+"분 전";
-    };
+      return "" + Math.round(postedTime) + "분 전";
+    }
   }
 
   return (
@@ -93,33 +112,63 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
 
           return (
             <div key={post.postNo} className="post_box">
+              <Snackbar
+                className="mapAlert"
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                open={alertStatus}
+                autoHideDuration={1000}
+                onClose={alertClick}
+              >
+                <Alert severity="success" sx={{ width: "100%" }}>
+                  로그인이 필요한 기능입니다.
+                </Alert>
+              </Snackbar>
               <section className="section_view">
                 <Avatar
                   className="profile_img"
-                  src={post.userDTO.kakaoProfileImg}
+                  src={post.kakaoProfileImg}
                   width="100px"
                   height="100px"
                 />
                 <div className="posts">
                   <div className="post_name">
-                    <span>{post.userDTO.kakaoNickname}</span>
-                    <span className="post_detail">
-                      @{post.userDTO.kakaoNickname}
-                    </span>
+                    {/* <span>{post.kakaoNickname}</span> */}
+                    <span className="post_detail">@{post.kakaoNickname}</span>
                     <span className="post_detail">{post.postDate}</span>
-                    <span className="post_detail">post#{post.postNo}</span><br/>
-                    <span className="post_detail">{time(post.postDate)} 포스팅</span><br/>
-                    
+                    {/* <span className="post_detail">post#{post.postNo}</span> */}
+                    <br />
+                    <span className="post_detail">
+                      {time(post.postDate)} 포스팅
+                    </span>
+                    <br />
+
                     <span className="heart_btn">
-                      <Checkbox
-                        // checked={liked >= 1 ? true : false}
-                        // defaultChecked={liked === 1 ? true : false}
-                        icon={<FavoriteBorder />}
-                        checkedIcon={<Favorite />}
-                        onChange={() => heartClick(post.postNo, 1)}
-                        color="warning"
-                      />
-                      {/* <span>{post.likeCnt}</span> */}
+                      {token !== null ? (
+                        <Checkbox
+                          defaultChecked={post.afterLike === 1 ? true : false}
+                          icon={<FavoriteBorder />}
+                          checkedIcon={<Favorite />}
+                          onChange={() =>
+                            heartClick(post.postNo, post.afterLike)
+                          }
+                          color="warning"
+                        />
+                      ) : (
+                        <Checkbox
+                          defaultChecked={post.afterLike === 1 ? true : false}
+                          disabled
+                          icon={<FavoriteBorder />}
+                          checkedIcon={<Favorite />}
+                          onChange={() =>
+                            heartClick(post.postNo, post.afterLike)
+                          }
+                          color="warning"
+                        />
+                      )}
+                      <span>{post.likeCnt}</span>
                     </span>
                     <span className="dot_btn">
                       {" "}
@@ -143,6 +192,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                   )}
                 </div>
               </section>
+              <div></div>
             </div>
           );
         })}
@@ -163,11 +213,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
         }}
       >
         {options.map((option) => (
-          <MenuItem
-            key={option}
-            selected={option === "Pyxis"}
-            onClick={(e) => editOrDelete(e)}
-          >
+          <MenuItem key={option} onClick={(e) => editOrDelete(e)}>
             {option}
           </MenuItem>
         ))}

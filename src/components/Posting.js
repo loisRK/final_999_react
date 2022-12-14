@@ -12,6 +12,9 @@ import {
   Fab,
   Toolbar,
   Typography,
+  Snackbar,
+  Alert,
+  Button,
 } from "@mui/material";
 import {
   AccountCircleOutlined,
@@ -25,6 +28,23 @@ import { axiosUser } from "../api/User";
 function Posting() {
   // ID token 확인
   const token = window.localStorage.getItem("token");
+
+  // 하단 바 로그인 상태별 paging 옵션
+  const [alertStatus, setAlertStatus] = useState(false);
+  const navigate = useNavigate();
+
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
+
+  const loginCheck = () => {
+    if (token === null) {
+      alertClick();
+    } else {
+      navigate("/myPage");
+    }
+  };
+
   // infinite scrolling
   const listInnerRef = useRef();
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,26 +52,33 @@ function Posting() {
   const [posts, setPosts] = useState([]);
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     // infinite scroll 테스트
     if (!wasLastList && prevPage !== currentPage) {
-      axiosUser().then((res) => {
-        console.log("##### id : " + res.kakaoId);
-        axiosPostLike(
-          posts,
-          setWasLastList,
-          setPrevPage,
-          setPosts,
-          currentPage,
-          res.kakaoId
-        );
-      });
+      token !== null
+        ? axiosUser().then((res) => {
+            console.log("##### id : " + res.kakaoId);
+            axiosPostLike(
+              posts,
+              setWasLastList,
+              setPrevPage,
+              setPosts,
+              currentPage,
+              res.kakaoId
+            );
+          })
+        : axiosPostLike(
+            posts,
+            setWasLastList,
+            setPrevPage,
+            setPosts,
+            currentPage,
+            999
+          );
       // postData(posts, setWasLastList, setPrevPage, setPosts, currentPage);
-      console.log("######## POSTS : " + posts);
     }
   }, [currentPage, wasLastList, prevPage]);
+  console.log("######## POSTS : " + posts);
 
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -90,16 +117,16 @@ function Posting() {
         </Container>
       </AppBar>
       <SearchBar />
-      <PostsTest
+      {/* <PostsTest
         onScroll={onScroll}
         listInnerRef={listInnerRef}
         posts={posts}
-      ></PostsTest>
-      {/* <Posts
+      ></PostsTest> */}
+      <Posts
         onScroll={onScroll}
         listInnerRef={listInnerRef}
         posts={posts}
-      ></Posts> */}
+      ></Posts>
       <BottomNavigation
         sx={{
           background: "#B6E2A1",
@@ -125,10 +152,24 @@ function Posting() {
         <BottomNavigationAction
           label="My Page"
           icon={<AccountCircleOutlined />}
-          component={Link}
-          to="/myPage"
+          component={Button}
+          onClick={loginCheck}
         />
       </BottomNavigation>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertStatus}
+        autoHideDuration={1000}
+        onClose={alertClick}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          로그인이 필요한 기능입니다.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

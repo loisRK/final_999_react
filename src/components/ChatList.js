@@ -64,7 +64,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 function ChatList() {
   const [chatLat, setLatitude] = useState(0);
-  const [chatLong, setLongitude] = useState(0);
+  const [chatLong, setchatLong] = useState(0);
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
   // geolocation으로 현재 위치 가져오는 함수 (Geolocation.getCurrentPosition(success, error, [options]))
@@ -74,7 +74,7 @@ function ChatList() {
       navigator.geolocation.getCurrentPosition(
         function (position) {
           setLatitude(position.coords.chatLat);
-          setLongitude(position.coords.chatLong);
+          setchatLong(position.coords.chatLong);
           // console.log(
           //   `chatLat : ${position.coords.chatLat} chatLong : ${position.coords.chatLong}`
           // );
