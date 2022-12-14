@@ -5,15 +5,20 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
-import { axiosGetAllPosts } from "../api/Post";
+import { axiosGetAllPosts, postData } from "../api/Post";
 import io from "socket.io-client";
-import { Snackbar, Alert, Button, Typography, Modal, Avatar } from "@mui/material";
+import {
+  Snackbar,
+  Alert,
+  Button,
+  Typography,
+  Modal,
+  Avatar,
+} from "@mui/material";
 import { axiosUser } from "../api/User";
-
 import { Box } from "@mui/system";
 import MyPage from "./MyPage";
 import { roomList } from "../api/Chatting";
-const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -135,6 +140,7 @@ function Map() {
 
     posts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
+      const postNo = post.postNo;
 
       // 포스트 마커 이미지 옵션
       const imageSrc = "feather.png";
@@ -161,8 +167,6 @@ function Map() {
         onePost.then((res) => setPostDetail(res));
         setModalOpen(true);
       });
-
-  
     });
 
     // 채팅방 마커 표시하기
@@ -428,110 +432,120 @@ function Map() {
     circle.setMap(map);
     // gps 버튼 동작
     const gps = document.getElementById("gps_bnt");
-    gps.addEventListener('click', () => {
+    gps.addEventListener("click", () => {
       console.log("gps 작동");
       currentPosition();
     });
   }, [latitude, longitude, posts.length, chatList.length]);
 
-
-
   return (
     <div>
       <div>
-      {/* <Button onClick={() =>{setModalOpen(true)}}>Open modal</Button> */}
-      <Modal
-        open={modalOpen}
-        onClose={() => {setModalOpen(false)}}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
+        {/* <Button onClick={() =>{setModalOpen(true)}}>Open modal</Button> */}
+        <Modal
+          open={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+          }}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
               width: 400,
-              bgcolor: 'white',
-              border: '2px solid #000',
+              bgcolor: "white",
+              border: "2px solid #000",
               boxShadow: 24,
               p: 4,
-          }}>
-
-          {postDetail === null ? (
-          <></>
-          ) : (
-            <div>
-              <Typography id="modal-modal-title" variant="h6" component="h2"></Typography>
-              
-              <Avatar
+            }}
+          >
+            {postDetail === null ? (
+              <></>
+            ) : (
+              <div>
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h2"
+                ></Typography>
+                <Avatar
                   className="profile_img"
                   src={postDetail.userDTO.kakaoProfileImg}
                   width="100px"
                   height="100px"
                 />
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>{postDetail.userDTO.kakaoNickname}</Typography>
-              <span className="post_detail">@{postDetail.userDTO.kakaoNickname}</span>&nbsp;
-              <span className="post_detail">{postDetail.postDate}</span>&nbsp;
-              <span className="post_detail">post#{postDetail.postNo}</span>&nbsp;
-              <div className="post_content">{postDetail.postContent}</div>
-                      {postDetail.postImg === "" ? (
-                        <></>
-                      ) : (
-                        <img className="post_img" src={`/img/${postDetail.postImg}`} />
-                      )}
-            </div>
-          )}
-          
-        </Box>
-      </Modal>
-    </div>
-
-    <div className="map_wrap" style={{position: "relative"}}>
-      <div
-        id="map"
-        className="map"
-        style={{ width: `"${window.innerWidth}"`, height: "500px" }}
-      ><img id="gps_bnt" className="gps_bnt" src="gps.png" />
-       
+                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  {postDetail.userDTO.kakaoNickname}
+                </Typography>
+                <span className="post_detail">
+                  @{postDetail.userDTO.kakaoNickname}
+                </span>
+                &nbsp;
+                <span className="post_detail">{postDetail.postDate}</span>&nbsp;
+                <span className="post_detail">post#{postDetail.postNo}</span>
+                &nbsp;
+                <div className="post_content">{postDetail.postContent}</div>
+                {postDetail.postImg === "" ? (
+                  <></>
+                ) : (
+                  <img
+                    className="post_img"
+                    src={`/img/${postDetail.postImg}`}
+                  />
+                )}
+              </div>
+            )}
+          </Box>
+        </Modal>
       </div>
-    </div>
+
+      <div className="map_wrap" style={{ position: "relative" }}>
+        <div
+          id="map"
+          className="map"
+          style={{ width: `"${window.innerWidth}"`, height: "500px" }}
+        >
+          <img id="gps_bnt" className="gps_bnt" src="gps.png" />
+        </div>
+      </div>
 
       <div>
-      {/* <MyPage map = {propMap}/> */}
-      <Snackbar
-        className="mapAlert"
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        open={open}
-        autoHideDuration={2000}
-        onClose={alertClick}
-      >
+        {/* <MyPage map = {propMap}/> */}
+        <Snackbar
+          className="mapAlert"
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          open={open}
+          autoHideDuration={2000}
+          onClose={alertClick}
+        >
+          <Alert severity="success" sx={{ width: "100%" }}>
+            로그인이 필요한 기능입니다.
+          </Alert>
+        </Snackbar>
 
-        <Alert severity="success" sx={{ width: "100%" }}>
-          로그인이 필요한 기능입니다.
-        </Alert>
-      </Snackbar>
-
-      <Snackbar
-        className="mapAlert"
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        open={errorOpen}
-        autoHideDuration={2000}
-        onClose={errorAlertClick}
-      >
-        <Alert severity="error" sx={{ width: "100%" }}>
-          1km 밖에서는 이용 불가
-        </Alert>
-      </Snackbar>
+        <Snackbar
+          className="mapAlert"
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          open={errorOpen}
+          autoHideDuration={2000}
+          onClose={errorAlertClick}
+        >
+          <Alert severity="error" sx={{ width: "100%" }}>
+            1km 밖에서는 이용 불가
+          </Alert>
+        </Snackbar>
       </div>
     </div>
-    
   );
 }
 

@@ -6,7 +6,6 @@ import React, {
   useCallback,
 } from "react";
 import { postData, postUpdate } from "../api/Post";
-import { diaryUpdate, diaryData } from "../api/Diary";
 import { fileDownload, deleteFile } from "../api/File";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import "../App.css";
@@ -27,7 +26,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
 } from "@mui/material";
 
 function PostEdit() {
@@ -79,19 +78,19 @@ function PostEdit() {
   const fileArr = new Array();
 
   // 미리보기 삭제
-  function deleteFileImage  (e) {
-    console.log(fileImage)
+  function deleteFileImage(e) {
+    console.log(fileImage);
     URL.revokeObjectURL(fileImage);
-    setFileImage(files)
-  };
+    setFileImage(files);
+  }
 
   const inputFromHandlerContent = (e) => {
     setContent(e.target.value);
   };
 
   // 수정하려는 이미지 미리보기
-  const saveFileImage = (e)  => {
-  setFileImage(URL.createObjectURL(e.target.files[0]));
+  const saveFileImage = (e) => {
+    setFileImage(URL.createObjectURL(e.target.files[0]));
   };
 
   function getFile(e) {
@@ -114,24 +113,26 @@ function PostEdit() {
     postUpdate(postNo, formData, currentPage);
   };
 
-
-  return (  
+  return (
     <div>
-      <form method="PUT" onSubmit={(e) => submit(e)} encType="multipart/form-data">
-      {/* 고정 상단바 */}
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-          <Toolbar>
-            <IconButton
-              size="large"
-              edge="start"
-              color="inherit"
-              aria-label="menu"
-              sx={{ mr: 2 }}
-            >
-            </IconButton>
-            {/* 비둘기 사진 누르면 홈으로 이동 */}
-            <Box sx={{ flexGrow: 0 }}>
+      <form
+        method="PUT"
+        onSubmit={(e) => submit(e)}
+        encType="multipart/form-data"
+      >
+        {/* 고정 상단바 */}
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+            <Toolbar>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="menu"
+                sx={{ mr: 2 }}
+              ></IconButton>
+              {/* 비둘기 사진 누르면 홈으로 이동 */}
+              <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Home">
                   <IconButton
                     onClick={() => {
@@ -144,80 +145,80 @@ function PostEdit() {
                 </Tooltip>
               </Box>
               {/* 페이지 중앙에 제목 */}
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} style={{color:"#4d5749"}}>
-              Post Edit Page (PostNo : {postNo})
-            </Typography>
-            {/* 수정 submit버튼 */}
-            <Button 
-              color="inherit" 
-              variant="outlined"
-              className="write_button"
-              type="submit"
-              defaultValue="save"
-              style={{backgroundColor : "#89ab79"}}
-            > 
-            Submit
-          </Button>
-          </Toolbar>
-        </AppBar>
-      </Box>
-      {/* 수정 입력 부분 -> 테이블 형식*/}
-      <div>
-      <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">
-              Content
-              </TableCell>
-            <TableCell align="center">
-              {/* 내용수정 */}
-              <TextField
-              id="content"
-              name="content"
-              multiline
-              variant="standard"
-              defaultValue={content}
-              ref={textRef}
-              onInput={handleResizeHeight}
-              onChange={(e) => inputFromHandlerContent(e)}
-              style={{width : "80%"}}
-            /></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-            <TableRow
-              sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-            >
-              <TableCell component="th" scope="row" align="center">
-                Photo
-              </TableCell>
-              <TableCell align="center">
-                <input
-                  className="write_button"
-                  type="file"
-                  name="newFiles"
-                  id="newFiles"
-                  onChange={(e) => {
-                    getFile(e);
-                  }}/>
-                  {/* 미리보기 사진 삭제 버튼 */}
-                <button
-                type="button"
-                onClick={(e) => deleteFileImage(e)}
+              <Typography
+                variant="h6"
+                component="div"
+                sx={{ flexGrow: 1 }}
+                style={{ color: "#4d5749" }}
+              >
+                Post Edit Page (PostNo : {postNo})
+              </Typography>
+              {/* 수정 submit버튼 */}
+              <Button
+                color="inherit"
+                variant="outlined"
+                className="write_button"
+                type="submit"
+                defaultValue="save"
+                style={{ backgroundColor: "#89ab79" }}
+              >
+                Submit
+              </Button>
+            </Toolbar>
+          </AppBar>
+        </Box>
+        {/* 수정 입력 부분 -> 테이블 형식*/}
+        <div>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">Content</TableCell>
+                  <TableCell align="center">
+                    {/* 내용수정 */}
+                    <TextField
+                      id="content"
+                      name="content"
+                      multiline
+                      variant="standard"
+                      defaultValue={content}
+                      ref={textRef}
+                      onInput={handleResizeHeight}
+                      onChange={(e) => inputFromHandlerContent(e)}
+                      style={{ width: "80%" }}
+                    />
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
-                  삭제
-                </button>
-                <div align="center">
-            {fileImage && (
-              <img alt="sample" src={fileImage} />
-            )}
-          </div>
-              </TableCell>
-            </TableRow>
-        </TableBody>
-      </Table>
-    </TableContainer>
+                  <TableCell component="th" scope="row" align="center">
+                    Photo
+                  </TableCell>
+                  <TableCell align="center">
+                    <input
+                      className="write_button"
+                      type="file"
+                      name="newFiles"
+                      id="newFiles"
+                      onChange={(e) => {
+                        getFile(e);
+                      }}
+                    />
+                    {/* 미리보기 사진 삭제 버튼 */}
+                    <button type="button" onClick={(e) => deleteFileImage(e)}>
+                      삭제
+                    </button>
+                    <div align="center">
+                      {fileImage && <img alt="sample" src={fileImage} />}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         </div>
         {/* file list에서 파일 하나씩 전개 -> 사진 하나만 업로드 가능하도록 했기 때문에 multiple 지움*/}
         {/* {files != null ? (
