@@ -25,7 +25,6 @@ import "../css/MyPage.css";
 import { currentPositions } from "../api/Map";
 // import Map from "./Map";
 
-
 function MyPage() {
   const [nickname, setNickname] = useState("gugu");
   const [profileImg, setProfileImg] = useState("../img/dulgi.jpg");
@@ -39,20 +38,21 @@ function MyPage() {
 
   function currentPositions() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function (position) {
-              setLatitude(position.coords.latitude);
-              setLongitude(position.coords.longitude);
-            },
-            function (error) {
-            console.error(error);
-            }
-        );
-    
-        } else {
-        console.log("GPS를 지원하지 않습니다.");
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        function (error) {
+          console.error(error);
         }
-  };
+      );
+    } else {
+      console.log("GPS를 지원하지 않습니다.");
+    }
+  }
+
+  const token = window.localStorage.getItem("token");
 
   useEffect(() => {
     const data = axiosUser();
@@ -123,8 +123,6 @@ function MyPage() {
 
 
     });
-
-
   }, [latitude, longitude, userPosts.length]);
 
   return (
@@ -227,8 +225,7 @@ function MyPage() {
         id="map"
         className="map"
         style={{ width: `"${window.innerWidth}"`, height: "350px" }}
-    >
-      </div>
+      ></div>
       <BottomNavigation
         sx={{
           background: "#B6E2A1",
