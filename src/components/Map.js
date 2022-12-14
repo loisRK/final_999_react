@@ -5,7 +5,7 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
 import { axiosRoom } from "../api/Room";
-import { axiosGetAllPosts } from "../api/Post";
+import { axiosGetAllPosts, postData } from "../api/Post";
 import io from "socket.io-client";
 import { Snackbar, Alert, Button, Typography, Modal, Avatar } from "@mui/material";
 import { axiosUser } from "../api/User";
@@ -135,6 +135,7 @@ function Map() {
 
     posts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
+      const postNo = post.postNo;
 
       // 포스트 마커 이미지 옵션
       const imageSrc = "feather.png";
