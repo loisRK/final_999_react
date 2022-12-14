@@ -68,20 +68,19 @@ export const axiosDeletePost = async (postNo) => {
 
 // 모든 post 불러오기(깃털꽂기) - GET
 export const axiosGetAllPosts = async () => {
-    const response = await axios.get(
-        `http://localhost:8080/api/postList`
-        );
+  const response = await axios.get(`http://localhost:8080/api/postList`);
 
-return response.data;
-}
+  return response.data;
+};
 // Like 정보 보내기 - POST
 export const axiosLike = async (formData) => {
   const response = await axios.post(
-    `http://localhost:8080/api/addLike`,
+    `http://localhost:8080/api/addLikeCnt`,
+    // `http://localhost:8080/api/addLike`,
     formData,
     {
       headers: {
-        "Contest-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
     }
   );
@@ -122,8 +121,8 @@ export const axiosAllPostAndLike = async (
 // 특정 유저의 post 불러오기(깃털꽂기) - GET
 export const axioUserPosts = async (userId) => {
   const response = await axios.get(
-      `http://localhost:8080/api/userPosts/${userId}`
-      );
+    `http://localhost:8080/api/userPosts/${userId}`
+  );
 
-return response.data;
-}
+  return response.data;
+};
