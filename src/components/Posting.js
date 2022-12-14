@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Posts from "./Posts";
 import PostsTest from "./PostsTest";
 import SearchBar from "./SearchBar";
-import { axiosData, postData } from "../api/Diary";
+import { axiosData, axiosPostLike, postData } from "../api/Diary";
 import { Link, useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -20,6 +20,7 @@ import {
   StickyNote2Outlined,
 } from "@mui/icons-material";
 import { Container } from "@mui/system";
+import { axiosUser } from "../api/User";
 
 function Posting() {
   // ID token 확인
@@ -36,7 +37,19 @@ function Posting() {
   useEffect(() => {
     // infinite scroll 테스트
     if (!wasLastList && prevPage !== currentPage) {
-      postData(posts, setWasLastList, setPrevPage, setPosts, currentPage);
+      axiosUser().then((res) => {
+        console.log("##### id : " + res.kakaoId);
+        axiosPostLike(
+          posts,
+          setWasLastList,
+          setPrevPage,
+          setPosts,
+          currentPage,
+          res.kakaoId
+        );
+      });
+      // postData(posts, setWasLastList, setPrevPage, setPosts, currentPage);
+      console.log("######## POSTS : " + posts);
     }
   }, [currentPage, wasLastList, prevPage]);
 
@@ -76,11 +89,16 @@ function Posting() {
         </Container>
       </AppBar>
       <SearchBar />
-      <Posts
+      <PostsTest
         onScroll={onScroll}
         listInnerRef={listInnerRef}
         posts={posts}
-      ></Posts>
+      ></PostsTest>
+      {/* <Posts
+        onScroll={onScroll}
+        listInnerRef={listInnerRef}
+        posts={posts}
+      ></Posts> */}
       <BottomNavigation
         sx={{
           background: "#B6E2A1",
