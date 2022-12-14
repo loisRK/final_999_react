@@ -11,7 +11,8 @@ import { Snackbar, Alert } from "@mui/material";
 import { axiosUser } from "../api/User";
 
 import { Box } from "@mui/system";
-
+import MyPage from "./MyPage";
+import { roomList } from "../api/Chatting";
 const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수

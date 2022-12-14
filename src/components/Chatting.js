@@ -110,7 +110,7 @@ function Chatting() {
             name="tag"
             onChange={getTag}
             value={tag}
-            placeholder="해시태그 입력"
+            placeholder="방 제목 입력"
           />
           <br />
           <button

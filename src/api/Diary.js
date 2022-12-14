@@ -91,10 +91,12 @@ export const postData = async (
   setWasLastList,
   setPrevPage,
   setPosts,
-  currentPage
+  currentPage,
+  loginId
 ) => {
   const response = await axios.get(
-    `http://localhost:8080/api/postPage?page=${currentPage}&size=10`
+    `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}`
+    // `http://localhost:8080/api/postPage?page=${currentPage}&size=10`
   );
   // 데이터가 없으면 마지막 페이지였다는걸 표시
   if (!response.data.dtoList.length) {
@@ -110,3 +112,26 @@ export const postData = async (
 //   );
 //   return response.data;
 // };
+
+// Post랑 like 정보 전체 데이터 불러오기 - GET
+export const axiosPostLike = async (
+  posts,
+  setWasLastList,
+  setPrevPage,
+  setPosts,
+  currentPage,
+  loginId
+) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}`
+  );
+
+  console.log("## inside axiosPostLike : " + response.data.dtoList);
+  // 데이터가 없으면 마지막 페이지였다는걸 표시
+  if (!response.data.dtoList.length) {
+    setWasLastList(true);
+    return;
+  }
+  setPrevPage(currentPage);
+  setPosts([...posts, ...response.data.dtoList]);
+};
