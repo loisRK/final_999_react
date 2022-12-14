@@ -68,20 +68,19 @@ export const axiosDeletePost = async (postNo) => {
 
 // 모든 post 불러오기(깃털꽂기) - GET
 export const axiosGetAllPosts = async () => {
-    const response = await axios.get(
-        `http://localhost:8080/api/postList`
-        );
+  const response = await axios.get(`http://localhost:8080/api/postList`);
 
-return response.data;
-}
+  return response.data;
+};
 // Like 정보 보내기 - POST
 export const axiosLike = async (formData) => {
   const response = await axios.post(
-    `http://localhost:8080/api/addLike`,
+    `http://localhost:8080/api/addLikeCnt`,
+    // `http://localhost:8080/api/addLike`,
     formData,
     {
       headers: {
-        "Contest-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
     }
   );
@@ -122,8 +121,63 @@ export const axiosAllPostAndLike = async (
 // 특정 유저의 post 불러오기(깃털꽂기) - GET
 export const axioUserPosts = async (userId) => {
   const response = await axios.get(
-      `http://localhost:8080/api/userPosts/${userId}`
-      );
+    `http://localhost:8080/api/userPosts/${userId}`
+  );
 
-return response.data;
-}
+  return response.data;
+};
+
+// Post랑 like 정보 전체 데이터 불러오기 - GET
+export const axiosPostLike = async (
+  posts,
+  setWasLastList,
+  setPrevPage,
+  setPosts,
+  currentPage,
+  loginId
+) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}`
+  );
+
+  console.log("## inside axiosPostLike : " + response.data.dtoList);
+  // 데이터가 없으면 마지막 페이지였다는걸 표시
+  if (!response.data.dtoList.length) {
+    setWasLastList(true);
+    return;
+  }
+  setPrevPage(currentPage);
+  setPosts([...posts, ...response.data.dtoList]);
+};
+
+// insert Diary - post
+export const createDiary = async (formData) => {
+  axios
+    .post("http://localhost:8080/api/insert", formData, {
+      headers: {
+        "Contest-Type": "multipart/form-data",
+      },
+    })
+    .then((res) => console.log("diaryNo : " + res.data))
+    .then((document.location.href = "/posting"));
+};
+
+// Diary 전체 데이터 불러오기 - GET
+export const axiosData = async (
+  posts,
+  setWasLastList,
+  setPrevPage,
+  setPosts,
+  currentPage
+) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/diaryPage?page=${currentPage}&size=10`
+  );
+  // 데이터가 없으면 마지막 페이지였다는걸 표시
+  if (!response.data.dtoList.length) {
+    setWasLastList(true);
+    return;
+  }
+  setPrevPage(currentPage);
+  setPosts([...posts, ...response.data.dtoList]);
+};

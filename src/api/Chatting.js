@@ -17,23 +17,28 @@ export const createRooms = async (formData) => {
 // DB 내에 존재하는 모든 채팅방 리스트 불러오기
 export const roomList = async () => {
   const response = await axios.get("http://localhost:8080/api/roomList");
-  console.log(response.data);
+  // console.log(response.data);
   return response.data;
 };
 
 // 해당 채팅에 관한 정보 불러오기.
 export const roomInfo = async (roomNo) => {
-  console.log("-------rsfsaf", roomNo);
   const response = await axios.get(`http://localhost:8080/api/room/${roomNo}`);
+  console.log(response.data);
   return response.data;
+};
+
+// 해당 유저 신고하기 (메세지를 클릭하여 신고)
+export const report = async (formData) => {
+  axios.post("http://localhost:8080/api/report", formData);
 };
 
 // 해당 room에 user ++
 export const client_in = async (roomNo) => {
-  axios.get("");
+  axios.get(`http://localhost:8080/api/clientIn/${roomNo}`);
 };
 
 // 해당 room에 user --
 export const client_out = async (roomNo) => {
-  axios.get("");
+  axios.get(`http://localhost:8080/api/clientOut/${roomNo}`);
 };

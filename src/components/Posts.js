@@ -12,6 +12,7 @@ import {
   FavoriteOutlined,
 } from "@mui/icons-material";
 import { axiosUser } from "../api/User";
+import { axiosUser } from "../api/User";
 
 const ITEM_HEIGHT = 20;
 
@@ -19,9 +20,8 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const navigate = useNavigate();
   const [postNo, setPostNo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [heartToggle, setHeartToggle] = useState(0);
-  const open = Boolean(anchorEl);
   const [userId, setUserId] = useState("");
+  const open = Boolean(anchorEl);
   const token = window.localStorage.getItem("token");
   const [alertStatus, setAlertStatus] = useState(false);
 
@@ -33,29 +33,20 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     }
   }, []);
 
-  const heartOnOff = (postNum, userId) => {
-    {
-      heartToggle === 1
-        ? heartClick(postNum, userId, 0) // 좋아요 눌러진 상태일 때
-        : heartClick(postNum, userId, 1); // 좋아요 없는 상태일 때
-    }
-  };
-
-  const heartClick = (postNum, userId, heartToggle) => {
-    {
-      heartToggle === 1 ? setHeartToggle(0) : setHeartToggle(1);
-    }
+  const heartClick = (postNum, liked) => {
     // 데이터 전송을 위한 form, file 객체 생성
     const formData = new FormData();
-    // console.log("postNo : " +postNum +"  kakaoId : " +userId +"  heartToggle : " +heartToggle);
+    console.log("postNo : " + postNum + "  kakaoId : " + userId);
     formData.append("postNo", postNum);
     formData.append("userId", userId);
-    formData.append("afterLike", heartToggle);
+    formData.append("afterLike", liked);
 
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
       console.log("formdata확인" + key, ":", formData.get(key));
     }
+
+    axiosLike(formData);
   };
 
   const handleClick = (event, postNo) => {
@@ -87,6 +78,26 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
       }
     }
   };
+  function time(postedDate) {
+    const today = new Date();
+    const postDate = new Date(postedDate);
+    const postedTime = Math.ceil(
+      (today.getTime() - postDate.getTime()) / (1000 * 60)
+    );
+
+  function time(postedDate) {
+    const today = new Date();
+    const postDate = new Date(postedDate);
+    const postedTime = Math.ceil((today.getTime() - postDate.getTime()) /(1000 * 60));
+
+    if((postedTime >=1440)) {
+      return ''+Math.round((postedTime / 3600))+"일 전";
+    } else if((postedTime >= 60)) {
+      return ''+Math.round((postedTime / 60))+"시간 전";
+    } else {
+      return ''+Math.round(postedTime)+"분 전";
+    };
+  }
 
   return (
     <div>
@@ -96,8 +107,12 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
         style={{ height: "73vh", overflowY: "auto" }}
       >
         {posts.map((post) => {
-          console.log(post.kakaoId);
-          let liked = axiosGetLike(post.userDTO.kakaoId, post.postNo);
+          console.log(post);
+          console.log(userId);
+          // like가 Promise 객체로 불러와지기 때문에 이렇게 사용할 수가 없다
+          // posts 자체를 불러올 때 afterLike 변수값까지 같이 가져올 수 있는 DTO를 새로 만들어야 한다.
+          // let liked = axiosGetLike(userId, post.postNo);
+          // console.log("get liked : " + post.postNo + " " + liked);
 
           return (
             <div key={post.postNo} className="post_box">
@@ -130,15 +145,19 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                     </span>
                     <span className="post_detail">{post.postDate}</span>
                     <span className="post_detail">post#{post.postNo}</span>
+                    <br />
+                    <span className="post_detail">
+                      {time(post.postDate)} 포스팅
+                    </span>
+                    <br />
+
                     <span className="heart_btn">
                       <Checkbox
                         // checked={liked >= 1 ? true : false}
-                        defaultChecked={liked >= 1 ? true : false}
+                        // defaultChecked={liked === 1 ? true : false}
                         icon={<FavoriteBorder />}
                         checkedIcon={<Favorite />}
-                        onChange={() =>
-                          heartOnOff(post.postNo, post.userDTO.kakaoId, liked)
-                        }
+                        onChange={() => heartClick(post.postNo, 1)}
                         color="warning"
                       />
                       {/* <span>{post.likeCnt}</span> */}
