@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Posts from "./Posts";
 import PostsTest from "./PostsTest";
 import SearchBar from "./SearchBar";
-import { axiosData, axiosPostLike, postData } from "../api/Diary";
+import { axiosPostLike } from "../api/Post";
 import { Link, useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -12,6 +12,9 @@ import {
   Fab,
   Toolbar,
   Typography,
+  Snackbar,
+  Alert,
+  Button,
 } from "@mui/material";
 import {
   AccountCircleOutlined,
@@ -25,14 +28,29 @@ import { axiosUser } from "../api/User";
 function Posting() {
   // ID token 확인
   const token = window.localStorage.getItem("token");
+
+  // 하단 바 로그인 상태별 paging 옵션
+  const [alertStatus, setAlertStatus] = useState(false);
+  const navigate = useNavigate();
+
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
+
+  const loginCheck = () => {
+    if (token === null) {
+      alertClick();
+    } else {
+      navigate("/myPage");
+    }
+  };
+
   // infinite scrolling
   const listInnerRef = useRef();
   const [currentPage, setCurrentPage] = useState(1);
   const [prevPage, setPrevPage] = useState(0); // storing prev page number
   const [posts, setPosts] = useState([]);
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     // infinite scroll 테스트
@@ -125,10 +143,24 @@ function Posting() {
         <BottomNavigationAction
           label="My Page"
           icon={<AccountCircleOutlined />}
-          component={Link}
-          to="/myPage"
+          component={Button}
+          onClick={loginCheck}
         />
       </BottomNavigation>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertStatus}
+        autoHideDuration={1000}
+        onClose={alertClick}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          로그인이 필요한 기능입니다.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

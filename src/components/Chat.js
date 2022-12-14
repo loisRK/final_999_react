@@ -44,7 +44,7 @@ const Chat = () => {
   const [kakaoId, setKakaoId] = useState("");
 
   const [search, setSearch] = useSearchParams();
-  const room = search.get("roomNo");  
+  const room = search.get("roomNo");
 
   // 상대방이 보낸 메세지를 신호를 감지해 내 리스트에 추가하여 말풍선을 뿌려주는 함수.
   useEffect(() => {
@@ -243,7 +243,7 @@ const Chat = () => {
             {"조금 더 자유로워지시겠습니까?"}
           </DialogTitle>
           <img alt="flyGugu" src={flyGugu}></img>
-        
+
           <DialogActions>
             <Button
               onClick={() => {
