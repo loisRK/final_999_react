@@ -85,133 +85,136 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
       (today.getTime() - postDate.getTime()) / (1000 * 60)
     );
 
-  function time(postedDate) {
-    const today = new Date();
-    const postDate = new Date(postedDate);
-    const postedTime = Math.ceil((today.getTime() - postDate.getTime()) /(1000 * 60));
+    function time(postedDate) {
+      const today = new Date();
+      const postDate = new Date(postedDate);
+      const postedTime = Math.ceil(
+        (today.getTime() - postDate.getTime()) / (1000 * 60)
+      );
 
-    if((postedTime >=1440)) {
-      return ''+Math.round((postedTime / 3600))+"일 전";
-    } else if((postedTime >= 60)) {
-      return ''+Math.round((postedTime / 60))+"시간 전";
-    } else {
-      return ''+Math.round(postedTime)+"분 전";
-    };
-  }
+      if (postedTime >= 1440) {
+        return "" + Math.round(postedTime / 3600) + "일 전";
+      } else if (postedTime >= 60) {
+        return "" + Math.round(postedTime / 60) + "시간 전";
+      } else {
+        return "" + Math.round(postedTime) + "분 전";
+      }
+    }
 
-  return (
-    <div>
-      <div
-        onScroll={onScroll}
-        ref={listInnerRef}
-        style={{ height: "73vh", overflowY: "auto" }}
-      >
-        {posts.map((post) => {
-          console.log(post);
-          console.log(userId);
-          // like가 Promise 객체로 불러와지기 때문에 이렇게 사용할 수가 없다
-          // posts 자체를 불러올 때 afterLike 변수값까지 같이 가져올 수 있는 DTO를 새로 만들어야 한다.
-          // let liked = axiosGetLike(userId, post.postNo);
-          // console.log("get liked : " + post.postNo + " " + liked);
+    return (
+      <div>
+        <div
+          onScroll={onScroll}
+          ref={listInnerRef}
+          style={{ height: "73vh", overflowY: "auto" }}
+        >
+          {posts.map((post) => {
+            console.log(post);
+            console.log(userId);
+            // like가 Promise 객체로 불러와지기 때문에 이렇게 사용할 수가 없다
+            // posts 자체를 불러올 때 afterLike 변수값까지 같이 가져올 수 있는 DTO를 새로 만들어야 한다.
+            // let liked = axiosGetLike(userId, post.postNo);
+            // console.log("get liked : " + post.postNo + " " + liked);
 
-          return (
-            <div key={post.postNo} className="post_box">
-              <Snackbar
-                className="mapAlert"
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "center",
-                }}
-                open={alertStatus}
-                autoHideDuration={1000}
-                onClose={alertClick}
-              >
-                <Alert severity="success" sx={{ width: "100%" }}>
-                  로그인이 필요한 기능입니다.
-                </Alert>
-              </Snackbar>
-              <section className="section_view">
-                <Avatar
-                  className="profile_img"
-                  src={post.userDTO.kakaoProfileImg}
-                  width="100px"
-                  height="100px"
-                />
-                <div className="posts">
-                  <div className="post_name">
-                    <span>{post.userDTO.kakaoNickname}</span>
-                    <span className="post_detail">
-                      @{post.userDTO.kakaoNickname}
-                    </span>
-                    <span className="post_detail">{post.postDate}</span>
-                    <span className="post_detail">post#{post.postNo}</span>
-                    <br />
-                    <span className="post_detail">
-                      {time(post.postDate)} 포스팅
-                    </span>
-                    <br />
+            return (
+              <div key={post.postNo} className="post_box">
+                <Snackbar
+                  className="mapAlert"
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "center",
+                  }}
+                  open={alertStatus}
+                  autoHideDuration={1000}
+                  onClose={alertClick}
+                >
+                  <Alert severity="success" sx={{ width: "100%" }}>
+                    로그인이 필요한 기능입니다.
+                  </Alert>
+                </Snackbar>
+                <section className="section_view">
+                  <Avatar
+                    className="profile_img"
+                    src={post.userDTO.kakaoProfileImg}
+                    width="100px"
+                    height="100px"
+                  />
+                  <div className="posts">
+                    <div className="post_name">
+                      <span>{post.userDTO.kakaoNickname}</span>
+                      <span className="post_detail">
+                        @{post.userDTO.kakaoNickname}
+                      </span>
+                      <span className="post_detail">{post.postDate}</span>
+                      <span className="post_detail">post#{post.postNo}</span>
+                      <br />
+                      <span className="post_detail">
+                        {time(post.postDate)} 포스팅
+                      </span>
+                      <br />
 
-                    <span className="heart_btn">
-                      <Checkbox
-                        // checked={liked >= 1 ? true : false}
-                        // defaultChecked={liked === 1 ? true : false}
-                        icon={<FavoriteBorder />}
-                        checkedIcon={<Favorite />}
-                        onChange={() => heartClick(post.postNo, 1)}
-                        color="warning"
-                      />
-                      {/* <span>{post.likeCnt}</span> */}
-                    </span>
-                    <span className="dot_btn">
-                      {" "}
-                      <IconButton
-                        aria-label="more"
-                        id="long-button"
-                        aria-controls={open ? "long-menu" : undefined}
-                        aria-expanded={open ? "true" : undefined}
-                        aria-haspopup="true"
-                        onClick={(e) => handleClick(e, post.postNo)}
-                      >
-                        <MoreVertIcon />
-                      </IconButton>
-                    </span>
+                      <span className="heart_btn">
+                        <Checkbox
+                          // checked={liked >= 1 ? true : false}
+                          // defaultChecked={liked === 1 ? true : false}
+                          icon={<FavoriteBorder />}
+                          checkedIcon={<Favorite />}
+                          onChange={() => heartClick(post.postNo, 1)}
+                          color="warning"
+                        />
+                        {/* <span>{post.likeCnt}</span> */}
+                      </span>
+                      <span className="dot_btn">
+                        {" "}
+                        <IconButton
+                          aria-label="more"
+                          id="long-button"
+                          aria-controls={open ? "long-menu" : undefined}
+                          aria-expanded={open ? "true" : undefined}
+                          aria-haspopup="true"
+                          onClick={(e) => handleClick(e, post.postNo)}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                      </span>
+                    </div>
+                    <div className="post_content">{post.postContent}</div>
+                    {post.postImg === "" ? (
+                      <></>
+                    ) : (
+                      <img className="post_img" src={`/img/${post.postImg}`} />
+                    )}
                   </div>
-                  <div className="post_content">{post.postContent}</div>
-                  {post.postImg === "" ? (
-                    <></>
-                  ) : (
-                    <img className="post_img" src={`/img/${post.postImg}`} />
-                  )}
-                </div>
-              </section>
-              <div></div>
-            </div>
-          );
-        })}
+                </section>
+                <div></div>
+              </div>
+            );
+          })}
+        </div>
+        <Menu
+          id="long-menu"
+          MenuListProps={{
+            "aria-labelledby": "long-button",
+          }}
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          PaperProps={{
+            style: {
+              maxHeight: ITEM_HEIGHT * 4.5,
+              width: "20ch",
+            },
+          }}
+        >
+          {options.map((option) => (
+            <MenuItem key={option} onClick={(e) => editOrDelete(e)}>
+              {option}
+            </MenuItem>
+          ))}
+        </Menu>
       </div>
-      <Menu
-        id="long-menu"
-        MenuListProps={{
-          "aria-labelledby": "long-button",
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: "20ch",
-          },
-        }}
-      >
-        {options.map((option) => (
-          <MenuItem key={option} onClick={(e) => editOrDelete(e)}>
-            {option}
-          </MenuItem>
-        ))}
-      </Menu>
-    </div>
-  );
+    );
+  }
 };
 
 export default Posts;
