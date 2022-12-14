@@ -5,14 +5,14 @@ import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { axiosDeletePost, axiosGetLike, axiosLike } from "../api/Post";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Checkbox } from "@mui/material";
+import { Avatar, Checkbox, Snackbar, Alert } from "@mui/material";
 import {
   Favorite,
   FavoriteBorder,
   FavoriteOutlined,
 } from "@mui/icons-material";
+import { axiosUser } from "../api/User";
 
-const options = ["수정하기", "삭제하기"];
 const ITEM_HEIGHT = 20;
 
 const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
@@ -21,8 +21,17 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [heartToggle, setHeartToggle] = useState(0);
   const open = Boolean(anchorEl);
+  const [userId, setUserId] = useState("");
   const token = window.localStorage.getItem("token");
-  // const heartToggle = 0;
+  const [alertStatus, setAlertStatus] = useState(false);
+
+  useEffect(() => {
+    // userId 가져오기
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUserId(res.kakaoId));
+    }
+  }, []);
 
   const heartOnOff = (postNum, userId) => {
     {
@@ -59,22 +68,25 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     setAnchorEl(null);
   };
 
-  const editOrDelete = (event) => {
-    console.log(event.currentTarget);
-    if (event.currentTarget.innerText === "수정하기") {
-      console.log("수정 눌렀을 때 : " + postNo);
-      navigate(`/postEdit?postNo=${postNo}`);
-
-      // axiosEditPost();
-    } else {
-      console.log("삭제 눌렀을 때 : " + postNo);
-      axiosDeletePost(postNo);
-    }
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
   };
 
-  useEffect(() => {
-    //
-  }, [heartToggle]);
+  const options = ["수정하기", "삭제하기"];
+  const editOrDelete = (event) => {
+    console.log(event.currentTarget);
+    if (userId === "") {
+      alertClick();
+    } else {
+      if (event.currentTarget.innerText === "수정하기") {
+        console.log("수정 눌렀을 때 : " + postNo);
+        navigate(`/postEdit?postNo=${postNo}`);
+      } else {
+        console.log("삭제 눌렀을 때 : " + postNo);
+        axiosDeletePost(postNo);
+      }
+    }
+  };
 
   return (
     <div>
@@ -84,13 +96,25 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
         style={{ height: "73vh", overflowY: "auto" }}
       >
         {posts.map((post) => {
-          console.log(post);
-          console.log(post.userDTO.kakaoId);
+          console.log(post.kakaoId);
           let liked = axiosGetLike(post.userDTO.kakaoId, post.postNo);
-          console.log("get liked : " + post.postNo + " " + liked);
 
           return (
             <div key={post.postNo} className="post_box">
+              <Snackbar
+                className="mapAlert"
+                anchorOrigin={{
+                  vertical: "top",
+                  horizontal: "center",
+                }}
+                open={alertStatus}
+                autoHideDuration={1000}
+                onClose={alertClick}
+              >
+                <Alert severity="success" sx={{ width: "100%" }}>
+                  로그인이 필요한 기능입니다.
+                </Alert>
+              </Snackbar>
               <section className="section_view">
                 <Avatar
                   className="profile_img"
@@ -141,6 +165,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                   )}
                 </div>
               </section>
+              <div></div>
             </div>
           );
         })}
@@ -161,11 +186,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
         }}
       >
         {options.map((option) => (
-          <MenuItem
-            key={option}
-            selected={option === "Pyxis"}
-            onClick={(e) => editOrDelete(e)}
-          >
+          <MenuItem key={option} onClick={(e) => editOrDelete(e)}>
             {option}
           </MenuItem>
         ))}

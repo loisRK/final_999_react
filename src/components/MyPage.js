@@ -156,7 +156,6 @@ function MyPage() {
         <Grid>{nickname}</Grid>
         <Grid>{email}</Grid>
       </Grid>
-      <button>프로필 수정</button>
       <div
         id="map"
         className="map"
