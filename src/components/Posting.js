@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Posts from "./Posts";
 import PostsTest from "./PostsTest";
 import SearchBar from "./SearchBar";
-import { axiosData, axiosPostLike, postData } from "../api/Diary";
+import { axiosPostLike } from "../api/Post";
 import { Link, useNavigate } from "react-router-dom";
 import {
   AppBar,
