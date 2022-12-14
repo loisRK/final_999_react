@@ -62,10 +62,19 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     }
   };
 
-  useEffect(() => {
-    // const data = axiosUser();
-    // axiosUser().then((res) => setUserId(res.kakaoId));
-  }, []);
+  function time(postedDate) {
+    const today = new Date();
+    const postDate = new Date(postedDate);
+    const postedTime = Math.ceil((today.getTime() - postDate.getTime()) /(1000 * 60));
+
+    if((postedTime >=1440)) {
+      return ''+Math.round((postedTime / 3600))+"일 전";
+    } else if((postedTime >= 60)) {
+      return ''+Math.round((postedTime / 60))+"시간 전";
+    } else {
+      return ''+Math.round(postedTime)+"분 전";
+    };
+  }
 
   return (
     <div>
@@ -98,7 +107,9 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                       @{post.userDTO.kakaoNickname}
                     </span>
                     <span className="post_detail">{post.postDate}</span>
-                    <span className="post_detail">post#{post.postNo}</span>
+                    <span className="post_detail">post#{post.postNo}</span><br/>
+                    <span className="post_detail">{time(post.postDate)} 포스팅</span><br/>
+                    
                     <span className="heart_btn">
                       <Checkbox
                         // checked={liked >= 1 ? true : false}
