@@ -1,11 +1,9 @@
-import { roomList } from "../api/Chatting";
 /*global kakao*/
 import "../css/Map.css";
 import React, { useRef, useEffect, useState } from "react";
 // import chattingRooms from "../db/mockup.json";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
-import { axiosRoom } from "../api/Room";
 import { axiosGetAllPosts, postData } from "../api/Post";
 import io from "socket.io-client";
 import {
@@ -170,15 +168,19 @@ function Map() {
       });
     });
 
+    const chatData = roomList();
+    chatData.then((response) => console.log(response));
+    chatData.then((response) => setChatList(response));
+
     // 채팅방 마커 표시하기
     // 채팅방 목록을 가져와서 forEach로 마커 생성
-    chattingRooms.forEach((room) => {
+    chatList.forEach((room) => {
       // console.log("위도 : " + room.latitude);
       // console.log("경도 : " + room.longitude);
       // console.log("태그 : " + room.tag);
 
       const tag = room.tag;
-      const roomsLatlng = new kakao.maps.LatLng(room.latitude, room.longitude);
+      const roomsLatlng = new kakao.maps.LatLng(room.chatLat, room.chatLong);
 
       // 채팅방 마커 이미지 옵션
       const imageSrc = "bidulgi.png";
@@ -195,8 +197,9 @@ function Map() {
       const roomMarkers = new kakao.maps.Marker({
         map: map,
         position: roomsLatlng,
-        title: room.room_no,
+        title: room.roomNo,
         image: markerImage,
+        client: room.userCnt,
       });
 
       // 채팅방 마커 클릭시 오버레이 띄우기
