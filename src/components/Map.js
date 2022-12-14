@@ -16,8 +16,6 @@ import {
   Avatar,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import MyPage from "./MyPage";
-import { roomList } from "../api/Chatting";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
