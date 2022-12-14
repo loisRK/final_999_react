@@ -12,7 +12,6 @@ import {
   FavoriteOutlined,
 } from "@mui/icons-material";
 import { axiosUser } from "../api/User";
-import { axiosUser } from "../api/User";
 
 const ITEM_HEIGHT = 20;
 
