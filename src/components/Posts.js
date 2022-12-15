@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { axiosDeletePost, axiosLike } from "../api/Post";
+import { axiosDeletePost, axiosLike, postData } from "../api/Post";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Checkbox, Snackbar, Alert } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
@@ -48,10 +48,12 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     axiosLike(formData);
   };
 
-  const handleClick = (event, postNo) => {
-    setAnchorEl(event.currentTarget);
-    console.log("handleClick : " + postNo);
-    setPostNo(postNo);
+  const handleClick = (event, postNo, postOwner) => {
+    // console.log("handleClick : " + postNo + " " + postOwner);
+    if (postOwner === userId) {
+      setAnchorEl(event.currentTarget);
+      setPostNo(postNo);
+    }
   };
 
   const handleClose = () => {
@@ -62,7 +64,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     setAlertStatus(!alertStatus);
   };
 
-  const options = ["수정하기", "삭제하기"];
+  const loginOptions = ["수정하기", "삭제하기"];
   const editOrDelete = (event) => {
     console.log(event.currentTarget);
     if (userId === "") {
@@ -174,7 +176,9 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                         aria-controls={open ? "long-menu" : undefined}
                         aria-expanded={open ? "true" : undefined}
                         aria-haspopup="true"
-                        onClick={(e) => handleClick(e, post.postNo)}
+                        onClick={(e) =>
+                          handleClick(e, post.postNo, post.kakaoId)
+                        }
                       >
                         <MoreVertIcon />
                       </IconButton>
@@ -208,7 +212,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
           },
         }}
       >
-        {options.map((option) => (
+        {loginOptions.map((option) => (
           <MenuItem key={option} onClick={(e) => editOrDelete(e)}>
             {option}
           </MenuItem>

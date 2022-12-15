@@ -152,7 +152,7 @@ function Posting() {
         <BottomNavigationAction
           label="My Page"
           icon={<AccountCircleOutlined />}
-          component={Button}
+          // component={Button}
           onClick={loginCheck}
         />
       </BottomNavigation>
