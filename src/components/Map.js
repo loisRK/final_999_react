@@ -15,8 +15,10 @@ import {
   Modal,
   Avatar,
 } from "@mui/material";
+import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
 import { roomList } from "../api/Chatting";
+import ChatList from "./ChatList";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -207,14 +209,14 @@ function Map({ token }) {
       kakao.maps.event.addListener(roomMarkers, "click", function (mouseEvent) {
         overlay.setMap(null);
         const roomMarker = roomMarkers;
-        roomEnter(roomMarker, room);
+        roomEnter(roomMarker, room); // 입장하는 함수에 room의 정보를 전달하기 위해 room도 전달
       });
     });
 
-    // 채팅방 입장 오버레이 내용 지정
+    // 채팅방 입장 오버레이 내용 지정 -> 초기값 지정
     var enterElement = document.createElement("div");
     enterElement.className = "enteroveray";
-    enterElement.innerHTML = '<div class="boxtitle">입장하기</div>';
+    enterElement.innerHTML = `<div class="boxtitle">입장하기</div>`;
 
     // 채팅방 입장 오버레이 내용 지정
     var blockElement = document.createElement("div");
@@ -250,6 +252,12 @@ function Map({ token }) {
         roomPosition.La
       );
       var latlng = roomLatlng;
+
+      // 받아온 room의 정보를 보여주기 위해 enterElement에 값을 다시 선언
+      var enterElement = document.createElement("div");
+      enterElement.className = "enteroveray";
+      enterElement.innerHTML = `<div class="boxtitle">${room.title}<br/>${room.userCnt}명<br/>입장하기</div>`;
+
       if (distance <= 1) {
         enterOverlay.setContent(enterElement);
       } else {
@@ -258,6 +266,7 @@ function Map({ token }) {
       enterOverlay.setPosition(latlng);
       enterOverlay.setMap(map);
 
+      // enterElement를 클릭했을 때 실행될 함수
       enterElement.onclick = function () {
         const roomNo = roomMarker.getTitle();
         console.log("ROOM NO : " + roomNo);
