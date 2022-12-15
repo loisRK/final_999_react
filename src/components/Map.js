@@ -171,6 +171,7 @@ function Map({ token }) {
       });
     });
 
+    // 생성된 채팅방 리스트 가져오기
     const chatData = roomList();
     // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
@@ -525,9 +526,13 @@ function Map({ token }) {
         <div
           id="map"
           className="map"
-          style={{ width: `"${window.innerWidth}"`, height: "500px" }}
+          style={{ width: `"${window.innerWidth}"`, height: "65vh" }}
         >
-          <img id="gps_bnt" className="gps_bnt" src="gps.png" />
+          <img
+            id="gps_bnt"
+            className="gps_bnt mt-[55vh] ml-[3vh]"
+            src="gps.png"
+          />
         </div>
       </div>
 
