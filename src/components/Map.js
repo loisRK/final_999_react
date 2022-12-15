@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
-import { roomList } from "../api/Chatting";
 import ChatList from "./ChatList";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수

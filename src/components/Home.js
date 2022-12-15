@@ -76,6 +76,14 @@ function Home() {
     "https://cdn-icons-png.flaticon.com/128/1077/1077063.png"
   );
 
+  const loginCheck = () => {
+    if (token === null) {
+      alertClick();
+    } else {
+      navigate("/myPage");
+    }
+  };
+
   useEffect(() => {
     if (token !== null) {
       const data = axiosUser();
