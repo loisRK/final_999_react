@@ -16,6 +16,8 @@ import {
   Avatar,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { roomList } from "../api/Chatting";
+import ChatList from "./ChatList";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -204,14 +206,15 @@ function Map() {
       kakao.maps.event.addListener(roomMarkers, "click", function (mouseEvent) {
         overlay.setMap(null);
         const roomMarker = roomMarkers;
-        roomEnter(roomMarker);
+        roomEnter(roomMarker, room); // 입장하는 함수에 room의 정보를 전달하기 위해 room도 전달
       });
     });
 
-    // 채팅방 입장 오버레이 내용 지정
+
+    // 채팅방 입장 오버레이 내용 지정 -> 초기값 지정
     var enterElement = document.createElement("div");
     enterElement.className = "enteroveray";
-    enterElement.innerHTML = '<div class="boxtitle">입장하기</div>';
+    enterElement.innerHTML = `<div class="boxtitle">입장하기</div>`;
 
     // 채팅방 입장 오버레이 내용 지정
     var blockElement = document.createElement("div");
@@ -230,7 +233,7 @@ function Map() {
     });
 
     // 채팅방 오버레이 (채팅방 입장)
-    function roomEnter(roomMarker) {
+    function roomEnter(roomMarker, room) {
       const roomPosition = roomMarker.getPosition();
 
       // 클릭한 채팅방의 마커 위치와 사용자의 위치 거리 계산
@@ -241,12 +244,19 @@ function Map() {
         roomPosition.La
       );
       console.log("선택한 채팅방과의 거리 : " + distance + "km");
+      
 
       const roomLatlng = new kakao.maps.LatLng(
         roomPosition.Ma,
         roomPosition.La
       );
       var latlng = roomLatlng;
+
+      // 받아온 room의 정보를 보여주기 위해 enterElement에 값을 다시 선언
+      var enterElement = document.createElement("div");
+      enterElement.className = "enteroveray";
+      enterElement.innerHTML = `<div class="boxtitle">${room.title}<br/>${room.userCnt}명<br/>입장하기</div>`;
+
       if (distance <= 1) {
         enterOverlay.setContent(enterElement);
       } else {
@@ -255,6 +265,7 @@ function Map() {
       enterOverlay.setPosition(latlng);
       enterOverlay.setMap(map);
 
+      // enterElement를 클릭했을 때 실행될 함수
       enterElement.onclick = function () {
         const roomNo = roomMarker.getTitle();
         console.log("ROOM NO : " + roomNo);
@@ -437,6 +448,7 @@ function Map() {
     gps.addEventListener("click", () => {
       console.log("gps 작동");
       currentPosition();
+      map.setCenter(markerPosition);
     });
   }, [latitude, longitude, posts.length, chatList.length]);
 

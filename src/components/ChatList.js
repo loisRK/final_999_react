@@ -1,21 +1,22 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { TableFooter, TablePagination } from "@material-ui/core";
-import chat from "../db/room_mock.json";
+import { 
+  styled,
+  Table, 
+  TableBody,
+  TableCell, 
+  tableCellClasses,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TableFooter,
+  TablePagination 
+} from "@mui/material";
 import { roomList } from "../api/Chatting";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@mui/material";
 
-// 임시로만든 db내 채팅 리스트 data 가져오기
-const chatList = chat;
+
 // [{db안에 있는 data}, 거리] -> 가까운 순으로 정렬
 const distanceList = [];
 // 거리를 기준으로 정렬된 db data
@@ -65,19 +66,24 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function ChatList() {
   const [chatLat, setLatitude] = useState(0);
   const [chatLong, setchatLong] = useState(0);
+  const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
+  const [toggled, setToggled] = useState(true);
+
+  const navigate = useNavigate();
+
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
   // geolocation으로 현재 위치 가져오는 함수 (Geolocation.getCurrentPosition(success, error, [options]))
   const currentPosition = () => {
-    // console.log("navigator.geolocation : " + navigator.geolocation);
+    console.log("navigator.geolocation : " + navigator.geolocation);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         function (position) {
-          setLatitude(position.coords.chatLat);
-          setchatLong(position.coords.chatLong);
-          // console.log(
-          //   `chatLat : ${position.coords.chatLat} chatLong : ${position.coords.chatLong}`
-          // );
+          setLatitude(position.coords.latitude);
+          setchatLong(position.coords.longitude);
+          console.log(
+            `chatLat : ${position.coords.chatLat} chatLong : ${position.coords.chatLong}`
+          );
         },
         function (error) {
           console.error(error);
@@ -87,65 +93,75 @@ function ChatList() {
       console.log("GPS를 지원하지 않습니다.");
     }
   };
-
+  
   useEffect(() => {
-    console.log(chatLat);
+
+    // 생성된 채팅방 리스트 가져오기
+    const chatData = roomList();
+      chatData.then((response) => console.log(response));
+      chatData.then((response) => setChatList(response));
+
+    console.log("chatData" , chatData);
+    console.log("chatList" , chatList);
+
+    console.log("chatLat" , chatLat);
+    
     // 페이지 로드 시 현재 위치 지정
+    
     currentPosition();
-    {
-      // 현재위치를 기준으로 거리 계산
-      chatList.map(
-        (li, i) => (
-          console.log("chatList", chatList),
-          // 거리계산
-          console.log(
-            `${i}`,
-            getDistanceFromLatLonInKm(
-              chatLat,
-              chatLong,
-              chatList[i].chatLat,
-              chatList[i].chatLong
-            )
-          ),
-          (distanceList[i] = [
-            chatList[i],
-            getDistanceFromLatLonInKm(
-              chatLat,
-              chatLong,
-              chatList[i].chatLat,
-              chatList[i].chatLong
-            ),
-          ]),
-          console.log(
-            getDistanceFromLatLonInKm(
-              chatLat,
-              chatLong,
-              chatList[0].chatLat,
-              chatList[0].chatLong
-            )
-          )
+    
+  }, []);
+  // 현재위치를 기준으로 거리 계산
+  {chatList.map((li, i) => (
+      console.log("chatList", chatList),
+      // 거리계산
+      console.log(
+        `${i}`,
+        getDistanceFromLatLonInKm(
+          chatLat,
+          chatLong,
+          chatList[i].chatLat,
+          chatList[i].chatLong
         )
-      );
-    }
-    console.log(distanceList)
-    // distanceList를 거리순으로 정렬
-    distanceList.sort(compareSecondColumn);
-
-    function compareSecondColumn(a, b) {
-      if (a[1] === b[1]) {
-        return 0;
-      } else {
-        return a[1] < b[1] ? -1 : 1;
-      }
-    }
-
-    // distanceList에서 data만 가져옴
-    distanceList.map((dli, i) => (
-      chatInfo[i] = distanceList[i][0]
       ),
-      console.log("chatInfo",chatInfo)
-      );
-    }, []);
+      (distanceList[i] = [
+        chatList[i],
+        getDistanceFromLatLonInKm(
+          chatLat,
+          chatLong,
+          chatList[i].chatLat,
+          chatList[i].chatLong
+        ),
+      ]),
+      console.log(
+        getDistanceFromLatLonInKm(
+          chatLat,
+          chatLong,
+          chatList[0].chatLat,
+          chatList[0].chatLong
+        )
+      )
+    )
+  );
+}
+console.log(distanceList)
+// distanceList를 거리순으로 정렬
+distanceList.sort(compareSecondColumn);
+
+function compareSecondColumn(a, b) {
+  if (a[1] === b[1]) {
+    return 0;
+  } else {
+    return a[1] < b[1] ? -1 : 1;
+  }
+}
+
+// distanceList에서 data만 가져옴
+distanceList.map((dli, i) => (
+  chatInfo[i] = distanceList[i][0]
+  ),
+  console.log("chatInfo",chatInfo)
+  );
 
 
   // 첫 페이지 0번
@@ -160,33 +176,41 @@ function ChatList() {
     setRowsPerPage(parseInt(event.target.value, 5));
     setPage(0);
   };
+
   return (
+    <div className="chatList_wrap" style={{ position: "relative" }}>
+      <div>{typeof(chatInfo.length)}</div>
+    <div
+      id = "chatList"
+      className="chatList"
+      style={{ width: `"${window.innerWidth}"`, height: "500px" }}
+      >
       <TableContainer component={Paper}>
         <br />
         <Table
           sx={{ width: 1 / 1, height: 1 / 2 }}
           aria-label="customized table"
           stickyHeader
-        >
+          >
           <TableHead>
             <TableRow>
-              <StyledTableCell align="center">category</StyledTableCell>
-              <StyledTableCell align="center">title</StyledTableCell>
-              <StyledTableCell align="center">peoples</StyledTableCell>
-              <StyledTableCell align="center">Go</StyledTableCell>
+              <StyledTableCell align="center">CATEGORY</StyledTableCell>
+              <StyledTableCell align="center">TITLE</StyledTableCell>
+              <StyledTableCell align="center">DULGIS</StyledTableCell>
+              <StyledTableCell align="center">GO</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {chatInfo
-              .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
-              .map((c, idx) => (
+          {chatInfo
+            .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
+            .map((c, idx) => (
                 <StyledTableRow key={idx}>
                   <StyledTableCell align="center">{c.category}</StyledTableCell>
                   <StyledTableCell align="center">{c.title}</StyledTableCell>
                   <StyledTableCell align="center">
-                    {`${c.user_cnt} 人`}{" "}
+                    {`${c.userCnt} 人`}{" "}
                   </StyledTableCell>
-                  <StyledTableCell align="center"> <button onClick={()=>{window.location.href =`room?roomNo=${c.roomNo}`}}>{c.roomNo}</button></StyledTableCell>
+                  <StyledTableCell align="center"> <button onClick={()=>{window.location.href =`room?roomNo=${c.roomNo}`}}>같이놀기</button></StyledTableCell>
                 </StyledTableRow>
               ))}
           </TableBody>
@@ -196,13 +220,15 @@ function ChatList() {
                 count={chatInfo.length}
                 page={page}
                 rowsPerPage={rowsPerPage}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
+                onPageChange={handleChangePage}
+                onRowsPerPageChange={handleChangeRowsPerPage}
+                />
             </TableRow>
           </TableFooter>
         </Table>
       </TableContainer>
+      </div>
+      </div>
   );
 }
 
