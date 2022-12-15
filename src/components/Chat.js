@@ -10,7 +10,14 @@ import { axiosReportNum, roomInfo } from "../api/Chatting";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
-import { report, client_in, client_out } from "../api/Chatting";
+import {
+  report,
+  client_in,
+  client_out,
+  insert_taboo,
+  alltabooList,
+  deleteTaboo,
+} from "../api/Chatting";
 import flyGugu from "../img/cutyDulgi.jpg";
 import {
   AppBar,
@@ -42,6 +49,10 @@ const Chat = () => {
   const [profileInfo, setProfileInfo] = useState(false);
   const [index, setIndex] = useState("");
   const [kakaoId, setKakaoId] = useState("");
+  const [host, setHost] = useState("");
+  const [taboo, setTaboo] = useState(false);
+  const [tabooWord, setTabooWord] = useState("");
+  const [tabooList, setTabooList] = useState([]);
 
   const [search, setSearch] = useSearchParams();
   const room = search.get("roomNo");
@@ -71,10 +82,16 @@ const Chat = () => {
     // 방의 상세정보 조회
     const data = roomInfo(room);
     // 참여 인원 입력
-    data.then((response) => console.log(response.userCnt));
+    // data.then((response) => console.log(response.user.kakaoId));
     data.then((response) => setClients(response.userCnt + 1));
     // 방의 태그 내용 입력
     data.then((response) => setTags(response.title));
+    data.then((response) => setHost(response.user.kakaoId));
+
+    // 금기어 리스트 모두 가져오기
+    const data1 = alltabooList(room);
+    // data.then((response) => console.log(response));
+    data1.then((response) => setTabooList(response));
   }, [room]);
 
   // 룸의 입장 인원을 카운트해주는 함수
@@ -82,6 +99,25 @@ const Chat = () => {
     socket.on("clients", (data) => {
       // console.log(data);
       setClients(data);
+    });
+  }, [socket]);
+
+  // 룸의 금기어가 추가되면 리스트 추가
+  useEffect(() => {
+    socket.on("tabooUpdate", (data) => {
+      // 같은 방 사람들도 리스트 추가 !
+      setTabooList((prev) => [...prev, data]);
+    });
+  }, [socket]);
+
+  // 룸의 금기어가 삭제되면 리스트에서도 삭제
+  useEffect(() => {
+    socket.on("tabooDelete", (datas) => {
+      let filterArr = tabooList.filter(function (data) {
+        return data !== tabooList[datas];
+      });
+
+      setTabooList(filterArr);
     });
   }, [socket]);
 
@@ -94,10 +130,15 @@ const Chat = () => {
   // 내 리스트에 message data 추가 후
   // 소켓에 message data를 담아 서버에 전달 !
   const sendMessage = async () => {
+    let test = tabooList.join("|");
+    console.log(test);
+    let test2 = new RegExp(test, "gi");
+    // setMessage(message.replace("하남", "구구"));
     if (message !== "") {
       const messageContent = {
         username: username,
-        message: message,
+        // message: message,
+        message: message.replace(test2, "구구"),
         userId: kakaoId,
         room: room,
         date: new Date().toLocaleString(), // 2022. 12. 7. 오전 11:24:42
@@ -150,6 +191,10 @@ const Chat = () => {
     setIndex(i);
   };
 
+  const tabooOpen = () => {
+    setTaboo(true);
+  };
+
   const reportUser = async () => {
     console.log(index);
     const formData = new FormData();
@@ -167,6 +212,41 @@ const Chat = () => {
     if (reportNum >= 3) {
       handleClickOpenKick();
     }
+  };
+
+  // 금기어를 추가하는 함수
+  const insertTaboo = async () => {
+    if (tabooWord !== "") {
+      const formData = new FormData();
+      formData.append("roomNo", parseInt(room));
+      formData.append("tabooWord", tabooWord);
+
+      // formdata에 담아 금기어 데이터 백엔드에 전달
+      insert_taboo(formData);
+      setTabooWord("");
+      socket.emit("tabooUpdate", tabooWord);
+      // 내 방 금기어 리스트 추가 !
+      setTabooList((prev) => [...prev, tabooWord]);
+    }
+  };
+
+  // 금기어 삭제
+  const tabooDelete = async (idx) => {
+    console.log(tabooList[idx]);
+    deleteTaboo(tabooList[idx]);
+    socket.emit("tabooDelete", idx);
+
+    let filterArr = tabooList.filter(function (data) {
+      return data !== tabooList[idx];
+    });
+
+    setTabooList(filterArr);
+
+    // setTabooList(delete tabooList[idx]);
+    // tabooList.splice(idx, 1);
+    // console.log(tabooList);
+    // await setTabooList(tabooList);
+    // setTabooList(tabooList.splice(idx, 1)); // 삭제된 금기어 리스트에서 지우기
   };
 
   // mui 적용
@@ -276,7 +356,7 @@ const Chat = () => {
           </DialogActions>
         </Dialog>
         {/* </div> */}
-        <div id="chat" className="w-auto h-[80%] overflow-y-auto">
+        <div id="chat" className="w-auto h-[80vh] overflow-y-auto">
           {messageList &&
             messageList.map((msg, i) => (
               <PopupState key={i} variant="popover" popupId="demo-popup-menu">
@@ -345,32 +425,64 @@ const Chat = () => {
             ))}
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 w-full h-[10%]">
-        <input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          className="w-3/4 h-12 border p-3 outline-none rounded-xl"
-          type="text"
-          placeholder="message send"
-          onKeyPress={onKeyPress}
-        />
-        {message != null ? (
-          <button
-            onClick={sendMessage}
-            className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-            style={{ backgroundColor: "#89ab79" }}
-          >
-            SEND
+      {host === kakaoId ? (
+        <div className="absolute bottom-0 left-0 w-full h-[10%]">
+          <button onClick={tabooOpen} className="w-12 h-12 border rounded-xl">
+            +
           </button>
-        ) : (
-          <button
-            className="w-1/4 bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-            style={{ backgroundColor: "#89ab79" }}
-          >
-            SEND
-          </button>
-        )}
-      </div>
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-[70%] h-12 border p-3 outline-none rounded-xl"
+            type="text"
+            placeholder="message send"
+            onKeyPress={onKeyPress}
+          />
+          {message != null ? (
+            <button
+              onClick={sendMessage}
+              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+              style={{ backgroundColor: "#89ab79" }}
+            >
+              SEND
+            </button>
+          ) : (
+            <button
+              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+              style={{ backgroundColor: "#89ab79" }}
+            >
+              SEND
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="absolute bottom-0 left-0 w-full h-[10%]">
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className="w-[80%] h-12 border p-3 outline-none rounded-xl"
+            type="text"
+            placeholder="message send"
+            onKeyPress={onKeyPress}
+          />
+          {message != null ? (
+            <button
+              onClick={sendMessage}
+              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+              style={{ backgroundColor: "#89ab79" }}
+            >
+              SEND
+            </button>
+          ) : (
+            <button
+              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+              style={{ backgroundColor: "#89ab79" }}
+            >
+              SEND
+            </button>
+          )}
+        </div>
+      )}
       <Modal
         open={profileInfo}
         onClose={() => setProfileInfo(false)}
@@ -414,6 +526,81 @@ const Chat = () => {
               &nbsp;&nbsp;&nbsp;
               <Grid>
                 <button onClick={() => setProfileInfo(false)}>닫기</button>
+              </Grid>
+            </Grid>
+          </Typography>
+        </Box>
+      </Modal>
+      <Modal
+        open={taboo}
+        onClose={() => setTaboo(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            <span>내 방 금기어 리스트</span>
+          </Typography>
+          {tabooList.map((taboo, idx) =>
+            taboo !== "" ? (
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                <span key={idx + "번"} className="text-[14px]">
+                  {taboo}
+                </span>
+                &nbsp;&nbsp;&nbsp;
+                <button
+                  onClick={() => tabooDelete(idx)}
+                  key={idx}
+                  className="text-[14px]"
+                >
+                  🗑
+                </button>
+              </Typography>
+            ) : (
+              <></>
+            )
+          )}
+          <br></br>
+          <input
+            value={tabooWord}
+            onChange={(e) => setTabooWord(e.target.value)}
+            type="text"
+            placeholder="추가 금기어 입력"
+            className="h-10 w-[50%] border-solid border-2"
+          ></input>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            <Grid container direction="row" alignItems="center">
+              <Grid>
+                <button
+                  className="border-solid border-2 rounded-xl w-16"
+                  style={{ backgroundColor: "#89ab79" }}
+                  onClick={insertTaboo}
+                >
+                  insert
+                </button>{" "}
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button
+                  className="border-solid border-2 rounded-xl w-16"
+                  onClick={() => setTaboo(false)}
+                  style={{ backgroundColor: "#89ab79" }}
+                >
+                  close
+                </button>
               </Grid>
             </Grid>
           </Typography>
