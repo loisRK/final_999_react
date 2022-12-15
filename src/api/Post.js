@@ -6,6 +6,7 @@ import { Form } from "react-router-dom";
 export const createPost = async (formData) => {
   const token = window.localStorage.getItem("token");
   console.log(token);
+  console.log("글쓰기 데이터 넘어옴" + formData);
   axios
     .post("http://localhost:8080/api/post", formData, {
       headers: {
