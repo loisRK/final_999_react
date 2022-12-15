@@ -24,6 +24,8 @@ import {
   Tooltip,
   Typography,
   Switch,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { KAKAO_AUTH_URL } from "./KakaoLoginData";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
@@ -70,7 +72,13 @@ function Home() {
   const [toggled, setToggled] = useState(false);
 
   const token = window.localStorage.getItem("token");
+  // 하단 바 로그인 상태별 paging 옵션
+  const [alertStatus, setAlertStatus] = useState(false);
   const navigate = useNavigate();
+
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
 
   const [profileImg, setProfileImg] = useState(
     "https://cdn-icons-png.flaticon.com/128/1077/1077063.png"
@@ -227,6 +235,20 @@ function Home() {
           onClick={loginCheck}
         />
       </BottomNavigation>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertStatus}
+        autoHideDuration={1000}
+        onClose={alertClick}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          로그인이 필요한 기능입니다.
+        </Alert>
+      </Snackbar>
       <Modal
         open={open}
         onClose={() => setOpen(false)}
