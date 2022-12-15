@@ -15,6 +15,7 @@ import {
   Modal,
   Avatar,
 } from "@mui/material";
+import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
@@ -437,6 +438,7 @@ function Map() {
     gps.addEventListener("click", () => {
       console.log("gps 작동");
       currentPosition();
+      map.setCenter(markerPosition);
     });
   }, [latitude, longitude, posts.length, chatList.length]);
 
