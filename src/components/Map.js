@@ -41,7 +41,7 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   return d;
 }
 
-function Map() {
+function Map({ token }) {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
   const [roomNo, setRoomNo] = useState(null);
@@ -86,8 +86,10 @@ function Map() {
   };
 
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setUsername(res.kakaoNickname));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+    }
 
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
@@ -170,7 +172,7 @@ function Map() {
     });
 
     const chatData = roomList();
-    chatData.then((response) => console.log(response));
+    // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
 
     // 채팅방 마커 표시하기
@@ -211,7 +213,6 @@ function Map() {
       });
     });
 
-
     // 채팅방 입장 오버레이 내용 지정 -> 초기값 지정
     var enterElement = document.createElement("div");
     enterElement.className = "enteroveray";
@@ -245,7 +246,6 @@ function Map() {
         roomPosition.La
       );
       console.log("선택한 채팅방과의 거리 : " + distance + "km");
-      
 
       const roomLatlng = new kakao.maps.LatLng(
         roomPosition.Ma,
@@ -270,9 +270,12 @@ function Map() {
       enterElement.onclick = function () {
         const roomNo = roomMarker.getTitle();
         console.log("ROOM NO : " + roomNo);
-        // ******************* 방으로 이동하는 함수 추가하기!!!!!!!!!! *******************
-        navigate(`/room?roomNo=${roomNo}`);
-        // ******************* 방 인원수 +1 하기 axios 함수 추가!!!!! ********************
+        if (token !== null) {
+          navigate(`/room?roomNo=${roomNo}`);
+        } else {
+          alertClick();
+          // ################################################# 로그인 없이는 방 참여 못한다는 알림 띄우기
+        }
       };
     }
 

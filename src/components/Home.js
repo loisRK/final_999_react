@@ -186,9 +186,7 @@ function Home() {
           </Stack>
         </FormGroup>
       </div>
-      <div>
-      {toggled === false ? <Map /> : <ChatList />}
-      </div>
+      <div>{toggled === false ? <Map /> : <ChatList />}</div>
       {/* <Map /> */}
       <br />
       <BottomNavigation
@@ -216,8 +214,9 @@ function Home() {
         <BottomNavigationAction
           label="My Page"
           icon={<AccountCircleOutlined />}
-          component={Link}
-          to="/myPage"
+          // component={Button}
+          // to="/myPage"
+          onClick={loginCheck}
         />
       </BottomNavigation>
       <Modal

@@ -6,7 +6,7 @@ import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import io from "socket.io-client";
 import { axiosUser } from "../api/User";
 import { useSearchParams } from "react-router-dom";
-import { roomInfo } from "../api/Chatting";
+import { axiosReportNum, roomInfo } from "../api/Chatting";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogTitle from "@mui/material/DialogTitle";
@@ -128,6 +128,7 @@ const Chat = () => {
 
   // EXIT 버튼을 누르면 채팅방을 나가거나 채팅방에 남거나 선택하는 modal
   const [open, setOpen] = React.useState(false);
+  const [openKick, setOpenKick] = React.useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -135,6 +136,14 @@ const Chat = () => {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleClickOpenKick = () => {
+    setOpenKick(true);
+  };
+
+  const handleCloseKick = () => {
+    setOpenKick(false);
   };
 
   const inputIndex = (i) => {
@@ -152,6 +161,12 @@ const Chat = () => {
     formData.append("reportedId", reportMessage.userId);
 
     report(formData);
+    // 신고 3번 이상 받으면 퇴장당하기
+    let reportNum = axiosReportNum(reportMessage.room, reportMessage.userId);
+    console.log("#### 신고 숫자 : " + reportNum);
+    if (reportNum >= 3) {
+      handleClickOpenKick();
+    }
   };
 
   // mui 적용
@@ -404,6 +419,32 @@ const Chat = () => {
           </Typography>
         </Box>
       </Modal>
+      <Dialog
+        open={openKick}
+        onClose={handleCloseKick}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"둥지에서 퇴장입니다."}
+        </DialogTitle>
+        {/* <img alt="flyGugu" src={flyGugu}></img> */}
+
+        <DialogActions>
+          <Button
+            onClick={() => {
+              // 소켓에서 퇴장하기. socket.disconnect();
+              socket.emit("left", [username, room]);
+              socket.disconnect();
+              client_out(room);
+              document.location.href = "/";
+            }}
+            autoFocus
+          >
+            확인
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
