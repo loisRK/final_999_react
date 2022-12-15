@@ -16,6 +16,7 @@ import {
   Avatar,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { roomList } from "../api/Chatting";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -166,6 +167,7 @@ function Map() {
       });
     });
 
+    // 생성된 채팅방 리스트 가져오기
     const chatData = roomList();
     chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
@@ -437,6 +439,7 @@ function Map() {
     gps.addEventListener("click", () => {
       console.log("gps 작동");
       currentPosition();
+      map.setCenter(markerPosition);
     });
   }, [latitude, longitude, posts.length, chatList.length]);
 
@@ -509,9 +512,13 @@ function Map() {
         <div
           id="map"
           className="map"
-          style={{ width: `"${window.innerWidth}"`, height: "500px" }}
+          style={{ width: `"${window.innerWidth}"`, height: "65vh" }}
         >
-          <img id="gps_bnt" className="gps_bnt" src="gps.png" />
+          <img
+            id="gps_bnt"
+            className="gps_bnt mt-[55vh] ml-[3vh]"
+            src="gps.png"
+          />
         </div>
       </div>
 

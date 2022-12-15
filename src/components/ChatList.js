@@ -95,24 +95,24 @@ function ChatList() {
       // 현재위치를 기준으로 거리 계산
       chatList.map(
         (li, i) => (
-          console.log("chatList", chatList),
+          console.log("chatList", li),
           // 거리계산
           console.log(
             `${i}`,
             getDistanceFromLatLonInKm(
               chatLat,
               chatLong,
-              chatList[i].chatLat,
-              chatList[i].chatLong
+              li.chatLat,
+              li.chatLong
             )
           ),
           (distanceList[i] = [
-            chatList[i],
+            li,
             getDistanceFromLatLonInKm(
               chatLat,
               chatLong,
-              chatList[i].chatLat,
-              chatList[i].chatLong
+              li.chatLat,
+              li.chatLong
             ),
           ]),
           console.log(
