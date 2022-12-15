@@ -42,3 +42,8 @@ export const client_in = async (roomNo) => {
 export const client_out = async (roomNo) => {
   axios.get(`http://localhost:8080/api/clientOut/${roomNo}`);
 };
+
+// 신고 몇 번 당했는지 값 불러오기
+export const axiosReportNum = async (roomNo) => {
+  axios.get(`http://localhost:8080/api/reportNum`);
+};

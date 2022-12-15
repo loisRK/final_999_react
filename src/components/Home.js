@@ -209,7 +209,7 @@ function Home() {
           </FormGroup>
         </Grid>
         <Grid sx={{ gridColumn: "1", gridRow: "span 2" }}>
-          {toggled === false ? <Map /> : <ChatList />}
+          {toggled === false ? <Map token={token} /> : <ChatList />}
         </Grid>
       </Box>
       <BottomNavigation
@@ -237,7 +237,7 @@ function Home() {
         <BottomNavigationAction
           label="My Page"
           icon={<AccountCircleOutlined />}
-          component={Button}
+          // component={Button}
           // to="/myPage"
           onClick={loginCheck}
         />

@@ -16,6 +16,7 @@ import {
   Avatar,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { roomList } from "../api/Chatting";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -38,7 +39,7 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   return d;
 }
 
-function Map() {
+function Map({ token }) {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
   const [roomNo, setRoomNo] = useState(null);
@@ -83,8 +84,10 @@ function Map() {
   };
 
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setUsername(res.kakaoNickname));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+    }
 
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
@@ -167,7 +170,7 @@ function Map() {
     });
 
     const chatData = roomList();
-    chatData.then((response) => console.log(response));
+    // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
 
     // 채팅방 마커 표시하기
@@ -204,7 +207,7 @@ function Map() {
       kakao.maps.event.addListener(roomMarkers, "click", function (mouseEvent) {
         overlay.setMap(null);
         const roomMarker = roomMarkers;
-        roomEnter(roomMarker);
+        roomEnter(roomMarker, room);
       });
     });
 
@@ -230,7 +233,7 @@ function Map() {
     });
 
     // 채팅방 오버레이 (채팅방 입장)
-    function roomEnter(roomMarker) {
+    function roomEnter(roomMarker, room) {
       const roomPosition = roomMarker.getPosition();
 
       // 클릭한 채팅방의 마커 위치와 사용자의 위치 거리 계산
@@ -258,9 +261,12 @@ function Map() {
       enterElement.onclick = function () {
         const roomNo = roomMarker.getTitle();
         console.log("ROOM NO : " + roomNo);
-        // ******************* 방으로 이동하는 함수 추가하기!!!!!!!!!! *******************
-        navigate(`/room?roomNo=${roomNo}`);
-        // ******************* 방 인원수 +1 하기 axios 함수 추가!!!!! ********************
+        if (token !== null) {
+          navigate(`/room?roomNo=${roomNo}`);
+        } else {
+          alertClick();
+          // ################################################# 로그인 없이는 방 참여 못한다는 알림 띄우기
+        }
       };
     }
 
@@ -437,6 +443,7 @@ function Map() {
     gps.addEventListener("click", () => {
       console.log("gps 작동");
       currentPosition();
+      map.setCenter(markerPosition);
     });
   }, [latitude, longitude, posts.length, chatList.length]);
 
