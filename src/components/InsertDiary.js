@@ -61,11 +61,16 @@ function InsertDiary() {
     formData.append("postLat", postLat);
     formData.append("postLong", postLong);
     formData.append("postContent", content);
-    // formData.append("files", fileArr[0]);
+    formData.append("files", fileArr[0]);
 
-    for (let i = 0; i < fileArr.length; i++) {
-      formData.append("files", fileArr[i]);
-    }
+    // // file 1개 업로드 test
+    // const input = document.querySelector("#newfiles");
+    // const oneFile = input.files;
+    // formData.append("files", oneFile);
+
+    // for (let i = 0; i < fileArr.length; i++) {
+    //   formData.append("files", fileArr[i]);
+    // }
 
     // formdata 값 확인해 보는 법 !
     // for (let key of formData.keys()) {
@@ -126,7 +131,7 @@ function InsertDiary() {
           type="file"
           name="newfiles"
           id="newfiles"
-          multiple
+          // multiple
           onChange={getFile}
         ></input>
       </div>

@@ -3,7 +3,7 @@ import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { axiosDeletePost, axiosLike } from "../api/Post";
+import { axiosDeletePost, axiosLike, postData } from "../api/Post";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Checkbox, Snackbar, Alert } from "@mui/material";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
@@ -17,15 +17,14 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [userId, setUserId] = useState("");
   const open = Boolean(anchorEl);
+
   const token = window.localStorage.getItem("token");
   const [alertStatus, setAlertStatus] = useState(false);
 
   useEffect(() => {
     // userId 가져오기
-    if (token !== null) {
-      const data = axiosUser();
-      data.then((res) => setUserId(res.kakaoId));
-    }
+    const data = axiosUser();
+    data.then((res) => setUserId(res.kakaoId));
   }, []);
 
   const heartClick = (postNum, liked) => {
@@ -49,10 +48,12 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     axiosLike(formData);
   };
 
-  const handleClick = (event, postNo) => {
-    setAnchorEl(event.currentTarget);
-    console.log("handleClick : " + postNo);
-    setPostNo(postNo);
+  const handleClick = (event, postNo, postOwner) => {
+    // console.log("handleClick : " + postNo + " " + postOwner);
+    if (postOwner === userId) {
+      setAnchorEl(event.currentTarget);
+      setPostNo(postNo);
+    }
   };
 
   const handleClose = () => {
@@ -63,7 +64,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     setAlertStatus(!alertStatus);
   };
 
-  const options = ["수정하기", "삭제하기"];
+  const loginOptions = ["수정하기", "삭제하기"];
   const editOrDelete = (event) => {
     console.log(event.currentTarget);
     if (userId === "") {
@@ -87,11 +88,11 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     );
 
     if (postedTime >= 1440) {
-      return "" + Math.round(postedTime / 3600) + "일 전";
+      return "" + Math.round(postedTime / 3600) + "d";
     } else if (postedTime >= 60) {
-      return "" + Math.round(postedTime / 60) + "시간 전";
+      return "" + Math.round(postedTime / 60) + "h";
     } else {
-      return "" + Math.round(postedTime) + "분 전";
+      return "" + Math.round(postedTime) + "m";
     }
   }
 
@@ -137,14 +138,11 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                   <div className="post_name">
                     {/* <span>{post.kakaoNickname}</span> */}
                     <span className="post_detail">@{post.kakaoNickname}</span>
-                    <span className="post_detail">{post.postDate}</span>
+                    {/* <span className="post_detail">{post.postDate}</span> */}
                     {/* <span className="post_detail">post#{post.postNo}</span> */}
+                    {/* <br /> */}
+                    <span className="post_detail">{time(post.postDate)}</span>
                     <br />
-                    <span className="post_detail">
-                      {time(post.postDate)} 포스팅
-                    </span>
-                    <br />
-
                     <span className="heart_btn">
                       {token !== null ? (
                         <Checkbox
@@ -178,7 +176,9 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                         aria-controls={open ? "long-menu" : undefined}
                         aria-expanded={open ? "true" : undefined}
                         aria-haspopup="true"
-                        onClick={(e) => handleClick(e, post.postNo)}
+                        onClick={(e) =>
+                          handleClick(e, post.postNo, post.kakaoId)
+                        }
                       >
                         <MoreVertIcon />
                       </IconButton>
@@ -188,7 +188,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                   {post.postImg === "" ? (
                     <></>
                   ) : (
-                    <img className="post_img" src={`/img/${post.postImg}`} />
+                    <img className="post_img" src={post.postImg} />
                   )}
                 </div>
               </section>
@@ -212,7 +212,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
           },
         }}
       >
-        {options.map((option) => (
+        {loginOptions.map((option) => (
           <MenuItem key={option} onClick={(e) => editOrDelete(e)}>
             {option}
           </MenuItem>

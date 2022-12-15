@@ -15,11 +15,11 @@ export const createRooms = async (formData) => {
 };
 
 // DB 내에 존재하는 모든 채팅방 리스트 불러오기
-export const roomList = async () => {
+export async function roomList() {
   const response = await axios.get("http://localhost:8080/api/roomList");
-  // console.log(response.data);
+  console.log(response.data);
   return response.data;
-};
+}
 
 // 해당 채팅에 관한 정보 불러오기.
 export const roomInfo = async (roomNo) => {
@@ -61,4 +61,9 @@ export const alltabooList = async (roomNo) => {
 export const deleteTaboo = async (tabooWord) => {
   console.log(tabooWord);
   axios.get(`http://localhost:8080/api/deleteTaboo/${tabooWord}`);
+};
+
+// 신고 몇 번 당했는지 값 불러오기
+export const axiosReportNum = async (roomNo) => {
+  axios.get(`http://localhost:8080/api/reportNum`);
 };

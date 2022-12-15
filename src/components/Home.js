@@ -1,4 +1,3 @@
-import * as React from "react";
 import "../css/Home.css";
 import { Link, useNavigate } from "react-router-dom";
 import Map from "./Map";
@@ -25,8 +24,6 @@ import {
   Tooltip,
   Typography,
   Switch,
-  Alert,
-  Snackbar,
 } from "@mui/material";
 import { KAKAO_AUTH_URL } from "./KakaoLoginData";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
@@ -35,10 +32,9 @@ import gugu from "../img/bidulgi.png";
 import gugu_tilt from "../img/dulgi_headtilt.png";
 import gugu_login from "../img/dulgi_login.jpg";
 import { Container } from "@mui/system";
+import styled from "@emotion/styled";
 import { axiosUser } from "../api/User";
 import ChatList from "./ChatList";
-import { styled } from "@mui/material/styles";
-import Posting from "./Posting";
 
 const style = {
   position: "absolute",
@@ -61,19 +57,6 @@ const MyThemeComponent = styled("div")(({ theme }) => ({
 }));
 
 function Home() {
-  const [alertStatus, setAlertStatus] = useState(false);
-  const alertClick = () => {
-    setAlertStatus(!alertStatus);
-  };
-
-  const loginCheck = () => {
-    if (token === null) {
-      alertClick();
-    } else {
-      navigate("/myPage");
-    }
-  };
-
   const handleLogin = () => {
     window.location.href = KAKAO_AUTH_URL;
   };
@@ -101,117 +84,111 @@ function Home() {
   }, []);
 
   return (
-    <React.Fragment>
-      <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-                paddingRight: 2,
-              }}
-            >
-              999.com
-            </Typography>
-            <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Home">
-                <IconButton
-                  onClick={() => {
-                    document.location.href = "/";
-                  }}
-                  sx={{ p: 0 }}
-                >
-                  <Avatar alt="gugu" src={gugu} />
-                </IconButton>
-              </Tooltip>
-            </Box>
-            <Grid
-              container
-              justifyContent="flex-end"
-              direction="row"
-              alignItems="center"
-            >
-              {token ? (
-                <Grid sx={{ flexGrow: 0 }}>
-                  <Tooltip title="My Profile">
-                    <IconButton
-                      onClick={() => {
-                        document.location.href = "/myPage";
-                      }}
-                      sx={{ p: 0 }}
-                    >
-                      <Avatar alt="myProfile" src={profileImg} />
-                    </IconButton>
-                  </Tooltip>
-                </Grid>
-              ) : (
-                <></>
-              )}
-              <Grid>&nbsp;&nbsp;&nbsp;</Grid>
-              <Grid>
-                {token === null ? (
-                  <Button
-                    sx={{ right: 0 }}
-                    onClick={() => setOpen(true)}
-                    justifycontent="flex-end"
-                    variant="contained"
-                    color="success"
+    <div className="wrap1">
+      <div className="header">
+        <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+          <Container maxWidth="xl">
+            <Toolbar disableGutters>
+              <Typography
+                variant="h6"
+                noWrap
+                component="a"
+                href="/"
+                sx={{
+                  mr: 2,
+                  display: { xs: "none", md: "flex" },
+                  fontFamily: "monospace",
+                  fontWeight: 700,
+                  letterSpacing: ".3rem",
+                  color: "inherit",
+                  textDecoration: "none",
+                  paddingRight: 2,
+                }}
+              >
+                999.com
+              </Typography>
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title="Home">
+                  <IconButton
+                    onClick={() => {
+                      document.location.href = "/";
+                    }}
+                    sx={{ p: 0 }}
                   >
-                    Login
-                  </Button>
+                    <Avatar alt="gugu" src={gugu} />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+              <Grid
+                container
+                justifyContent="flex-end"
+                direction="row"
+                alignItems="center"
+              >
+                {token ? (
+                  <Grid sx={{ flexGrow: 0 }}>
+                    <Tooltip title="My Profile">
+                      <IconButton
+                        onClick={() => {
+                          document.location.href = "/myPage";
+                        }}
+                        sx={{ p: 0 }}
+                      >
+                        <Avatar alt="myProfile" src={profileImg} />
+                      </IconButton>
+                    </Tooltip>
+                  </Grid>
                 ) : (
-                  <Button
-                    sx={{ right: 0 }}
-                    onClick={() => setLogoutOpen(true)}
-                    justifycontent="flex-end"
-                    variant="contained"
-                    color="success"
-                  >
-                    Logout
-                  </Button>
+                  <></>
                 )}
+                <Grid>&nbsp;&nbsp;&nbsp;</Grid>
+                <Grid>
+                  {token === null ? (
+                    <Button
+                      sx={{ right: 0 }}
+                      onClick={() => setOpen(true)}
+                      justifycontent="flex-end"
+                      variant="contained"
+                      color="success"
+                    >
+                      Login
+                    </Button>
+                  ) : (
+                    <Button
+                      sx={{ right: 0 }}
+                      onClick={() => setLogoutOpen(true)}
+                      justifycontent="flex-end"
+                      variant="contained"
+                      color="success"
+                    >
+                      Logout
+                    </Button>
+                  )}
+                </Grid>
               </Grid>
-            </Grid>
-          </Toolbar>
-        </Container>
-      </AppBar>
-      <div className="headerLeft"></div>
+            </Toolbar>
+          </Container>
+        </AppBar>
+        <div className="headerLeft"></div>
+      </div>
       <br />
-      <Box
-        sx={{
-          display: "grid",
-          gridAutoRows: "40px",
-          gap: 1,
-        }}
-      >
-        <Grid>
-          <FormGroup sx={{ alignContent: "center" }}>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography>Map</Typography>
-              <Switch
-                checked={toggled}
-                size="large"
-                inputProps={{ "aria-label": "ant design" }}
-                onChange={(e) => setToggled(e.target.checked)}
-              />
-              <Typography>List</Typography>
-            </Stack>
-          </FormGroup>
-        </Grid>
-        <Grid sx={{ gridColumn: "1", gridRow: "span 2" }}>
-          {toggled === false ? <Map /> : <ChatList />}
-        </Grid>
-      </Box>
+      <div>
+        <FormGroup sx={{ alignContent: "center" }}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Typography>Map</Typography>
+            <Switch
+              checked={toggled}
+              size="large"
+              inputProps={{ "aria-label": "ant design" }}
+              onChange={(e) => setToggled(e.target.checked)}
+            />
+            <Typography>List</Typography>
+          </Stack>
+        </FormGroup>
+      </div>
+      <div>{toggled === false ? <Map /> : <ChatList />}</div>
+      {/* <Map /> */}
+      <br />
       <BottomNavigation
         sx={{
           background: "#B6E2A1",
@@ -237,26 +214,11 @@ function Home() {
         <BottomNavigationAction
           label="My Page"
           icon={<AccountCircleOutlined />}
-          component={Button}
+          // component={Button}
           // to="/myPage"
           onClick={loginCheck}
         />
       </BottomNavigation>
-      <Snackbar
-        className="mapAlert"
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        open={alertStatus}
-        autoHideDuration={1000}
-        onClose={alertClick}
-      >
-        <Alert severity="success" sx={{ width: "100%" }}>
-          로그인이 필요한 기능입니다.
-        </Alert>
-      </Snackbar>
-      {/* 로그인 모달 */}
       <Modal
         open={open}
         onClose={() => setOpen(false)}
@@ -293,6 +255,9 @@ function Home() {
             }}
           />
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            {/* <input placeholder="아이디"></input> <br />
+                <input type={"password"} placeholder="비밀번호"></input> <br />
+                <button type="submit">Login</button> */}
             <img
               src={kakao_login_medium_wide}
               alt="kakao_login"
@@ -301,7 +266,6 @@ function Home() {
           </Typography>
         </Box>
       </Modal>
-      {/* 로그아웃 모달 */}
       <Modal
         open={logoutOpen}
         onClose={() => setLogoutOpen(false)}
@@ -318,7 +282,7 @@ function Home() {
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,
-            p: 2,
+            p: 4,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -337,22 +301,20 @@ function Home() {
               alignItems: "center",
             }}
           />
-          <br />
-          <Stack spacing={5} direction="row">
-            <Button color="success" variant="outlined" onClick={logout}>
-              네
-            </Button>
-            <Button
-              color="error"
-              variant="outlined"
-              onClick={() => setLogoutOpen(false)}
-            >
-              아니요!
-            </Button>
-          </Stack>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            <Grid container direction="row" alignItems="center">
+              <Grid>
+                <button onClick={logout}>네</button>
+              </Grid>
+              &nbsp;&nbsp;&nbsp;
+              <Grid>
+                <button onClick={() => setLogoutOpen(false)}>아니요!</button>
+              </Grid>
+            </Grid>
+          </Typography>
         </Box>
       </Modal>
-    </React.Fragment>
+    </div>
   );
 }
 
