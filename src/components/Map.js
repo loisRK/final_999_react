@@ -228,7 +228,7 @@ function Map({ token }) {
       content: enterElement,
       title: enterElement,
       xAnchor: 0.5,
-      yAnchor: 2.3,
+      yAnchor: 1.6,
       zIndex: 2,
       clickable: true,
     });
@@ -273,7 +273,6 @@ function Map({ token }) {
           navigate(`/room?roomNo=${roomNo}`);
         } else {
           alertClick();
-          // ################################################# 로그인 없이는 방 참여 못한다는 알림 띄우기
         }
       };
     }
@@ -339,7 +338,7 @@ function Map({ token }) {
       position: markerPosition,
       content: content,
       xAnchor: 0.3,
-      yAnchor: 0.91,
+      yAnchor: 1.1,
       zIndex: 3,
       clickable: true,
     });
@@ -509,10 +508,7 @@ function Map({ token }) {
                 {postDetail.postImg === "" ? (
                   <></>
                 ) : (
-                  <img
-                    className="post_img"
-                    src={`/img/${postDetail.postImg}`}
-                  />
+                  <img className="post_img" src={postDetail.postImg} />
                 )}
               </div>
             )}

@@ -80,6 +80,10 @@ function Home() {
     setAlertStatus(!alertStatus);
   };
 
+  const [profileImg, setProfileImg] = useState(
+    "https://cdn-icons-png.flaticon.com/128/1077/1077063.png"
+  );
+
   const loginCheck = () => {
     if (token === null) {
       alertClick();
@@ -87,10 +91,6 @@ function Home() {
       navigate("/myPage");
     }
   };
-
-  const [profileImg, setProfileImg] = useState(
-    "https://cdn-icons-png.flaticon.com/128/1077/1077063.png"
-  );
 
   useEffect(() => {
     if (token !== null) {
