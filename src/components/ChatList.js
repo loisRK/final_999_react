@@ -123,27 +123,25 @@ function ChatList() {
             chatList[i].chatLong
           )
         ),
-        (distanceList[i] = [
-          chatList[i],
-          getDistanceFromLatLonInKm(
-            chatLat,
-            chatLong,
-            chatList[i].chatLat,
-            chatList[i].chatLong
-          ),
-        ]),
-        console.log(
-          getDistanceFromLatLonInKm(
-            chatLat,
-            chatLong,
-            chatList[0].chatLat,
-            chatList[0].chatLong
-          )
+        // (distanceList[i] = [
+        //   // chatList[i],
+        //   getDistanceFromLatLonInKm(
+        //     chatLat,
+        //     chatLong,
+        //     chatList[i].chatLat,
+        //     chatList[i].chatLong
+        //   ),
+        // ]),
+        (getDistanceFromLatLonInKm(chatLat,chatLong,chatList[i].chatLat,chatList[i].chatLong) <= 1 ?
+          distanceList[i] = [chatList[i], getDistanceFromLatLonInKm(chatLat, chatLong, chatList[i].chatLat, chatList[i].chatLong )] : null        
         )
       )
-    );
+    )
   }
-  console.log(distanceList);
+
+  console.log("distanceList", distanceList);
+
+
   // distanceList를 거리순으로 정렬
   distanceList.sort(compareSecondColumn);
 
@@ -176,7 +174,6 @@ function ChatList() {
 
   return (
     <div className="chatList_wrap" style={{ position: "relative" }}>
-      <div>{typeof chatInfo.length}</div>
       <div
         id="chatList"
         className="chatList"

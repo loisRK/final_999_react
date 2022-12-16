@@ -132,7 +132,7 @@ const Chat = () => {
   const sendMessage = async () => {
     let test = tabooList.join("|");
     console.log(test);
-    let test2 = new RegExp(test, "gi");
+    let test2 = new RegExp(test, "gi"); 
     // setMessage(message.replace("하남", "구구"));
     if (message !== "") {
       const messageContent = {
@@ -141,7 +141,7 @@ const Chat = () => {
         message: message.replace(test2, "구구"),
         userId: kakaoId,
         room: room,
-        date: new Date().toLocaleString(), // 2022. 12. 7. 오전 11:24:42
+        date: new Date().toLocaleString(), // 2022. 12. 7. 오전 11:24:42 
       };
       // messageContent 값이 먼저 정의 된 후 메세지 전달.
       await socket.emit("message", messageContent);
@@ -524,9 +524,11 @@ const Chat = () => {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <Grid container direction="row" alignItems="center">
               &nbsp;&nbsp;&nbsp;
+              <span alignItems="end">
               <Grid>
-                <button onClick={() => setProfileInfo(false)}>닫기</button>
+                <button alignItems="left" onClick={() => setProfileInfo(false)}>닫기</button>
               </Grid>
+              </span>
             </Grid>
           </Typography>
         </Box>
