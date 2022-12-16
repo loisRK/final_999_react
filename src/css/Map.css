@@ -25,6 +25,7 @@
   background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/box_movie.png")
     no-repeat;
   padding: 15px 10px;
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.55);
 }
 .overlaybox div,
 ul {
@@ -124,4 +125,3 @@ ul {
   padding: 10px 10px;
   white-space: normal;
 }
-
