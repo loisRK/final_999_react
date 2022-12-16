@@ -273,7 +273,6 @@ function Map({ token }) {
           navigate(`/room?roomNo=${roomNo}`);
         } else {
           alertClick();
-          // ################################################# 로그인 없이는 방 참여 못한다는 알림 띄우기
         }
       };
     }
