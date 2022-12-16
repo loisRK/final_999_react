@@ -31,6 +31,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
+import Paper from "@material-ui/core/Paper";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
@@ -45,6 +47,8 @@ const Chat = () => {
   const [messageList, setMessageList] = useState([]);
   const [username, setUsername] = useState("gugu");
   const [profileImg, setProfileImg] = useState("../img/dulgi.jpg");
+  const [ownerName, setOwnerName] = useState("");
+  const [ownerProfileImg, setOwnerProfileImg] = useState("../img/dulgi.jpg");
   const [clients, setClients] = useState("");
   const [tags, setTags] = useState("");
   const [profileInfo, setProfileInfo] = useState(false);
@@ -89,6 +93,9 @@ const Chat = () => {
     // 방의 태그 내용 입력
     data.then((response) => setTags(response.title));
     data.then((response) => setHost(response.user.kakaoId));
+    // 방장 프로필 보기 용 변수 설정
+    data.then((response) => setOwnerProfileImg(response.user.kakaoProfileImg));
+    data.then((response) => setOwnerName(response.user.kakaoNickname));
 
     // 금기어 리스트 모두 가져오기
     const data1 = alltabooList(room);
@@ -154,6 +161,26 @@ const Chat = () => {
     chat.scrollTop = chat.scrollHeight;
   }, [messageList]);
 
+  // 신고가 3번 이상이면 추방 당할 사람으로 setExit으로 저장
+  useEffect(() => {
+    socket.on("reportedGugu", (data) => {
+      console.log("추방될 사람 id : " + data);
+      setExit(data);
+    });
+  }, [socket]);
+
+  // 신고 당한 사람이 나인지 확인
+  useEffect(() => {
+    // console.log(kakaoId);
+    // console.log(exit);
+    // 신고 당한 사람이 나면 강퇴당하기 실행
+    // ###################################################################################### 아래 주석 나중에 지우기.. exit 리스트 어떻게 할까..
+    // if (kakaoId === exit) {
+    //   handleClickOpenKick();
+    //   setExit("");
+    // }
+  }, [exit]);
+
   // 내 리스트에 message data 추가 후
   // 소켓에 message data를 담아 서버에 전달 !
   const sendMessage = async () => {
@@ -203,6 +230,7 @@ const Chat = () => {
     }
   };
 
+  // 엔터로 메세지 보낼 수 있게하기
   const onKeyPress = (e) => {
     if (message !== "") {
       if (e.key === "Enter") {
@@ -243,23 +271,33 @@ const Chat = () => {
     setTaboo(true);
   };
 
+  // 신고하기 DB에 저장
   const reportUser = async () => {
-    console.log(index);
+    // console.log(index);
     const formData = new FormData();
-    console.log([messageList[index]]);
+    // console.log([messageList[index]]);
     let reportMessage = messageList[index];
     formData.append("roomNo", reportMessage.room);
     formData.append("message", reportMessage.message);
     formData.append("reporterId", kakaoId);
     formData.append("reportedId", reportMessage.userId);
 
-    report(formData);
+    report(formData).then((data) => {
+      console.log("#### 신고 숫자 : " + data);
+      if (data >= 3) {
+        console.log("### 신고 3번 이상!!!!!");
+        socket.emit("reported", [reportMessage.userId, reportMessage.room]);
+      }
+    });
+
     // 신고 3번 이상 받으면 퇴장당하기
-    let reportNum = axiosReportNum(reportMessage.room, reportMessage.userId);
-    console.log("#### 신고 숫자 : " + reportNum);
-    if (reportNum >= 3) {
-      handleClickOpenKick();
-    }
+    // axiosReportNum(reportMessage.room, reportMessage.userId).then((data) => {
+    //   console.log("#### 신고 숫자 : " + data);
+    //   if (data >= 3) {
+    //     console.log("### 신고 3번 이상!!!!!");
+    //     socket.emit("reported", reportMessage.userId);
+    //   }
+    // });
   };
 
   // 금기어를 추가하는 함수
@@ -315,7 +353,7 @@ const Chat = () => {
                     }}
                     sx={{ p: 0 }}
                   >
-                    <Avatar alt="gugu" src={profileImg} />
+                    <Avatar alt="gugu" src={ownerProfileImg} />
                   </IconButton>
                 </Tooltip>
               </Box>
@@ -407,13 +445,14 @@ const Chat = () => {
         <div id="chat" className="w-auto h-[80vh] overflow-y-auto">
           {messageList &&
             messageList.map((msg, i) => (
-              <PopupState key={i} variant="popover" popupId="demo-popup-menu">
+              <PopupState variant="popover" popupId="demo-popup-menu">
                 {(popupState) => (
-                  <div key={i} onclick={inputIndex(i)}>
+                  <div onclick={inputIndex(i)}>
                     {/* {username === msg.username ? ( */}
                     {/* <div className="flex"> */}
                     {username !== msg.username ? (
                       <div
+                        key={i}
                         className={
                           // username === msg.username
                           //   ? "flex justify-end text-xs mr-4 font-semibold"
@@ -426,12 +465,11 @@ const Chat = () => {
                       <></>
                     )}
                     <div
-                      key={i}
                       className={`${
                         username === msg.username ? "flex justify-end" : ""
                       }`}
                       variant="contained"
-                      {...bindTrigger(popupState)}
+                      // {...bindTrigger(popupState)}
                     >
                       <div
                         className={` ${
@@ -440,11 +478,14 @@ const Chat = () => {
                             : "bg-blue-600 rounded-xl rounded-tl-none"
                         } h-auto p-2 text-white m-2 w-fit max-w-[30%] text-left p-2`}
                       >
-                        <div className="flex">{msg.message}</div>
+                        <div key={i} className="flex">
+                          {msg.message}
+                        </div>
                       </div>
                     </div>
                     {username !== msg.username ? (
-                      <Menu {...bindMenu(popupState)}>
+                      <Menu>
+                        {/* <Menu {...bindMenu(popupState)}> */}
                         {/* <button
                           component="MenuItem"
                           sx={{ display: "inline" }}
@@ -454,6 +495,7 @@ const Chat = () => {
                         </button>
                         <br></br> */}
                         <button
+                          key={i}
                           component="MenuItem"
                           sx={{ display: "inline" }}
                           onClick={() => {
@@ -553,30 +595,53 @@ const Chat = () => {
             alignItems: "center",
           }}
         >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            <img
-              className="rounded-full"
-              alt="gugu_tilt"
-              src={profileImg}
-              style={{
-                height: 150,
-                width: 150,
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-              }}
-            />
-          </Typography>
-          <br></br>
-          <Typography>{username}</Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Grid container direction="row" alignItems="center">
-              &nbsp;&nbsp;&nbsp;
+          <Grid container>
+            <Grid item xs={6} alignItems="flex-end">
               <Grid>
-                <button onClick={() => setProfileInfo(false)}>닫기</button>
+                <img
+                  className="rounded-full"
+                  alt="gugu_tilt"
+                  src={ownerProfileImg}
+                  style={{
+                    height: 120,
+                    width: 120,
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    margin: "auto",
+                  }}
+                />
+              </Grid>
+              <Grid style={{ float: "none" }}>
+                <Button
+                  style={{
+                    color: "#000000",
+                    alignItems: "center",
+                    position: "relative",
+                  }}
+                >
+                  {ownerName}
+                </Button>
               </Grid>
             </Grid>
-          </Typography>
+            <Grid item xs={6} alignItems="flex-end">
+              <Grid item xs={5} style={{ float: "right" }}>
+                <IconButton
+                  component="label"
+                  style={{ color: "#89ab79" }}
+                  onClick={() => setProfileInfo(false)}
+                >
+                  <CancelIcon />
+                </IconButton>
+              </Grid>
+              <Grid item xs={15}>
+                ⛔금기어 목록⛔
+                {tabooList.map((value, index) => (
+                  <Typography key={index}>{value}</Typography>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
         </Box>
       </Modal>
       <Modal

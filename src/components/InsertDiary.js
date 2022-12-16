@@ -12,6 +12,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
 
 function InsertDiary() {
   // 페이지 전환 시 쿼리스트링방식으로 값 받아오기위한 searchParams 객체 생성
@@ -89,81 +91,76 @@ function InsertDiary() {
       //   console.log(key, ":", formData.get(key));
       // }
 
-      createPost(formData);
+      createPost(formData).then((document.location.href = "/posting"));
       console.log("formData" + formData);
     }
-  };
 
-  return (
-    <Box
-      component="form"
-      sx={{
-        "& .MuiTextField-root": { m: 2, width: "50ch" },
-        flexGrow: 1,
-      }}
-      noValidate
-      autoComplete="off"
-      method="POST"
-      onSubmit={(e) => sendDiary(e)}
-      encType="multipart/form-data"
-    >
-      <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            <img
-              src="https://emojigraph.org/media/openmoji/feather_1fab6.png"
-              width="30"
-              height="30"
-            />
-          </Typography>
-          <Button color="success" endIcon={<SendIcon />} onClick={sendDiary}>
-            Send
-          </Button>
-          <Button
-            color="error"
-            endIcon={<DeleteIcon />}
-            onClick={() => (window.location.href = "/")}
+    return (
+      <Box
+        component="form"
+        sx={{
+          "& .MuiTextField-root": { m: 2, width: "50ch" },
+          flexGrow: 1,
+        }}
+        noValidate
+        autoComplete="off"
+        method="POST"
+        onSubmit={(e) => sendDiary(e)}
+        encType="multipart/form-data"
+      >
+        <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+          <Toolbar>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              <img
+                src="https://emojigraph.org/media/openmoji/feather_1fab6.png"
+                width="30"
+                height="30"
+              />
+            </Typography>
+            <Button color="success" endIcon={<SendIcon />} onClick={sendDiary}>
+              Send
+            </Button>
+            <Button
+              color="error"
+              endIcon={<DeleteIcon />}
+              onClick={() => (window.location.href = "/")}
+            >
+              Cancle
+            </Button>
+          </Toolbar>
+        </AppBar>
+        <div>
+          <TextField
+            id="outlined-multiline-static"
+            label="Content"
+            name="content"
+            multiline
+            rows={4}
+            onChange={getContent}
+            defaultValue={content}
+          />
+        </div>
+        <div>
+          <IconButton
+            color="primary"
+            aria-label="upload picture"
+            component="label"
           >
-            Cancle
-          </Button>
-        </Toolbar>
-      </AppBar>
-      <div>
-        <TextField
-          id="outlined-multiline-static"
-          label="Content"
-          name="content"
-          multiline
-          rows={4}
-          onChange={getContent}
-          defaultValue={content}
-        />
-      </div>
-      <div>
-        <input
-          type="file"
-          name="newfiles"
-          id="newfiles"
-          // multiple
-          onChange={getFile}
-        ></input>
-        <Snackbar
-          className="mapAlert"
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          open={alertStatus}
-          autoHideDuration={1000}
-          onClose={alertClick}
-        >
-          <Alert severity="warning" sx={{ width: "100%" }}>
-            포스팅 내용을 입력해주세요.
-          </Alert>
-        </Snackbar>
-      </div>
-    </Box>
-  );
+            <input
+              type="file"
+              name="newfiles"
+              id="newfiles"
+              // multiple
+              onChange={getFile}
+              hidden
+              accept="image/*"
+            />
+            <PhotoCamera />
+          </IconButton>
+        </div>
+      </Box>
+    );
+  };
 }
 
 export default InsertDiary;

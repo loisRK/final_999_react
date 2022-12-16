@@ -237,7 +237,6 @@ function MyPage() {
           </Box>
         </Modal>
       </div>
-
       <AppBar position="static" sx={{ background: "#B6E2A1" }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
