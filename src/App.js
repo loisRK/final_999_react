@@ -19,9 +19,9 @@ function App() {
         <Routes>
           {/* <Route path="/" element={<HomeTest />} /> */}
           <Route path="/" element={<Home />} />
-          <Route path="/posting" element={<Posting />} />
+          <Route path="/posting/*" element={<Posting />} />
           <Route path="/chatting/*" element={<Chatting />} />
-          <Route path="/postEdit/*" element={<PostEdit />} />
+          <Route path="/postEdit/*" element={<PostEdit />} /> 
           <Route path="/insert/*" element={<InsertDiary />} />
           <Route
             path="/oauth/callback/kakao"

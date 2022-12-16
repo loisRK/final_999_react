@@ -4,7 +4,7 @@ import Posts from "./Posts";
 import PostsTest from "./PostsTest";
 import SearchBar from "./SearchBar";
 import { axiosPostLike } from "../api/Post";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate , useSearchParams} from "react-router-dom";
 import {
   AppBar,
   BottomNavigation,
@@ -37,6 +37,10 @@ function Posting() {
     setAlertStatus(!alertStatus);
   };
 
+  const alertClick2 = () => {
+    setAlertStatus2(!alertStatus2);
+  };
+
   const loginCheck = () => {
     if (token === null) {
       alertClick();
@@ -45,18 +49,37 @@ function Posting() {
     }
   };
 
+  // const alertHandler = () => {
+  //   setWasLastList(!wasLastList);
+  // }
+
   // infinite scrolling
   const listInnerRef = useRef();
   const [currentPage, setCurrentPage] = useState(1);
   const [prevPage, setPrevPage] = useState(0); // storing prev page number
   const [posts, setPosts] = useState([]);
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
+  const [searchId, setSearchId] = useState(null);
+  const [end, setEnd] = useState(0);
+  const [alertStatus2, setAlertStatus2] = useState(false);
+
+  // 존재하지 않는 사용자 alert 발생
+  useEffect(() => {
+    if(wasLastList) {
+      setAlertStatus2(!alertStatus2);
+      setTimeout(function() {
+        setWasLastList(wasLastList => !wasLastList);
+        setSearchId(null);
+      }, 500);
+    }
+  }, [wasLastList])
 
   useEffect(() => {
+
+    console.log("키워드" + searchId );
     // infinite scroll 테스트
     if (!wasLastList && prevPage !== currentPage) {
-      token !== null
-        ? axiosUser().then((res) => {
+          axiosUser().then((res) => {
             console.log("##### id : " + res.kakaoId);
             axiosPostLike(
               posts,
@@ -64,34 +87,49 @@ function Posting() {
               setPrevPage,
               setPosts,
               currentPage,
-              res.kakaoId
+              token !== null ? res.kakaoId : 999,
+              searchId !== null ? searchId : "null",
+              setEnd
             );
           })
-        : axiosPostLike(
-            posts,
-            setWasLastList,
-            setPrevPage,
-            setPosts,
-            currentPage,
-            999
-          );
       // postData(posts, setWasLastList, setPrevPage, setPosts, currentPage);
     }
-  }, [currentPage, wasLastList, prevPage]);
+  }, [
+    // searchId, 
+    currentPage, wasLastList, prevPage]);
   console.log("######## POSTS : " + posts);
+  
+  useEffect(()=>{
+    console.log('go home')
+    axiosUser().then((res) => {
+      console.log("##### id : " + res.kakaoId);
+      axiosPostLike(
+        posts,
+        setWasLastList,
+        setPrevPage,
+        setPosts,
+        currentPage,
+        token !== null ? res.kakaoId : 999,
+        searchId !== null ? searchId : "null",
+        setEnd
+      );
+    })
+  },[searchId]);
 
   const onScroll = () => {
     if (listInnerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
       // console.log(`${scrollTop + clientHeight} >= ${scrollHeight}`);
-      if (Math.ceil(scrollTop) + clientHeight >= scrollHeight) {
-        setCurrentPage(currentPage + 1);
+      // if ((Math.ceil(scrollTop) + clientHeight >= scrollHeight) || currentPage!==end) {
+      if (Math.ceil(scrollTop) + clientHeight >= scrollHeight && (currentPage < end)) {
+        console.log("스크롤 할 때 페이지 번호" +currentPage + "마지막 페이지"+end);
+        setCurrentPage(currentPage + 1)
       }
     }
   };
 
   return (
-    <div>
+    <div id="post-box">
       <AppBar position="static" sx={{ background: "#B6E2A1" }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -116,7 +154,14 @@ function Posting() {
           </Toolbar>
         </Container>
       </AppBar>
-      <SearchBar />
+      <SearchBar 
+      setSearchId={setSearchId}
+      setPosts={setPosts}
+      setPrevPage={setPrevPage}
+      setCurrentPage={setCurrentPage}
+      setWasLastList={setWasLastList}
+      setAlertStatus2={setAlertStatus2}
+      />
       {/* <PostsTest
         onScroll={onScroll}
         listInnerRef={listInnerRef}
@@ -170,6 +215,21 @@ function Posting() {
           로그인이 필요한 기능입니다.
         </Alert>
       </Snackbar>
+          <Snackbar
+            className="mapAlert"
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "center",
+            }}
+            open={alertStatus2}
+            autoHideDuration={1000}
+            onClose={alertClick2}
+            >
+            <Alert severity="warning" sx={{ width: "100%" }}>
+              존재하지 않는 사용자 입니다.
+            </Alert>
+        </Snackbar>
+      
     </div>
   );
 }
