@@ -15,11 +15,11 @@ export const createRooms = async (formData) => {
 };
 
 // DB 내에 존재하는 모든 채팅방 리스트 불러오기
-export const roomList = async () => {
+export async function roomList() {
   const response = await axios.get("http://localhost:8080/api/roomList");
-  // console.log(response.data);
+  console.log(response.data);
   return response.data;
-};
+}
 
 // 해당 채팅에 관한 정보 불러오기.
 export const roomInfo = async (roomNo) => {
@@ -29,8 +29,18 @@ export const roomInfo = async (roomNo) => {
 };
 
 // 해당 유저 신고하기 (메세지를 클릭하여 신고)
+// 신고 몇 번 당했는지 값 불러오기
 export const report = async (formData) => {
-  axios.post("http://localhost:8080/api/report", formData);
+  // axios.post("http://localhost:8080/api/report", formData);
+
+  const response = await axios.post(
+    "http://localhost:8080/api/report",
+    formData
+  );
+
+  console.log("#### axiosReportNum : " + response);
+
+  return response.data;
 };
 
 // 해당 room에 user ++
@@ -42,3 +52,36 @@ export const client_in = async (roomNo) => {
 export const client_out = async (roomNo) => {
   axios.get(`http://localhost:8080/api/clientOut/${roomNo}`);
 };
+
+// 금기어 생성하기
+export const insert_taboo = async (formData) => {
+  axios.post("http://localhost:8080/api/taboo", formData);
+};
+
+// 내 방 금기어 전부 가져오기 !
+export const alltabooList = async (roomNo) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/tabooList/${roomNo}`
+  );
+  console.log(response.data);
+  return response.data;
+};
+
+// 해당 금기어 delete !
+export const deleteTaboo = async (tabooWord) => {
+  console.log(tabooWord);
+  axios.get(`http://localhost:8080/api/deleteTaboo/${tabooWord}`);
+};
+
+
+// // 신고 몇 번 당했는지 값 불러오기
+// export const axiosReportNum = async (roomNo, userId) => {
+//   const response = await axios.get(
+//     `http://localhost:8080/api/reportNum?roomNo=${roomNo}&reportedId=${userId}`
+//   );
+
+//   console.log("#### axiosReportNum : " + response);
+
+//   return response.data;
+// };
+
