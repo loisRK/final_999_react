@@ -31,6 +31,8 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
+import Paper from "@material-ui/core/Paper";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
@@ -44,6 +46,8 @@ const Chat = () => {
   const [messageList, setMessageList] = useState([]);
   const [username, setUsername] = useState("gugu");
   const [profileImg, setProfileImg] = useState("../img/dulgi.jpg");
+  const [ownerName, setOwnerName] = useState("");
+  const [ownerProfileImg, setOwnerProfileImg] = useState("../img/dulgi.jpg");
   const [clients, setClients] = useState("");
   const [tags, setTags] = useState("");
   const [profileInfo, setProfileInfo] = useState(false);
@@ -89,6 +93,9 @@ const Chat = () => {
     // 방의 태그 내용 입력
     data.then((response) => setTags(response.title));
     data.then((response) => setHost(response.user.kakaoId));
+    // 방장 프로필 보기 용 변수 설정
+    data.then((response) => setOwnerProfileImg(response.user.kakaoProfileImg));
+    data.then((response) => setOwnerName(response.user.kakaoNickname));
 
     // 금기어 리스트 모두 가져오기
     const data1 = alltabooList(room);
@@ -341,7 +348,7 @@ const Chat = () => {
                     }}
                     sx={{ p: 0 }}
                   >
-                    <Avatar alt="gugu" src={profileImg} />
+                    <Avatar alt="gugu" src={ownerProfileImg} />
                   </IconButton>
                 </Tooltip>
               </Box>
@@ -435,11 +442,12 @@ const Chat = () => {
             messageList.map((msg, i) => (
               <PopupState variant="popover" popupId="demo-popup-menu">
                 {(popupState) => (
-                  <div key={i} onClick={inputIndex(i)}>
+                  <div onclick={inputIndex(i)}>
                     {/* {username === msg.username ? ( */}
                     {/* <div className="flex"> */}
                     {username !== msg.username ? (
                       <div
+                        key={i}
                         className={
                           // username === msg.username
                           //   ? "flex justify-end text-xs mr-4 font-semibold"
@@ -452,7 +460,6 @@ const Chat = () => {
                       <></>
                     )}
                     <div
-                      key={i}
                       className={`${
                         username === msg.username ? "flex justify-end" : ""
                       }`}
@@ -466,7 +473,9 @@ const Chat = () => {
                             : "bg-blue-600 rounded-xl rounded-tl-none"
                         } h-auto p-2 text-white m-2 w-fit max-w-[30%] text-left p-2`}
                       >
-                        <div className="flex">{msg.message}</div>
+                        <div key={i} className="flex">
+                          {msg.message}
+                        </div>
                       </div>
                     </div>
                     {username !== msg.username ? (
@@ -481,6 +490,7 @@ const Chat = () => {
                         </button>
                         <br></br> */}
                         <button
+                          key={i}
                           component="MenuItem"
                           sx={{ display: "inline" }}
                           onClick={() => {
@@ -580,30 +590,53 @@ const Chat = () => {
             alignItems: "center",
           }}
         >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            <img
-              className="rounded-full"
-              alt="gugu_tilt"
-              src={profileImg}
-              style={{
-                height: 150,
-                width: 150,
-                position: "relative",
-                display: "flex",
-                alignItems: "center",
-              }}
-            />
-          </Typography>
-          <br></br>
-          <span>{username}</span>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Grid container direction="row" alignItems="center">
-              &nbsp;&nbsp;&nbsp;
+          <Grid container>
+            <Grid item xs={6} alignItems="flex-end">
               <Grid>
-                <button onClick={() => setProfileInfo(false)}>닫기</button>
+                <img
+                  className="rounded-full"
+                  alt="gugu_tilt"
+                  src={ownerProfileImg}
+                  style={{
+                    height: 120,
+                    width: 120,
+                    position: "relative",
+                    display: "flex",
+                    alignItems: "center",
+                    margin: "auto",
+                  }}
+                />
+              </Grid>
+              <Grid style={{ float: "none" }}>
+                <Button
+                  style={{
+                    color: "#000000",
+                    alignItems: "center",
+                    position: "relative",
+                  }}
+                >
+                  {ownerName}
+                </Button>
               </Grid>
             </Grid>
-          </Typography>
+            <Grid item xs={6} alignItems="flex-end">
+              <Grid item xs={5} style={{ float: "right" }}>
+                <IconButton
+                  component="label"
+                  style={{ color: "#89ab79" }}
+                  onClick={() => setProfileInfo(false)}
+                >
+                  <CancelIcon />
+                </IconButton>
+              </Grid>
+              <Grid item xs={15}>
+                ⛔금기어 목록⛔
+                {tabooList.map((value, index) => (
+                  <Typography key={index}>{value}</Typography>
+                ))}
+              </Grid>
+            </Grid>
+          </Grid>
         </Box>
       </Modal>
       <Modal
