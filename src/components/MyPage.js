@@ -19,9 +19,14 @@ import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
-import { axioUserPosts, postData } from "../api/Post";
+import { axioUserPosts, postData, axiosDeletePost } from "../api/Post";
 // import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { useNavigate } from "react-router-dom";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { currentPositions } from "../api/Map";
 // import Map from "./Map";
 
@@ -35,6 +40,12 @@ function MyPage() {
   const [userPosts, setUserPosts] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [postDetail, setPostDetail] = useState(null);
+  const loginOptions = ["수정하기", "삭제하기"];
+  const navigate = useNavigate();
+  const [postNo, setPostNo] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const ITEM_HEIGHT = 20;
 
   function currentPositions() {
     if (navigator.geolocation) {
@@ -55,15 +66,14 @@ function MyPage() {
   const token = window.localStorage.getItem("token");
 
   useEffect(() => {
-    if (token !== null) {
-      const data = axiosUser();
-      data.then((res) => setNickname(res.kakaoNickname));
-      data.then((res) => setProfileImg(res.kakaoProfileImg));
-      data.then((res) => setEmail(res.kakaoEmail));
-      data
-        .then((res) => axioUserPosts(res.kakaoId))
-        .then((res) => setUserPosts(res));
-    }
+    const data = axiosUser();
+    data.then((res) => setNickname(res.kakaoNickname));
+    data.then((res) => setProfileImg(res.kakaoProfileImg));
+    data.then((res) => setEmail(res.kakaoEmail));
+    data
+      .then((res) => axioUserPosts(res.kakaoId))
+      .then((res) => setUserPosts(res));
+
     // const postsData = axioUserPosts(userId);
 
     // 지도생성
@@ -124,6 +134,28 @@ function MyPage() {
     });
   }, [latitude, longitude, userPosts.length]);
 
+  const handleClick = (event, postNo) => {
+    // console.log("handleClick : " + postNo + " " + postOwner);
+    setAnchorEl(event.currentTarget);
+    setPostNo(postNo);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const editOrDelete = (event) => {
+    console.log(event.currentTarget);
+
+    if (event.currentTarget.innerText === "수정하기") {
+      console.log("수정 눌렀을 때 : " + postNo);
+      navigate(`/postEdit?postNo=${postNo}`);
+    } else {
+      console.log("삭제 눌렀을 때 : " + postNo);
+      axiosDeletePost(postNo);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -153,17 +185,34 @@ function MyPage() {
               <></>
             ) : (
               <div>
+                <span className="dot_btn">
+                  {" "}
+                  <IconButton
+                    aria-label="more"
+                    id="long-button"
+                    aria-controls={open ? "long-menu" : undefined}
+                    aria-expanded={open ? "true" : undefined}
+                    aria-haspopup="true"
+                    onClick={(e) =>
+                      handleClick(e, postDetail.postNo, postDetail.kakaoId)
+                    }
+                  >
+                    <MoreVertIcon />
+                  </IconButton>
+                </span>
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
                   component="h2"
                 ></Typography>
-                <Avatar
-                  className="profile_img"
-                  src={postDetail.userDTO.kakaoProfileImg}
-                  width="100px"
-                  height="100px"
-                />
+                <Typography className="flex">
+                  <Avatar
+                    className="profile_img"
+                    src={postDetail.userDTO.kakaoProfileImg}
+                    width="100px"
+                    height="100px"
+                  />
+                </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                   {postDetail.userDTO.kakaoNickname}
                 </Typography>
@@ -237,7 +286,7 @@ function MyPage() {
       <div
         id="map"
         className="map"
-        style={{ width: `"${window.innerWidth}"`, height: "350px" }}
+        style={{ width: `"${window.innerWidth}"`, height: "45vh" }}
       ></div>
       <BottomNavigation
         sx={{
@@ -269,6 +318,27 @@ function MyPage() {
           to="/myPage"
         />
       </BottomNavigation>
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          "aria-labelledby": "long-button",
+        }}
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            maxHeight: ITEM_HEIGHT * 4.5,
+            width: "20ch",
+          },
+        }}
+      >
+        {loginOptions.map((option) => (
+          <MenuItem key={option} onClick={(e) => editOrDelete(e)}>
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
     </div>
   );
 }

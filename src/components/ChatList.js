@@ -176,7 +176,7 @@ function ChatList() {
 
   return (
     <div className="chatList_wrap" style={{ position: "relative" }}>
-      <div>{typeof chatInfo.length}</div>
+      <br></br>
       <div
         id="chatList"
         className="chatList"

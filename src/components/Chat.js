@@ -37,7 +37,8 @@ import Paper from "@material-ui/core/Paper";
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-const socket = io.connect("http://192.168.0.81:9999"); // 민기 ip주소
+const socket = io.connect("http://192.168.0.81:9999");
+// const socket = io.connect("http://192.168.0.25:9999");
 // const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
@@ -57,7 +58,6 @@ const Chat = () => {
   const [taboo, setTaboo] = useState(false);
   const [tabooWord, setTabooWord] = useState("");
   const [tabooList, setTabooList] = useState([]);
-  const [exit, setExit] = useState("");
   const [clientList, setClientList] = useState([]);
 
   const [search, setSearch] = useSearchParams();
@@ -73,14 +73,14 @@ const Chat = () => {
 
   // // 첫 입장시 데이터 정보 저장.
   useEffect(() => {
-    console.log("CHATTING # : " + room);
-    socket.emit("room", [room, kakaoId]);
-
-    // 로그인 된 유저 정보 가져오기
     const userData = axiosUser();
+
     userData.then((res) => setKakaoId(res.kakaoId));
     userData.then((res) => setUsername(res.kakaoNickname));
     userData.then((res) => setProfileImg(res.kakaoProfileImg));
+
+    console.log("CHATTING # : " + room);
+    socket.emit("room", [room, kakaoId]);
 
     // 방의 user_cnt +1
     client_in(room);
@@ -107,7 +107,6 @@ const Chat = () => {
   useEffect(() => {
     socket.on("in", (data) => {
       setClientList((prev) => [...prev, data]);
-      // socket.emit("추방자목록", 추방자리스트);
     });
   }, [socket]);
 
@@ -120,6 +119,12 @@ const Chat = () => {
       setClientList(filterArr);
     });
     if (clientList.length < 5) {
+      let arr = clientList.filter(function (data) {
+        return data !== host;
+      });
+      if (arr === []) {
+        // 방 삭제 실행
+      }
     }
   }, [socket]);
 
@@ -305,7 +310,7 @@ const Chat = () => {
       // formdata에 담아 금기어 데이터 백엔드에 전달
       insert_taboo(formData);
       setTabooWord("");
-      socket.emit("tabooUpdate", tabooWord);
+      socket.emit("tabooUpdate", [tabooWord, room]);
       // 내 방 금기어 리스트 추가 !
       setTabooList((prev) => [...prev, tabooWord]);
     }
@@ -315,7 +320,7 @@ const Chat = () => {
   const tabooDelete = async (idx) => {
     console.log(tabooList[idx]);
     deleteTaboo(tabooList[idx]);
-    socket.emit("tabooDelete", idx);
+    socket.emit("tabooDelete", [idx, room]);
 
     let filterArr = tabooList.filter(function (data) {
       return data !== tabooList[idx];
@@ -662,27 +667,34 @@ const Chat = () => {
           }}
         >
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            <span>내 방 금기어 리스트</span>
+            내 방 금기어 리스트
           </Typography>
-          {tabooList.map((taboo, idx) =>
-            taboo !== "" ? (
-              <Typography id="modal-modal-title" variant="h6" component="h2">
-                <span key={idx + "번"} className="text-[14px]">
-                  {taboo}
-                </span>
-                &nbsp;&nbsp;&nbsp;
-                <button
-                  onClick={() => tabooDelete(idx)}
+          <Typography className="h-20vh">
+            {tabooList.map((taboo, idx) =>
+              taboo !== "" ? (
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h2"
                   key={idx}
-                  className="text-[14px]"
                 >
-                  🗑
-                </button>
-              </Typography>
-            ) : (
-              <></>
-            )
-          )}
+                  <span key={idx + "번"} className="text-[14px]">
+                    {taboo}
+                  </span>
+                  &nbsp;&nbsp;&nbsp;
+                  <button
+                    onClick={() => tabooDelete(idx)}
+                    key={idx}
+                    className="text-[14px]"
+                  >
+                    🗑
+                  </button>
+                </Typography>
+              ) : (
+                <></>
+              )
+            )}
+          </Typography>
           <br></br>
           <input
             value={tabooWord}
@@ -729,8 +741,7 @@ const Chat = () => {
           <Button
             onClick={() => {
               // 소켓에서 퇴장하기. socket.disconnect();
-              setExit("");
-              socket.emit("left", [username, room]);
+              socket.emit("left", [username, room, kakaoId]);
               socket.disconnect();
               client_out(room);
               document.location.href = "/";
