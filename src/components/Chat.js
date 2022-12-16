@@ -640,6 +640,7 @@ const Chat = () => {
                   <Typography key={index}>{value}</Typography>
                 ))}
               </Grid>
+              </span>
             </Grid>
           </Grid>
         </Box>

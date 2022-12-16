@@ -334,11 +334,20 @@ function Home() {
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
             <Grid container direction="row" alignItems="center">
               <Grid>
-                <button onClick={logout}>네</button>
+              <Button
+                onClick={logout}
+                variant="outlined">
+                네
+              </Button>
               </Grid>
               &nbsp;&nbsp;&nbsp;
               <Grid>
-                <button onClick={() => setLogoutOpen(false)}>아니요!</button>
+                <Button
+                  onClick={() => setLogoutOpen(false)}
+                  variant="contained"
+                >
+                    아니요
+                </Button>
               </Grid>
             </Grid>
           </Typography>

@@ -73,6 +73,7 @@ export const deleteTaboo = async (tabooWord) => {
   axios.get(`http://localhost:8080/api/deleteTaboo/${tabooWord}`);
 };
 
+
 // // 신고 몇 번 당했는지 값 불러오기
 // export const axiosReportNum = async (roomNo, userId) => {
 //   const response = await axios.get(
@@ -83,3 +84,4 @@ export const deleteTaboo = async (tabooWord) => {
 
 //   return response.data;
 // };
+
