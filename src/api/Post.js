@@ -134,20 +134,38 @@ export const axiosPostLike = async (
   setPrevPage,
   setPosts,
   currentPage,
-  loginId
+  loginId,
+  searchId,
+  setEnd
 ) => {
+  
+  console.log(currentPage)
+  console.log("searchId : " + searchId);
   const response = await axios.get(
-    `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}`
+    `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}&searchId=${searchId}`
   );
 
   console.log("## inside axiosPostLike : " + response.data.dtoList);
+  console.log("## inside axiosPostLike : " + response.data.page);
   // 데이터가 없으면 마지막 페이지였다는걸 표시
   if (!response.data.dtoList.length) {
+    console.log("마지막 페이지 입니다.");
     setWasLastList(true);
     return;
   }
+  setEnd(response.data.end);
   setPrevPage(currentPage);
-  setPosts([...posts, ...response.data.dtoList]);
+  // setPrevPage(response.data.page);
+  let result = [];
+  if(searchId === 0 || currentPage !== 1) {
+    console.log("1페이지가 아닐때 : " + currentPage)
+    result = [...posts, ...response.data.dtoList];
+  } else {
+    console.log("검색했을 때 " + currentPage);
+    result = [...response.data.dtoList];
+  }
+
+  setPosts(result);
 };
 
 // insert Diary - post

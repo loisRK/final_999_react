@@ -5,7 +5,7 @@ import React, { useRef, useEffect, useState } from "react";
 import chattingRooms from "../db/room_mock.json";
 import { useNavigate } from "react-router-dom";
 import { axiosUser } from "../api/User";
-import { axiosGetAllPosts, postData } from "../api/Post";
+import { axiosGetAllPosts, postData, axioUserPosts } from "../api/Post";
 import io from "socket.io-client";
 import {
   Snackbar,
@@ -50,6 +50,9 @@ function Map() {
   const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
   const [modalOpen, setModalOpen] = useState(false);
   const [postDetail, setPostDetail] = useState(null);
+  const [userPosts, setUserPosts] = useState([]);
+  // const [overlayState, setOverlayState] = useState("open");
+  var overlayState = "open";
 
   const alertClick = () => {
     setOpen(!open);
@@ -82,10 +85,11 @@ function Map() {
       console.log("GPS를 지원하지 않습니다.");
     }
   };
-
   useEffect(() => {
     const data = axiosUser();
     data.then((res) => setUsername(res.kakaoNickname));
+    data.then((res) => axioUserPosts(res.kakaoId))
+        .then((res) => setUserPosts(res));
 
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
@@ -136,7 +140,8 @@ function Map() {
     // postsData.then((res) => console.log(res));
     postsData.then((res) => setPosts(res));
 
-    posts.forEach((post) => {
+    // posts.forEach((post) => {
+    userPosts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
       const postNo = post.postNo;
 
@@ -266,13 +271,6 @@ function Map() {
     }
 
     // 카카오맵-오버레이 내용 지정
-    var closeElement = document.createElement("div");
-    closeElement.className = "close";
-    closeElement.id = "close";
-    closeElement.title = "닫기";
-    closeElement.innerHTML =
-      '<img src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png" width="15" height="15">';
-
     var postingElement = document.createElement("li");
     postingElement.className = "posting";
     postingElement.id = "posting";
@@ -291,7 +289,7 @@ function Map() {
 
     var content = document.createElement("div");
     content.className = "overlaybox";
-    content.innerHTML = "    <div class=boxtitle>999</div>";
+    content.innerHTML = "    <div class=boxtitle></div>";
     // '        <li class="posting">' +
     // '            <span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
     // '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>' +
@@ -300,7 +298,6 @@ function Map() {
     // '            <span class="icon"><img src="https://emojigraph.org/media/google/bug_1f41b.png" width="25" height="25"></span>' +
     // '            <span class="title">먹이주기</span>' +
     // "        </li>";
-    content.appendChild(closeElement);
     content.appendChild(postingElement);
     content.appendChild(chattingElement);
 
@@ -325,11 +322,14 @@ function Map() {
     var overlay = new kakao.maps.CustomOverlay({
       position: markerPosition,
       content: content,
-      xAnchor: 0.3,
-      yAnchor: 0.91,
+      // xAnchor: 0.3,
+      // yAnchor: 0.91,
+      
       zIndex: 3,
       clickable: true,
     });
+
+
 
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
@@ -348,21 +348,33 @@ function Map() {
         latlng.La
       );
 
+
       if (mouseDistance > 1) {
         overlay.setMap(null);
         enterOverlay.setMap(null);
         console.log("거리범위 초과" + mouseDistance);
         errorAlertClick();
       } else {
-        overlay.setPosition(latlng);
-        overlay.setMap(map);
-      }
-    });
+        if(overlayState==="open") {
+          // buttonHandler(); // true -> false
+          const currentCenter = map.getCenter();
+          const latitudeDistance = (currentCenter.Ma -latlng.Ma);
+          const logitudeDistance = (currentCenter.La -latlng.La);
+          if(latitudeDistance>=0.005) { 
+            const newCenter = new kakao.maps.LatLng((latitude-latitudeDistance), (longitude-logitudeDistance));
+            map.setCenter(newCenter);
+          }
+          overlayState = "close";
+          overlay.setPosition(latlng);
+          overlay.setMap(map);
+        } else {
+          overlay.setMap(null);
+          overlayState = "open";
+        }
 
-    // 오버레이를 닫기 위해 호출되는 함수
-    closeElement.onclick = function () {
-      overlay.setMap(null);
-    };
+      }
+     
+    });
 
     // posting으로 이동 함수
     postingElement.onclick = function () {
@@ -438,6 +450,7 @@ function Map() {
     gps.addEventListener("click", () => {
       console.log("gps 작동");
       currentPosition();
+      map.setCenter(markerPosition);
     });
   }, [latitude, longitude, posts.length, chatList.length]);
 
@@ -510,7 +523,7 @@ function Map() {
         <div
           id="map"
           className="map"
-          style={{ width: `"${window.innerWidth}"`, height: "500px" }}
+          style={{ width: `"${window.innerWidth}"`, height: "70vh" }}
         >
           <img id="gps_bnt" className="gps_bnt" src="gps.png" />
         </div>

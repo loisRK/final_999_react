@@ -72,11 +72,11 @@ function ChatList() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         function (position) {
-          setLatitude(position.coords.chatLat);
-          setchatLong(position.coords.chatLong);
-          // console.log(
-          //   `chatLat : ${position.coords.chatLat} chatLong : ${position.coords.chatLong}`
-          // );
+          setLatitude(position.coords.latitude);
+          setchatLong(position.coords.longitude);
+          console.log(
+            `chatLat : ${position.coords.chatLat} chatLong : ${position.coords.chatLong}`
+          );
         },
         function (error) {
           console.error(error);
