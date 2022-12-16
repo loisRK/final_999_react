@@ -39,7 +39,7 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   return d;
 }
 
-function Map() {
+function Map({ token }) {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
   const [roomNo, setRoomNo] = useState(null);
@@ -84,8 +84,10 @@ function Map() {
   };
 
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setUsername(res.kakaoNickname));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+    }
 
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
@@ -167,8 +169,9 @@ function Map() {
       });
     });
 
+    // 생성된 채팅방 리스트 가져오기
     const chatData = roomList();
-    chatData.then((response) => console.log(response));
+    // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
 
     // 채팅방 마커 표시하기
@@ -205,14 +208,14 @@ function Map() {
       kakao.maps.event.addListener(roomMarkers, "click", function (mouseEvent) {
         overlay.setMap(null);
         const roomMarker = roomMarkers;
-        roomEnter(roomMarker);
+        roomEnter(roomMarker, room); // 입장하는 함수에 room의 정보를 전달하기 위해 room도 전달
       });
     });
 
-    // 채팅방 입장 오버레이 내용 지정
+    // 채팅방 입장 오버레이 내용 지정 -> 초기값 지정
     var enterElement = document.createElement("div");
     enterElement.className = "enteroveray";
-    enterElement.innerHTML = '<div class="boxtitle">입장하기</div>';
+    enterElement.innerHTML = `<div class="boxtitle">입장하기</div>`;
 
     // 채팅방 입장 오버레이 내용 지정
     var blockElement = document.createElement("div");
@@ -231,7 +234,7 @@ function Map() {
     });
 
     // 채팅방 오버레이 (채팅방 입장)
-    function roomEnter(roomMarker) {
+    function roomEnter(roomMarker, room) {
       const roomPosition = roomMarker.getPosition();
 
       // 클릭한 채팅방의 마커 위치와 사용자의 위치 거리 계산
@@ -248,6 +251,12 @@ function Map() {
         roomPosition.La
       );
       var latlng = roomLatlng;
+
+      // 받아온 room의 정보를 보여주기 위해 enterElement에 값을 다시 선언
+      var enterElement = document.createElement("div");
+      enterElement.className = "enteroveray";
+      enterElement.innerHTML = `<div class="boxtitle">${room.title}<br/>${room.userCnt}명<br/>입장하기</div>`;
+
       if (distance <= 1) {
         enterOverlay.setContent(enterElement);
       } else {
@@ -256,12 +265,16 @@ function Map() {
       enterOverlay.setPosition(latlng);
       enterOverlay.setMap(map);
 
+      // enterElement를 클릭했을 때 실행될 함수
       enterElement.onclick = function () {
         const roomNo = roomMarker.getTitle();
         console.log("ROOM NO : " + roomNo);
-        // ******************* 방으로 이동하는 함수 추가하기!!!!!!!!!! *******************
-        navigate(`/room?roomNo=${roomNo}`);
-        // ******************* 방 인원수 +1 하기 axios 함수 추가!!!!! ********************
+        if (token !== null) {
+          navigate(`/room?roomNo=${roomNo}`);
+        } else {
+          alertClick();
+          // ################################################# 로그인 없이는 방 참여 못한다는 알림 띄우기
+        }
       };
     }
 
@@ -508,9 +521,13 @@ function Map() {
         <div
           id="map"
           className="map"
-          style={{ width: `"${window.innerWidth}"`, height: "500px" }}
+          style={{ width: `"${window.innerWidth}"`, height: "65vh" }}
         >
-          <img id="gps_bnt" className="gps_bnt" src="gps.png" />
+          <img
+            id="gps_bnt"
+            className="gps_bnt mt-[55vh] ml-[3vh]"
+            src="gps.png"
+          />
         </div>
       </div>
 
