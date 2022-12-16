@@ -64,6 +64,12 @@ export const deleteTaboo = async (tabooWord) => {
 };
 
 // 신고 몇 번 당했는지 값 불러오기
-export const axiosReportNum = async (roomNo) => {
-  axios.get(`http://localhost:8080/api/reportNum`);
+export const axiosReportNum = async (roomNo, userId) => {
+  const response = await axios.get(
+    `http://localhost:8080/api/reportNum?roomNo=${roomNo}&reportedId=${userId}`
+  );
+
+  console.log("#### axiosReportNum : " + response);
+
+  return response.data;
 };

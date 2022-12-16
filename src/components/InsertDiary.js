@@ -10,6 +10,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
+import Snackbar from "@mui/material/Snackbar";
+import { Alert } from "@mui/material";
 
 function InsertDiary() {
   // 페이지 전환 시 쿼리스트링방식으로 값 받아오기위한 searchParams 객체 생성
@@ -29,6 +31,12 @@ function InsertDiary() {
   // 데이터 전송을 위한 form, file 객체 생성
   const formData = new FormData();
   const fileArr = new Array();
+
+  const [alertStatus, setAlertStatus] = useState(false);
+
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
 
   const getContent = (e) => {
     e.preventDefault();
@@ -53,32 +61,37 @@ function InsertDiary() {
   };
 
   const sendDiary = (e) => {
-    e.preventDefault();
+    console.log(content);
+    if (content === "") {
+      alertClick();
+    } else {
+      e.preventDefault();
 
-    console.log("postLat" + postLat);
-    console.log("content" + content);
+      console.log("postLat" + postLat);
+      console.log("content" + content);
 
-    formData.append("postLat", postLat);
-    formData.append("postLong", postLong);
-    formData.append("postContent", content);
-    formData.append("files", fileArr[0]);
+      formData.append("postLat", postLat);
+      formData.append("postLong", postLong);
+      formData.append("postContent", content);
+      formData.append("files", fileArr[0]);
 
-    // // file 1개 업로드 test
-    // const input = document.querySelector("#newfiles");
-    // const oneFile = input.files;
-    // formData.append("files", oneFile);
+      // // file 1개 업로드 test
+      // const input = document.querySelector("#newfiles");
+      // const oneFile = input.files;
+      // formData.append("files", oneFile);
 
-    // for (let i = 0; i < fileArr.length; i++) {
-    //   formData.append("files", fileArr[i]);
-    // }
+      // for (let i = 0; i < fileArr.length; i++) {
+      //   formData.append("files", fileArr[i]);
+      // }
 
-    // formdata 값 확인해 보는 법 !
-    // for (let key of formData.keys()) {
-    //   console.log(key, ":", formData.get(key));
-    // }
+      // formdata 값 확인해 보는 법 !
+      // for (let key of formData.keys()) {
+      //   console.log(key, ":", formData.get(key));
+      // }
 
-    createPost(formData);
-    console.log("formData" + formData);
+      createPost(formData);
+      console.log("formData" + formData);
+    }
   };
 
   return (
@@ -103,7 +116,7 @@ function InsertDiary() {
               height="30"
             />
           </Typography>
-          <Button color="success" endIcon={<SendIcon />} type="submit">
+          <Button color="success" endIcon={<SendIcon />} onClick={sendDiary}>
             Send
           </Button>
           <Button
@@ -134,6 +147,20 @@ function InsertDiary() {
           // multiple
           onChange={getFile}
         ></input>
+        <Snackbar
+          className="mapAlert"
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          open={alertStatus}
+          autoHideDuration={1000}
+          onClose={alertClick}
+        >
+          <Alert severity="warning" sx={{ width: "100%" }}>
+            포스팅 내용을 입력해주세요.
+          </Alert>
+        </Snackbar>
       </div>
     </Box>
   );

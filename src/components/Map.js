@@ -228,7 +228,7 @@ function Map({ token }) {
       content: enterElement,
       title: enterElement,
       xAnchor: 0.5,
-      yAnchor: 2.3,
+      yAnchor: 1.6,
       zIndex: 2,
       clickable: true,
     });
@@ -339,7 +339,7 @@ function Map({ token }) {
       position: markerPosition,
       content: content,
       xAnchor: 0.3,
-      yAnchor: 0.91,
+      yAnchor: 1.1,
       zIndex: 3,
       clickable: true,
     });
