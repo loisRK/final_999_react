@@ -10,6 +10,8 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
+import IconButton from "@mui/material/IconButton";
+import PhotoCamera from "@mui/icons-material/PhotoCamera";
 
 function InsertDiary() {
   // 페이지 전환 시 쿼리스트링방식으로 값 받아오기위한 searchParams 객체 생성
@@ -77,7 +79,7 @@ function InsertDiary() {
     //   console.log(key, ":", formData.get(key));
     // }
 
-    createPost(formData);
+    createPost(formData).then((document.location.href = "/posting"));
     console.log("formData" + formData);
   };
 
@@ -127,13 +129,22 @@ function InsertDiary() {
         />
       </div>
       <div>
-        <input
-          type="file"
-          name="newfiles"
-          id="newfiles"
-          // multiple
-          onChange={getFile}
-        ></input>
+        <IconButton
+          color="primary"
+          aria-label="upload picture"
+          component="label"
+        >
+          <input
+            type="file"
+            name="newfiles"
+            id="newfiles"
+            // multiple
+            onChange={getFile}
+            hidden
+            accept="image/*"
+          />
+          <PhotoCamera />
+        </IconButton>
       </div>
     </Box>
   );
