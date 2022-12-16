@@ -23,8 +23,10 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
 
   useEffect(() => {
     // userId 가져오기
-    const data = axiosUser();
-    data.then((res) => setUserId(res.kakaoId));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUserId(res.kakaoId));
+    }
   }, []);
 
   const heartClick = (postNum, liked) => {
@@ -102,7 +104,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
       <div
         onScroll={onScroll}
         ref={listInnerRef}
-        style={{ height: "73vh", overflowY: "auto" }}
+        style={{ height: "73vh", overflowY: "scroll" }}
       >
         {posts.map((post) => {
           console.log(post);

@@ -8,9 +8,6 @@ import { axiosUser } from "../api/User";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 // import io from "socket.io-client";
-import { roomInfo } from "../api/Chatting";
-// import { axiosUser } from "../api/User";
-// const data = axiosUser();
 
 function Chatting() {
   // useNavigate() : 양식이 제출되거나 특정 event가 발생할 때, url 조작

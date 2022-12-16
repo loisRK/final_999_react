@@ -29,8 +29,18 @@ export const roomInfo = async (roomNo) => {
 };
 
 // 해당 유저 신고하기 (메세지를 클릭하여 신고)
+// 신고 몇 번 당했는지 값 불러오기
 export const report = async (formData) => {
-  axios.post("http://localhost:8080/api/report", formData);
+  // axios.post("http://localhost:8080/api/report", formData);
+
+  const response = await axios.post(
+    "http://localhost:8080/api/report",
+    formData
+  );
+
+  console.log("#### axiosReportNum : " + response);
+
+  return response.data;
 };
 
 // 해당 room에 user ++
@@ -63,7 +73,13 @@ export const deleteTaboo = async (tabooWord) => {
   axios.get(`http://localhost:8080/api/deleteTaboo/${tabooWord}`);
 };
 
-// 신고 몇 번 당했는지 값 불러오기
-export const axiosReportNum = async (roomNo) => {
-  axios.get(`http://localhost:8080/api/reportNum`);
-};
+// // 신고 몇 번 당했는지 값 불러오기
+// export const axiosReportNum = async (roomNo, userId) => {
+//   const response = await axios.get(
+//     `http://localhost:8080/api/reportNum?roomNo=${roomNo}&reportedId=${userId}`
+//   );
+
+//   console.log("#### axiosReportNum : " + response);
+
+//   return response.data;
+// };
