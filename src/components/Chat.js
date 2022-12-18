@@ -37,9 +37,9 @@ import Paper from "@material-ui/core/Paper";
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-// const socket = io.connect("http://192.168.0.81:9999");
+const socket = io.connect("http://192.168.0.13:9999");
 // const socket = io.connect("http://192.168.0.25:9999");
-const socket = io.connect("https://server.bnmnil96.repl.co");
+// const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -78,9 +78,9 @@ const Chat = () => {
     userData.then((res) => setKakaoId(res.kakaoId));
     userData.then((res) => setUsername(res.kakaoNickname));
     userData.then((res) => setProfileImg(res.kakaoProfileImg));
+    userData.then((res) => socket.emit("room", [room, res.kakaoId]));
 
     console.log("CHATTING # : " + room);
-    socket.emit("room", [room, kakaoId]);
 
     // 방의 user_cnt +1
     client_in(room);
@@ -107,12 +107,21 @@ const Chat = () => {
   useEffect(() => {
     socket.on("in", (data) => {
       setClientList((prev) => [...prev, data]);
+      socket.emit("list", [room, "222"]);
+    });
+  }, [socket]);
+
+  // 추방자 리스트 받기
+  useEffect(() => {
+    socket.on("returnlist", (data) => {
+      console.log("추방자 리스트 : ", data);
     });
   }, [socket]);
 
   // 퇴장시 clientList 에서 delete
   useEffect(() => {
     socket.on("out", (datas) => {
+      console.log(datas);
       let filterArr = clientList.filter(function (data) {
         return data !== datas;
       });
@@ -157,6 +166,7 @@ const Chat = () => {
 
   // 새로운 채팅이 생성되면 스크롤를 최하단으로 내려줌.
   useEffect(() => {
+    console.log("방문목록", clientList);
     let chat = document.querySelector("#chat");
     chat.scrollTop = chat.scrollHeight;
   }, [messageList]);

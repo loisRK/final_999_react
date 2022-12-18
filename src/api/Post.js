@@ -14,8 +14,8 @@ export const createPost = async (formData) => {
         Authorization: token,
       },
     })
-    .then((res) => console.log("postNo : " + res.data));
-  // .then((document.location.href = "/posting"));
+    .then((res) => console.log("postNo : " + res.data))
+    .then((document.location.href = "/posting"));
 };
 
 // Post 전체 데이터 불러오기 - GET
@@ -140,8 +140,7 @@ export const axiosPostLike = async (
   searchId,
   setEnd
 ) => {
-  
-  console.log(currentPage)
+  console.log(currentPage);
   console.log("searchId : " + searchId);
   const response = await axios.get(
     `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}&searchId=${searchId}`
@@ -159,8 +158,8 @@ export const axiosPostLike = async (
   setPrevPage(currentPage);
   // setPrevPage(response.data.page);
   let result = [];
-  if(searchId === 0 || currentPage !== 1) {
-    console.log("1페이지가 아닐때 : " + currentPage)
+  if (searchId === 0 || currentPage !== 1) {
+    console.log("1페이지가 아닐때 : " + currentPage);
     result = [...posts, ...response.data.dtoList];
   } else {
     console.log("검색했을 때 " + currentPage);

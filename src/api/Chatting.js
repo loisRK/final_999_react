@@ -63,16 +63,15 @@ export const alltabooList = async (roomNo) => {
   const response = await axios.get(
     `http://localhost:8080/api/tabooList/${roomNo}`
   );
-  console.log(response.data);
+  console.log("금기어 리스트 : ", response.data);
   return response.data;
 };
 
 // 해당 금기어 delete !
 export const deleteTaboo = async (tabooWord) => {
-  console.log(tabooWord);
+  console.log("금기어 삭제 : ", tabooWord);
   axios.get(`http://localhost:8080/api/deleteTaboo/${tabooWord}`);
 };
-
 
 // // 신고 몇 번 당했는지 값 불러오기
 // export const axiosReportNum = async (roomNo, userId) => {
@@ -84,4 +83,3 @@ export const deleteTaboo = async (tabooWord) => {
 
 //   return response.data;
 // };
-
