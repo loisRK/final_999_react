@@ -77,8 +77,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
         navigate(`/postEdit?postNo=${postNo}`);
       } else {
         console.log("삭제 눌렀을 때 : " + postNo);
-        axiosDeletePost(postNo)
-        .then((document.location.href = `/posting`))
+        axiosDeletePost(postNo).then((document.location.href = `/posting`));
       }
     }
   };

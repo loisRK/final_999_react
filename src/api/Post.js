@@ -50,13 +50,12 @@ export const postUpdate = async (postNo, formData) => {
   console.log("수정하기!!!!" + formData);
   console.log(postNo);
 
-  await axios
-    .put(`http://localhost:8080/api/updatePost/${postNo}`, formData, {
-      headers: {
-        "Contest-Type": "multipart/form-data",
-      },
-    })
-    .then((document.location.href = `/posting`));
+  await axios.put(`http://localhost:8080/api/updatePost/${postNo}`, formData, {
+    headers: {
+      "Contest-Type": "multipart/form-data",
+    },
+  });
+  // .then((document.location.href = `/posting`));
 };
 
 // post 삭제하기 - delete
@@ -140,8 +139,7 @@ export const axiosPostLike = async (
   searchId,
   setEnd
 ) => {
-  
-  console.log(currentPage)
+  console.log(currentPage);
   console.log("searchId : " + searchId);
   const response = await axios.get(
     `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}&searchId=${searchId}`
@@ -159,8 +157,8 @@ export const axiosPostLike = async (
   setPrevPage(currentPage);
   // setPrevPage(response.data.page);
   let result = [];
-  if(searchId === 0 || currentPage !== 1) {
-    console.log("1페이지가 아닐때 : " + currentPage)
+  if (searchId === 0 || currentPage !== 1) {
+    console.log("1페이지가 아닐때 : " + currentPage);
     result = [...posts, ...response.data.dtoList];
   } else {
     console.log("검색했을 때 " + currentPage);

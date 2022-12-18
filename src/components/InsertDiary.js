@@ -11,7 +11,8 @@ import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import Snackbar from "@mui/material/Snackbar";
-import { Alert } from "@mui/material";
+import { Alert, IconButton } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
 
 function InsertDiary() {
   // 페이지 전환 시 쿼리스트링방식으로 값 받아오기위한 searchParams 객체 생성
@@ -78,12 +79,12 @@ function InsertDiary() {
       // }
 
       // formdata 값 확인해 보는 법 !
-      // for (let key of formData.keys()) {
-      //   console.log(key, ":", formData.get(key));
-      // }
+      for (let key of formData.keys()) {
+        console.log("formdata확인" + key, ":", formData.get(key));
+      }
 
       createPost(formData);
-      window.location.href = "/"
+      // .then((document.location.href = "/posting"));
       console.log("formData" + formData);
     }
   };
@@ -118,7 +119,7 @@ function InsertDiary() {
             endIcon={<DeleteIcon />}
             onClick={() => (window.location.href = "/")}
           >
-            Cancle
+            Cancel
           </Button>
         </Toolbar>
       </AppBar>
@@ -134,13 +135,28 @@ function InsertDiary() {
         />
       </div>
       <div>
-        <input
+        <IconButton
+          color="primary"
+          aria-label="upload picture"
+          component="label"
+        >
+          <input
+            type="file"
+            name="newfiles"
+            id="newfiles"
+            onChange={getFile}
+            hidden
+            // accept="image/*"
+          />
+          <PhotoCamera />
+        </IconButton>
+        {/* <input
           type="file"
           name="newfiles"
           id="newfiles"
           // multiple
           onChange={getFile}
-        ></input>
+        ></input> */}
         <Snackbar
           className="mapAlert"
           anchorOrigin={{
