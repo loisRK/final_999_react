@@ -50,13 +50,12 @@ export const postUpdate = async (postNo, formData) => {
   console.log("수정하기!!!!" + formData);
   console.log(postNo);
 
-  await axios
-    .put(`http://localhost:8080/api/updatePost/${postNo}`, formData, {
-      headers: {
-        "Contest-Type": "multipart/form-data",
-      },
-    })
-    .then((document.location.href = `/posting`));
+  await axios.put(`http://localhost:8080/api/updatePost/${postNo}`, formData, {
+    headers: {
+      "Contest-Type": "multipart/form-data",
+    },
+  });
+  // .then((document.location.href = `/posting`));
 };
 
 // post 삭제하기 - delete
