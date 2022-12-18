@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
-import { roomList } from "../api/Chatting";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -89,8 +88,9 @@ function Map({ token }) {
   useEffect(() => {
     const data = axiosUser();
     data.then((res) => setUsername(res.kakaoNickname));
-    data.then((res) => axioUserPosts(res.kakaoId))
-        .then((res) => setUserPosts(res));
+    data
+      .then((res) => axioUserPosts(res.kakaoId))
+      .then((res) => setUserPosts(res));
 
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
@@ -339,8 +339,6 @@ function Map({ token }) {
       clickable: true,
     });
 
-
-
     // 지도에 클릭 이벤트를 등록합니다
     // 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
     kakao.maps.event.addListener(map, "click", function (mouseEvent) {
@@ -358,20 +356,22 @@ function Map({ token }) {
         latlng.La
       );
 
-
       if (mouseDistance > 1) {
         overlay.setMap(null);
         enterOverlay.setMap(null);
         console.log("거리범위 초과" + mouseDistance);
         errorAlertClick();
       } else {
-        if(overlayState==="open") {
+        if (overlayState === "open") {
           // buttonHandler(); // true -> false
           const currentCenter = map.getCenter();
-          const latitudeDistance = (currentCenter.Ma -latlng.Ma);
-          const logitudeDistance = (currentCenter.La -latlng.La);
-          if(latitudeDistance>=0.005) { 
-            const newCenter = new kakao.maps.LatLng((latitude-latitudeDistance), (longitude-logitudeDistance));
+          const latitudeDistance = currentCenter.Ma - latlng.Ma;
+          const logitudeDistance = currentCenter.La - latlng.La;
+          if (latitudeDistance >= 0.005) {
+            const newCenter = new kakao.maps.LatLng(
+              latitude - latitudeDistance,
+              longitude - logitudeDistance
+            );
             map.setCenter(newCenter);
           }
           overlayState = "close";
@@ -381,9 +381,7 @@ function Map({ token }) {
           overlay.setMap(null);
           overlayState = "open";
         }
-
       }
-     
     });
 
     // posting으로 이동 함수
