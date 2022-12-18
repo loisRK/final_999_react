@@ -37,9 +37,9 @@ import Paper from "@material-ui/core/Paper";
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-const socket = io.connect("http://192.168.0.81:9999");
+// const socket = io.connect("http://192.168.0.81:9999");
 // const socket = io.connect("http://192.168.0.25:9999");
-// const socket = io.connect("https://server.bnmnil96.repl.co");
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -165,7 +165,7 @@ const Chat = () => {
   useEffect(() => {
     socket.on("reportedGugu", (data) => {
       console.log("추방될 사람 id : " + data);
-      setExit(data);
+      // setExit(data);
     });
   }, [socket]);
 
@@ -179,7 +179,7 @@ const Chat = () => {
     //   handleClickOpenKick();
     //   setExit("");
     // }
-  }, [exit]);
+  }, []);
 
   // 내 리스트에 message data 추가 후
   // 소켓에 message data를 담아 서버에 전달 !
@@ -447,7 +447,7 @@ const Chat = () => {
             messageList.map((msg, i) => (
               <PopupState variant="popover" popupId="demo-popup-menu">
                 {(popupState) => (
-                  <div onclick={inputIndex(i)}>
+                  <div onClick={inputIndex(i)}>
                     {/* {username === msg.username ? ( */}
                     {/* <div className="flex"> */}
                     {username !== msg.username ? (
@@ -469,7 +469,7 @@ const Chat = () => {
                         username === msg.username ? "flex justify-end" : ""
                       }`}
                       variant="contained"
-                      // {...bindTrigger(popupState)}
+                      {...bindTrigger(popupState)}
                     >
                       <div
                         className={` ${
@@ -484,8 +484,8 @@ const Chat = () => {
                       </div>
                     </div>
                     {username !== msg.username ? (
-                      <Menu>
-                        {/* <Menu {...bindMenu(popupState)}> */}
+                      // <Menu>
+                      <Menu {...bindMenu(popupState)}>
                         {/* <button
                           component="MenuItem"
                           sx={{ display: "inline" }}
@@ -640,7 +640,6 @@ const Chat = () => {
                   <Typography key={index}>{value}</Typography>
                 ))}
               </Grid>
-              </span>
             </Grid>
           </Grid>
         </Box>
