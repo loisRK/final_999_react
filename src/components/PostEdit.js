@@ -110,7 +110,9 @@ function PostEdit() {
       console.log("formdata확인" + key, ":", formData.get(key));
     }
 
-    postUpdate(postNo, formData, currentPage);
+    postUpdate(postNo, formData, currentPage).then(
+      (document.location.href = `/posting`)
+    );
   };
 
   return (
