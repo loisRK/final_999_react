@@ -79,11 +79,12 @@ function InsertDiary() {
       // }
 
       // formdata 값 확인해 보는 법 !
-      // for (let key of formData.keys()) {
-      //   console.log(key, ":", formData.get(key));
-      // }
+      for (let key of formData.keys()) {
+        console.log("formdata확인" + key, ":", formData.get(key));
+      }
 
-      createPost(formData).then((document.location.href = "/posting"));
+      createPost(formData);
+      // .then((document.location.href = "/posting"));
       console.log("formData" + formData);
     }
   };
@@ -143,7 +144,6 @@ function InsertDiary() {
             type="file"
             name="newfiles"
             id="newfiles"
-            // multiple
             onChange={getFile}
             hidden
             // accept="image/*"

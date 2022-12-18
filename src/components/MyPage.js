@@ -64,7 +64,6 @@ function MyPage() {
   }
 
   const token = window.localStorage.getItem("token");
-
   useEffect(() => {
     const data = axiosUser();
     data.then((res) => setNickname(res.kakaoNickname));
@@ -73,7 +72,6 @@ function MyPage() {
     data
       .then((res) => axioUserPosts(res.kakaoId))
       .then((res) => setUserPosts(res));
-
     // const postsData = axioUserPosts(userId);
 
     // 지도생성
