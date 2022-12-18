@@ -37,9 +37,9 @@ import Paper from "@material-ui/core/Paper";
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-const socket = io.connect("http://192.168.0.81:9999");
+// const socket = io.connect("http://192.168.0.81:9999");
 // const socket = io.connect("http://192.168.0.25:9999");
-// const socket = io.connect("https://server.bnmnil96.repl.co");
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -165,21 +165,20 @@ const Chat = () => {
   useEffect(() => {
     socket.on("reportedGugu", (data) => {
       console.log("추방될 사람 id : " + data);
-      setExit(data);
     });
   }, [socket]);
 
   // 신고 당한 사람이 나인지 확인
-  useEffect(() => {
-    // console.log(kakaoId);
-    // console.log(exit);
-    // 신고 당한 사람이 나면 강퇴당하기 실행
-    // ###################################################################################### 아래 주석 나중에 지우기.. exit 리스트 어떻게 할까..
-    // if (kakaoId === exit) {
-    //   handleClickOpenKick();
-    //   setExit("");
-    // }
-  }, [exit]);
+  // useEffect(() => {
+  //   // console.log(kakaoId);
+  //   // console.log(exit);
+  //   // 신고 당한 사람이 나면 강퇴당하기 실행
+  //   // ###################################################################################### 아래 주석 나중에 지우기.. exit 리스트 어떻게 할까..
+  //   // if (kakaoId === exit) {
+  //   //   handleClickOpenKick();
+  //   //   setExit("");
+  //   // }
+  // }, [exit]);
 
   // 내 리스트에 message data 추가 후
   // 소켓에 message data를 담아 서버에 전달 !
@@ -640,7 +639,6 @@ const Chat = () => {
                   <Typography key={index}>{value}</Typography>
                 ))}
               </Grid>
-              </span>
             </Grid>
           </Grid>
         </Box>
