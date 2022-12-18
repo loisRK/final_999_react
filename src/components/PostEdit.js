@@ -151,7 +151,7 @@ function PostEdit() {
                 sx={{ flexGrow: 1 }}
                 style={{ color: "#4d5749" }}
               >
-                Post Edit Page (PostNo : {postNo})
+                Post Edit Page
               </Typography>
               {/* 수정 submit버튼 */}
               <Button

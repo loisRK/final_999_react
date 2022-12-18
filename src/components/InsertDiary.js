@@ -12,24 +12,18 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert } from "@mui/material";
-import IconButton from "@mui/material/IconButton";
-import PhotoCamera from "@mui/icons-material/PhotoCamera";
 
 function InsertDiary() {
   // 페이지 전환 시 쿼리스트링방식으로 값 받아오기위한 searchParams 객체 생성
   const [search, setSearch] = useSearchParams();
-
   // post 위치 위도(lat), 경도(long)
   const postLat = search.get("lat");
   const postLong = search.get("long");
   console.log(postLat);
-
   // post 내용
   const [content, setContent] = useState("");
-
   // post 첨부 이미지(1개)
   const [addedFile, setAddedFile] = useState([]);
-
   // 데이터 전송을 위한 form, file 객체 생성
   const formData = new FormData();
   const fileArr = new Array();
@@ -45,19 +39,16 @@ function InsertDiary() {
     console.log(e.target.value);
     setContent(e.target.value);
   };
-
   const getFile = (e) => {
     console.log(e.target.files);
     const input = document.querySelector("#newfiles");
     const files = input.files;
     const arr = Array.from(files);
     console.log("arr : " + arr);
-
     for (let i = 0; i < arr.length; i++) {
       fileArr.push(arr[i]);
       console.log(arr[i]);
     }
-
     console.log(addedFile);
     console.log(fileArr);
   };
@@ -91,76 +82,82 @@ function InsertDiary() {
       //   console.log(key, ":", formData.get(key));
       // }
 
-      createPost(formData).then((document.location.href = "/posting"));
+      createPost(formData);
+      window.location.href = "/"
       console.log("formData" + formData);
     }
-
-    return (
-      <Box
-        component="form"
-        sx={{
-          "& .MuiTextField-root": { m: 2, width: "50ch" },
-          flexGrow: 1,
-        }}
-        noValidate
-        autoComplete="off"
-        method="POST"
-        onSubmit={(e) => sendDiary(e)}
-        encType="multipart/form-data"
-      >
-        <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-          <Toolbar>
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              <img
-                src="https://emojigraph.org/media/openmoji/feather_1fab6.png"
-                width="30"
-                height="30"
-              />
-            </Typography>
-            <Button color="success" endIcon={<SendIcon />} onClick={sendDiary}>
-              Send
-            </Button>
-            <Button
-              color="error"
-              endIcon={<DeleteIcon />}
-              onClick={() => (window.location.href = "/")}
-            >
-              Cancle
-            </Button>
-          </Toolbar>
-        </AppBar>
-        <div>
-          <TextField
-            id="outlined-multiline-static"
-            label="Content"
-            name="content"
-            multiline
-            rows={4}
-            onChange={getContent}
-            defaultValue={content}
-          />
-        </div>
-        <div>
-          <IconButton
-            color="primary"
-            aria-label="upload picture"
-            component="label"
-          >
-            <input
-              type="file"
-              name="newfiles"
-              id="newfiles"
-              // multiple
-              onChange={getFile}
-              hidden
-              accept="image/*"
-            />
-            <PhotoCamera />
-          </IconButton>
-        </div>
-      </Box>
-    );
   };
+
+  return (
+    <Box
+      component="form"
+      sx={{
+        "& .MuiTextField-root": { m: 2, width: "50ch" },
+        flexGrow: 1,
+      }}
+      noValidate
+      autoComplete="off"
+      method="POST"
+      onSubmit={(e) => sendDiary(e)}
+      encType="multipart/form-data"
+    >
+      <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            <img
+              src="https://emojigraph.org/media/openmoji/feather_1fab6.png"
+              width="30"
+              height="30"
+            />
+          </Typography>
+          <Button color="success" endIcon={<SendIcon />} onClick={sendDiary}>
+            Send
+          </Button>
+          <Button
+            color="error"
+            endIcon={<DeleteIcon />}
+            onClick={() => (window.location.href = "/")}
+          >
+            Cancle
+          </Button>
+        </Toolbar>
+      </AppBar>
+      <div>
+        <TextField
+          id="outlined-multiline-static"
+          label="Content"
+          name="content"
+          multiline
+          rows={4}
+          onChange={getContent}
+          defaultValue={content}
+        />
+      </div>
+      <div>
+        <input
+          type="file"
+          name="newfiles"
+          id="newfiles"
+          // multiple
+          onChange={getFile}
+        ></input>
+        <Snackbar
+          className="mapAlert"
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          open={alertStatus}
+          autoHideDuration={1000}
+          onClose={alertClick}
+        >
+          <Alert severity="warning" sx={{ width: "100%" }}>
+            포스팅 내용을 입력해주세요.
+          </Alert>
+        </Snackbar>
+      </div>
+    </Box>
+  );
 }
 
 export default InsertDiary;

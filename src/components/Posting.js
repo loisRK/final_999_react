@@ -4,7 +4,7 @@ import Posts from "./Posts";
 import PostsTest from "./PostsTest";
 import SearchBar from "./SearchBar";
 import { axiosPostLike } from "../api/Post";
-import { Link, useNavigate , useSearchParams} from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import {
   AppBar,
   BottomNavigation,
@@ -65,65 +65,96 @@ function Posting() {
 
   // 존재하지 않는 사용자 alert 발생
   useEffect(() => {
-    if(wasLastList) {
+    if (wasLastList) {
       setAlertStatus2(!alertStatus2);
-      setTimeout(function() {
-        setWasLastList(wasLastList => !wasLastList);
+      setTimeout(function () {
+        setWasLastList((wasLastList) => !wasLastList);
         setSearchId(null);
       }, 500);
     }
-  }, [wasLastList])
+  }, [wasLastList]);
 
   useEffect(() => {
-
-    console.log("키워드" + searchId );
+    console.log("키워드" + searchId);
     // infinite scroll 테스트
     if (!wasLastList && prevPage !== currentPage) {
-          axiosUser().then((res) => {
-            console.log("##### id : " + res.kakaoId);
-            axiosPostLike(
+      {
+        token !== null
+          ? axiosUser().then((res) => {
+              console.log("##### id : " + res.kakaoId);
+              axiosPostLike(
+                posts,
+                setWasLastList,
+                setPrevPage,
+                setPosts,
+                currentPage,
+                res.kakaoId,
+                searchId !== null ? searchId : "null",
+                setEnd
+              );
+            })
+          : axiosPostLike(
               posts,
               setWasLastList,
               setPrevPage,
               setPosts,
               currentPage,
-              token !== null ? res.kakaoId : 999,
+              999,
               searchId !== null ? searchId : "null",
               setEnd
             );
-          })
+      }
       // postData(posts, setWasLastList, setPrevPage, setPosts, currentPage);
     }
   }, [
-    // searchId, 
-    currentPage, wasLastList, prevPage]);
+    // searchId,
+    currentPage,
+    wasLastList,
+    prevPage,
+  ]);
   console.log("######## POSTS : " + posts);
-  
-  useEffect(()=>{
-    console.log('go home')
-    axiosUser().then((res) => {
-      console.log("##### id : " + res.kakaoId);
-      axiosPostLike(
-        posts,
-        setWasLastList,
-        setPrevPage,
-        setPosts,
-        currentPage,
-        token !== null ? res.kakaoId : 999,
-        searchId !== null ? searchId : "null",
-        setEnd
-      );
-    })
-  },[searchId]);
+
+  useEffect(() => {
+    token !== null
+      ? axiosUser().then((res) => {
+          // console.log("go home");
+          // console.log("##### id : " + res.kakaoId);
+          axiosPostLike(
+            posts,
+            setWasLastList,
+            setPrevPage,
+            setPosts,
+            currentPage,
+            res.kakaoId,
+            searchId !== null ? searchId : "null",
+            setEnd
+          );
+        })
+      : axiosPostLike(
+          posts,
+          setWasLastList,
+          setPrevPage,
+          setPosts,
+          currentPage,
+          999,
+          searchId !== null ? searchId : "null",
+          setEnd
+        );
+  }, [searchId]);
 
   const onScroll = () => {
     if (listInnerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
       // console.log(`${scrollTop + clientHeight} >= ${scrollHeight}`);
       // if ((Math.ceil(scrollTop) + clientHeight >= scrollHeight) || currentPage!==end) {
-      if (Math.ceil(scrollTop) + clientHeight >= scrollHeight && (currentPage < end)) {
-        console.log("스크롤 할 때 페이지 번호" +currentPage + "마지막 페이지"+end);
-        setCurrentPage(currentPage + 1)
+      if (
+        Math.ceil(scrollTop) + clientHeight >= scrollHeight &&
+        currentPage < end
+      ) {
+        console.log(
+          "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
+        );
+        setCurrentPage(currentPage + 1);
       }
     }
   };
@@ -154,13 +185,13 @@ function Posting() {
           </Toolbar>
         </Container>
       </AppBar>
-      <SearchBar 
-      setSearchId={setSearchId}
-      setPosts={setPosts}
-      setPrevPage={setPrevPage}
-      setCurrentPage={setCurrentPage}
-      setWasLastList={setWasLastList}
-      setAlertStatus2={setAlertStatus2}
+      <SearchBar
+        setSearchId={setSearchId}
+        setPosts={setPosts}
+        setPrevPage={setPrevPage}
+        setCurrentPage={setCurrentPage}
+        setWasLastList={setWasLastList}
+        setAlertStatus2={setAlertStatus2}
       />
       {/* <PostsTest
         onScroll={onScroll}
@@ -215,21 +246,20 @@ function Posting() {
           로그인이 필요한 기능입니다.
         </Alert>
       </Snackbar>
-          <Snackbar
-            className="mapAlert"
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "center",
-            }}
-            open={alertStatus2}
-            autoHideDuration={1000}
-            onClose={alertClick2}
-            >
-            <Alert severity="warning" sx={{ width: "100%" }}>
-              존재하지 않는 사용자 입니다.
-            </Alert>
-        </Snackbar>
-      
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertStatus2}
+        autoHideDuration={1000}
+        onClose={alertClick2}
+      >
+        <Alert severity="warning" sx={{ width: "100%" }}>
+          존재하지 않는 사용자 입니다.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

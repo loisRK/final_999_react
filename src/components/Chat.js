@@ -37,9 +37,9 @@ import Paper from "@material-ui/core/Paper";
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-const socket = io.connect("http://192.168.0.81:9999");
+// const socket = io.connect("http://192.168.0.81:9999");
 // const socket = io.connect("http://192.168.0.25:9999");
-// const socket = io.connect("https://server.bnmnil96.repl.co");
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -162,15 +162,15 @@ const Chat = () => {
   }, [messageList]);
 
   // 신고가 3번 이상이면 추방 당할 사람으로 setExit으로 저장
-  useEffect(() => {
-    socket.on("reportedGugu", (data) => {
-      console.log("추방될 사람 id : " + data);
-      setExit(data);
-    });
-  }, [socket]);
+  // useEffect(() => {
+  //   socket.on("reportedGugu", (data) => {
+  //     console.log("추방될 사람 id : " + data);
+  //     setExit(data);
+  //   });
+  // }, [socket]);
 
   // 신고 당한 사람이 나인지 확인
-  useEffect(() => {
+  // useEffect(() => {
     // console.log(kakaoId);
     // console.log(exit);
     // 신고 당한 사람이 나면 강퇴당하기 실행
@@ -179,7 +179,7 @@ const Chat = () => {
     //   handleClickOpenKick();
     //   setExit("");
     // }
-  }, [exit]);
+  // }, [exit]);
 
   // 내 리스트에 message data 추가 후
   // 소켓에 message data를 담아 서버에 전달 !
@@ -389,31 +389,6 @@ const Chat = () => {
             </Toolbar>
           </AppBar>
         </Box>
-        {/* <div className="w-full h-16 bg-gray-600 flex items-center p-3">
-          {/* <div className="w-12 h-12 bg-white rounded-full"></div>
-          {/* 프로필 지정 */}
-        {/* <Avatar alt={username} src={profileImg} className="w-12 h-12" />
-          <div className="m-5 text-white">
-            {clients !== "" ? (
-              <div className="flex">{`${clients} 명`}</div>
-            ) : (
-              <></>
-            )}
-            <div className="flex">
-              <div>{tags}</div>
-            </div>
-          </div> */}
-        {/* <a
-            href="/"
-            className="ml-auto text-white w-14 bg-gray-600 text-white h-8 rounded-xl"
-          >
-            EXIT
-          </a> */}
-        {/* <div className="ml-auto"> */}
-        {/* <Button variant="contained" style={{backgroundColor : "gray"}} onClick={handleClickOpen}>
-            EXIT
-          </Button> */}
-        {/* </div> */}
         <Dialog
           open={open}
           onClose={handleClose}
@@ -469,7 +444,7 @@ const Chat = () => {
                         username === msg.username ? "flex justify-end" : ""
                       }`}
                       variant="contained"
-                      // {...bindTrigger(popupState)}
+                      {...bindTrigger(popupState)}
                     >
                       <div
                         className={` ${
@@ -484,8 +459,8 @@ const Chat = () => {
                       </div>
                     </div>
                     {username !== msg.username ? (
-                      <Menu>
-                        {/* <Menu {...bindMenu(popupState)}> */}
+                      // <Menu>
+                        <Menu {...bindMenu(popupState)}>
                         {/* <button
                           component="MenuItem"
                           sx={{ display: "inline" }}

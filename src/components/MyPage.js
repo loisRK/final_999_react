@@ -156,6 +156,22 @@ function MyPage() {
     }
   };
 
+  function time(postedDate) {
+    const today = new Date();
+    const postDate = new Date(postedDate);
+    const postedTime = Math.ceil(
+      (today.getTime() - postDate.getTime()) / (1000 * 60)
+    );
+
+    if (postedTime >= 1440) {
+      return "" + Math.round(postedTime / 3600) + "d";
+    } else if (postedTime >= 60) {
+      return "" + Math.round(postedTime / 60) + "h";
+    } else {
+      return "" + Math.round(postedTime) + "m";
+    }
+  }
+
   return (
     <div>
       <div>
@@ -214,22 +230,22 @@ function MyPage() {
                   />
                 </Typography>
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  {postDetail.userDTO.kakaoNickname}
+                  @{postDetail.userDTO.kakaoNickname}&nbsp;
+                  <span className="post_detail">{time(postDetail.postDate)}</span>&nbsp;
+                  {/* {postDetail.userDTO.kakaoNickname} */}
                 </Typography>
-                <span className="post_detail">
+                {/* <span className="post_detail">
                   @{postDetail.userDTO.kakaoNickname}
-                </span>
-                &nbsp;
-                <span className="post_detail">{postDetail.postDate}</span>&nbsp;
-                <span className="post_detail">post#{postDetail.postNo}</span>
-                &nbsp;
+                </span> */}
+                {/* <span className="post_detail">{time(postDetail.postDate)}</span>&nbsp; */}
+                {/* <span className="post_detail">post#{postDetail.postNo}</span> */}
                 <div className="post_content">{postDetail.postContent}</div>
                 {postDetail.postImg === "" ? (
                   <></>
                 ) : (
                   <img
                     className="post_img"
-                    src={`/img/${postDetail.postImg}`}
+                    src={postDetail.postImg}
                   />
                 )}
               </div>
