@@ -9,11 +9,12 @@
 .gps_bnt {
   height: 30px;
   width: 30px;
-  position: absolute;
+  position: relative;
+  float: left;
   z-index: 100;
   display: block;
-
 }
+
 .gps_bnt:hover {
   cursor: pointer;
 }
@@ -25,7 +26,7 @@
   background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/box_movie.png")
     no-repeat;
   padding: 15px 10px;
-  box-shadow: 5px 5px 5px rgba(0,0,0,0.55);
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.55);
 }
 .overlaybox div,
 ul {

@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import {
   AccountCircleOutlined,
   HomeOutlined,
-  Image,
   StickyNote2Outlined,
 } from "@mui/icons-material";
 import {
@@ -16,7 +15,6 @@ import {
   Box,
   Button,
   FormGroup,
-  Grid,
   IconButton,
   Modal,
   Stack,
@@ -26,17 +24,73 @@ import {
   Switch,
   Snackbar,
   Alert,
+  Menu,
+  MenuItem,
+  FormControlLabel,
 } from "@mui/material";
 import { KAKAO_AUTH_URL } from "./KakaoLoginData";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
 import { KAKAO_LOGOUT_URL } from "./KakaoLogoutData";
 import gugu from "../img/bidulgi.png";
+import dulgi from "../img/graydulgi.png";
 import gugu_tilt from "../img/dulgi_headtilt.png";
 import gugu_login from "../img/dulgi_login.jpg";
 import { Container } from "@mui/system";
-import styled from "@emotion/styled";
+// import styled from "@emotion/styled";
+import { styled } from "@mui/material/styles";
 import { axiosUser } from "../api/User";
 import ChatList from "./ChatList";
+
+const IOSSwitch = styled((props) => (
+  <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
+))(({ theme }) => ({
+  width: 42,
+  height: 26,
+  padding: 0,
+  "& .MuiSwitch-switchBase": {
+    padding: 0,
+    margin: 2,
+    transitionDuration: "300ms",
+    "&.Mui-checked": {
+      transform: "translateX(16px)",
+      color: "#fff",
+      "& + .MuiSwitch-track": {
+        backgroundColor: theme.palette.mode === "dark" ? "#2ECA45" : "#65C466",
+        opacity: 1,
+        border: 0,
+      },
+      "&.Mui-disabled + .MuiSwitch-track": {
+        opacity: 0.5,
+      },
+    },
+    "&.Mui-focusVisible .MuiSwitch-thumb": {
+      color: "#33cf4d",
+      border: "6px solid #fff",
+    },
+    "&.Mui-disabled .MuiSwitch-thumb": {
+      color:
+        theme.palette.mode === "light"
+          ? theme.palette.grey[100]
+          : theme.palette.grey[600],
+    },
+    "&.Mui-disabled + .MuiSwitch-track": {
+      opacity: theme.palette.mode === "light" ? 0.7 : 0.3,
+    },
+  },
+  "& .MuiSwitch-thumb": {
+    boxSizing: "border-box",
+    width: 22,
+    height: 22,
+  },
+  "& .MuiSwitch-track": {
+    borderRadius: 26 / 2,
+    backgroundColor: theme.palette.mode === "light" ? "#E9E9EA" : "#39393D",
+    opacity: 1,
+    transition: theme.transitions.create(["background-color"], {
+      duration: 500,
+    }),
+  },
+}));
 
 const style = {
   position: "absolute",
@@ -59,6 +113,39 @@ const MyThemeComponent = styled("div")(({ theme }) => ({
 }));
 
 function Home() {
+  const token = window.localStorage.getItem("token");
+  const [settings, setSettings] = useState([]);
+
+  const [anchorElUser, setAnchorElUser] = useState(null);
+
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  const menuAction = (setting) => {
+    console.log("menu test: " + setting);
+    handleCloseUserMenu();
+    switch (setting) {
+      case "Login":
+        setOpen(true);
+        break;
+      case "My Profile":
+        // 내 프로필 모달로 보여주기
+        alert("프로필보여주기");
+        break;
+      case "Logout":
+        // kakaoLogout 이동
+        setLogoutOpen(true);
+        break;
+      default:
+        alert("아무것도 선택하지 않음");
+    }
+  };
+
   const handleLogin = () => {
     window.location.href = KAKAO_AUTH_URL;
   };
@@ -71,7 +158,6 @@ function Home() {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [toggled, setToggled] = useState(false);
 
-  const token = window.localStorage.getItem("token");
   // 하단 바 로그인 상태별 paging 옵션
   const [alertStatus, setAlertStatus] = useState(false);
   const navigate = useNavigate();
@@ -96,6 +182,9 @@ function Home() {
     if (token !== null) {
       const data = axiosUser();
       data.then((res) => setProfileImg(res.kakaoProfileImg));
+      setSettings(["My Profile", "Logout"]);
+    } else {
+      setSettings(["Login"]);
     }
   }, []);
 
@@ -105,6 +194,13 @@ function Home() {
         <AppBar position="static" sx={{ background: "#B6E2A1" }}>
           <Container maxWidth="xl">
             <Toolbar disableGutters>
+              <IconButton
+                onClick={() => {
+                  document.location.href = "/";
+                }}
+              >
+                <Avatar alt="gugu" src={gugu} />
+              </IconButton>
               <Typography
                 variant="h6"
                 noWrap
@@ -118,70 +214,62 @@ function Home() {
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
-                  paddingRight: 2,
                 }}
               >
-                999.com
+                <b>999.com</b>
+              </Typography>
+              <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }} />
+              <Typography
+                variant="h6"
+                noWrap
+                component="a"
+                href=""
+                sx={{
+                  mr: 2,
+                  display: { xs: "flex", md: "none" },
+                  flexGrow: 1,
+                  fontFamily: "monospace",
+                  fontWeight: 700,
+                  letterSpacing: ".3rem",
+                  color: "inherit",
+                  textDecoration: "none",
+                }}
+              >
+                <b>999.com</b>
               </Typography>
               <Box sx={{ flexGrow: 0 }}>
-                <Tooltip title="Home">
-                  <IconButton
-                    onClick={() => {
-                      document.location.href = "/";
-                    }}
-                    sx={{ p: 0 }}
-                  >
-                    <Avatar alt="gugu" src={gugu} />
+                <Tooltip title="Account settings">
+                  <IconButton size="small" onClick={handleOpenUserMenu}>
+                    {token ? (
+                      <Avatar alt="myProfile" src={profileImg} />
+                    ) : (
+                      <Avatar />
+                    )}
                   </IconButton>
                 </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {settings.map((setting) => (
+                    <MenuItem key={setting} onClick={() => menuAction(setting)}>
+                      <Typography textAlign="center">{setting}</Typography>
+                    </MenuItem>
+                  ))}
+                </Menu>
               </Box>
-              <Grid
-                container
-                justifyContent="flex-end"
-                direction="row"
-                alignItems="center"
-              >
-                {token ? (
-                  <Grid sx={{ flexGrow: 0 }}>
-                    <Tooltip title="My Profile">
-                      <IconButton
-                        onClick={() => {
-                          document.location.href = "/myPage";
-                        }}
-                        sx={{ p: 0 }}
-                      >
-                        <Avatar alt="myProfile" src={profileImg} />
-                      </IconButton>
-                    </Tooltip>
-                  </Grid>
-                ) : (
-                  <></>
-                )}
-                <Grid>&nbsp;&nbsp;&nbsp;</Grid>
-                <Grid>
-                  {token === null ? (
-                    <Button
-                      sx={{ right: 0 }}
-                      onClick={() => setOpen(true)}
-                      justifycontent="flex-end"
-                      variant="contained"
-                      color="success"
-                    >
-                      Login
-                    </Button>
-                  ) : (
-                    <Button
-                      sx={{ right: 0 }}
-                      onClick={() => setLogoutOpen(true)}
-                      justifycontent="flex-end"
-                      variant="contained"
-                      color="success"
-                    >
-                      Logout
-                    </Button>
-                  )}
-                </Grid>
-              </Grid>
             </Toolbar>
           </Container>
         </AppBar>
@@ -192,17 +280,29 @@ function Home() {
         <FormGroup sx={{ alignContent: "center" }}>
           <Stack direction="row" spacing={1} alignItems="center">
             <Typography>Map</Typography>
-            <Switch
+            {/* <FormControlLabel
+              control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
+              label="iOS style"
+            /> */}
+            <IOSSwitch
+              sx={{ m: 1 }}
               checked={toggled}
               size="large"
               inputProps={{ "aria-label": "ant design" }}
               onChange={(e) => setToggled(e.target.checked)}
             />
+            {/* <Switch
+              checked={toggled}
+              size="large"
+              inputProps={{ "aria-label": "ant design" }}
+              onChange={(e) => setToggled(e.target.checked)}
+            /> */}
             <Typography>List</Typography>
           </Stack>
         </FormGroup>
       </div>
-      <div>{toggled === false ? <Map /> : <ChatList />}</div>
+      <br />
+      <div>{toggled === false ? <Map token={token} /> : <ChatList />}</div>
       {/* <Map /> */}
       <br />
       <BottomNavigation
@@ -230,8 +330,6 @@ function Home() {
         <BottomNavigationAction
           label="My Page"
           icon={<AccountCircleOutlined />}
-          // component={Button}
-          // to="/myPage"
           onClick={loginCheck}
         />
       </BottomNavigation>
@@ -329,28 +427,18 @@ function Home() {
               position: "relative",
               display: "flex",
               alignItems: "center",
+              marginBottom: 20,
             }}
           />
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Grid container direction="row" alignItems="center">
-              <Grid>
-              <Button
-                onClick={logout}
-                variant="outlined">
-                네
-              </Button>
-              </Grid>
-              &nbsp;&nbsp;&nbsp;
-              <Grid>
-                <Button
-                  onClick={() => setLogoutOpen(false)}
-                  variant="contained"
-                >
-                    아니요
-                </Button>
-              </Grid>
-            </Grid>
-          </Typography>
+          <Box>
+            <Button onClick={logout} variant="outlined">
+              네
+            </Button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button onClick={() => setLogoutOpen(false)} variant="contained">
+              아니요
+            </Button>
+          </Box>
         </Box>
       </Modal>
     </div>
