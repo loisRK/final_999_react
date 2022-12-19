@@ -2,11 +2,10 @@ import React, { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { axiosDeletePost, axiosLike, postData } from "../api/Post";
 import { useNavigate } from "react-router-dom";
 import { Avatar, Checkbox, Snackbar, Alert } from "@mui/material";
-import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { Favorite, FavoriteBorder, MoreVertIcon } from "@mui/icons-material";
 import { axiosUser } from "../api/User";
 
 const ITEM_HEIGHT = 20;
