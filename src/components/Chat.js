@@ -444,9 +444,9 @@ const Chat = () => {
         <div id="chat" className="w-auto h-[80vh] overflow-y-auto">
           {messageList &&
             messageList.map((msg, i) => (
-              <PopupState variant="popover" popupId="demo-popup-menu">
+              <PopupState variant="popover" popupId="demo-popup-menu" key={i}>
                 {(popupState) => (
-                  <div onclick={inputIndex(i)}>
+                  <div onClick={ () =>inputIndex(i)}>
                     {/* {username === msg.username ? ( */}
                     {/* <div className="flex"> */}
                     {username !== msg.username ? (

@@ -1,15 +1,10 @@
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  FormEvent,
-  useCallback,
-} from "react";
-import { postData, postUpdate } from "../api/Post";
-import { fileDownload, deleteFile } from "../api/File";
-import { useParams, useSearchParams, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { axiosUser, axiosUserUpdate } from "../api/User";
 import "../App.css";
 import gugu from "../img/bidulgi.png";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SendIcon from "@mui/icons-material/Send";
 import {
   AppBar,
   Avatar,
@@ -27,51 +22,24 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Grid
 } from "@mui/material";
 
-function PostEdit() {
-  // textarea 글 분량에 따른 자동 높이 조절 메소드
-  const textRef = useRef();
-  const handleResizeHeight = useCallback(() => {
-    textRef.current.style.height = "auto";
-    textRef.current.style.height = textRef.current.scrollHeight + "px";
-  }, []);
-  // 페이지 전환 시 쿼리스트링방식으로 값 받아오기
+function Profile() {
   const [search, setSearch] = useSearchParams();
-  const postNo = search.get("postNo");
-  const currentPage = search.get("currentPage");
-  console.log("postNo : " + postNo);
-  console.log("currentPage : " + currentPage);
+  const userId = search.get("userId");
 
   // 빈 객체 선언
   const [files, setFiles] = useState([]);
-  const [post, setPost] = useState({});
 
-  // // formData 객체로 전달할 경우 필요한 변수
-  // const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [postImg, setPostImg] = useState("");
+  // formData 객체로 전달할 경우 필요한 변수
+  const [email, setEmail] = useState(search.get("email"));
+  const [nickname, setNickname] = useState(search.get("nickname"));
   const [fileImage, setFileImage] = useState("");
-  const [addedFile, setAddedFile] = useState([]);
+  const [addedFile, setAddedFile] = useState([search.get("image")]);
+  const [currentEmail, setCurrentEmail] = useState(search.get("email"));
+  const [currentNickname, setCurrentNickname] = useState(search.get("nickname"));
 
-  // 동기로 diary 데이터 불러오는 useEffect
-  useEffect(() => {
-    const datas = postData(postNo);
-    datas.then((response) => setPost(response));
-    datas.then((response) => setFiles(response.fileDTOs));
-    datas.then((response) => setContent(response.postContent));
-    datas.then((response) => setPostImg(response.postImg));
-
-    console.log("post " + post);
-    console.log("content " + content);
-    console.log("post.content " + post.postContent);
-  }, []);
-  // fileNo(FileEntity PK)로 해당 file 삭제
-  const deleteFiles = (e, fileNo, postNo) => {
-    e.preventDefault();
-    // axios로 fileNo 전달해서 file delete 쿼리 실행
-    deleteFile(fileNo, postNo);
-  };
 
   // 데이터 전송을 위한 form, file 객체 생성
   const formData = new FormData();
@@ -82,12 +50,18 @@ function PostEdit() {
     console.log(fileImage);
     URL.revokeObjectURL(fileImage);
     setFileImage(files);
-    setAddedFile([]);
   }
 
-  const inputFromHandlerContent = (e) => {
-    setContent(e.target.value);
+  //  변경하려는 email
+  const emailFromHandlerContent = (e) => {
+    setEmail(e.target.value);
   };
+
+  // 변경하려는 nickname
+  const nicknameFromHandlerContent = (e) => {
+    setNickname(e.target.value);
+  };
+
 
   // 수정하려는 이미지 미리보기
   const saveFileImage = (e) => {
@@ -101,9 +75,8 @@ function PostEdit() {
 
   const submit = (e) => {
     e.preventDefault();
-    console.log("addedFile : " + addedFile[0]);
-    console.log("files : " + postImg);
-    formData.append("content", content);
+    formData.append("email", email);
+    formData.append("nickname", nickname);
     formData.append("files", addedFile[0]);
 
     // formdata 값 확인해 보는 법 !
@@ -111,13 +84,16 @@ function PostEdit() {
       console.log("formdata확인" + key, ":", formData.get(key));
     }
 
-    postUpdate(postNo, formData, currentPage).then(
-      (document.location.href = `/posting`)
+    axiosUserUpdate(userId, formData)
+    .then(
+        (document.location.href=`/mypage`)
     );
-  };
 
-  return (
-    <div>
+    };
+
+
+    return(
+        <div>
       <form
         method="PUT"
         onSubmit={(e) => submit(e)}
@@ -154,46 +130,88 @@ function PostEdit() {
                 sx={{ flexGrow: 1 }}
                 style={{ color: "#4d5749" }}
               >
-                Post Edit Page (PostNo : {postNo})
+                Profile Edit Page
               </Typography>
               {/* 수정 submit버튼 */}
               <Button
-                color="inherit"
-                variant="outlined"
-                className="write_button"
+                color="success" 
+                endIcon={<SendIcon />}
                 type="submit"
                 defaultValue="save"
-                style={{ backgroundColor: "#89ab79" }}
+                // style={{ backgroundColor: "#89ab79" }}
               >
-                Submit
+                EDIT
               </Button>
+              <Button
+                color="error"
+                endIcon={<DeleteIcon />}
+                onClick={() => (window.location.href = "/MyPage")}
+            >
+                Cancel
+              </Button>
+              
             </Toolbar>
           </AppBar>
         </Box>
+        <Grid
+        container
+        justifycontent="center"
+        direction="column"
+        alignItems="center"
+        padding={3}
+      >
+        <Grid>
+          <Avatar
+            className="profileImg"
+            alt="gugu"
+            src={addedFile[0]}
+            sx={{
+              width: 100,
+              height: 100,
+            }}
+          />
+        </Grid>
+        
+      </Grid>
+    
+        &nbsp;&nbsp;&nbsp;
         {/* 수정 입력 부분 -> 테이블 형식*/}
         <div>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">Content</TableCell>
+                  <TableCell align="center">Email</TableCell>
                   <TableCell align="center">
-                    {/* 내용수정 */}
+                    {/* 이메일 수정 */}
                     <TextField
                       id="content"
                       name="content"
                       multiline
                       variant="standard"
-                      defaultValue={content}
-                      ref={textRef}
-                      onInput={handleResizeHeight}
-                      onChange={(e) => inputFromHandlerContent(e)}
+                      defaultValue={currentEmail}
+                      onChange={(e) => emailFromHandlerContent(e)}
                       style={{ width: "80%" }}
                     />
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
+              <TableRow>
+                  <TableCell align="center">Nickname</TableCell>
+                  <TableCell align="center">
+                    {/* 닉네임 수정 */}
+                    <TextField
+                      id="content"
+                      name="content"
+                      multiline
+                      variant="standard"
+                      defaultValue={currentNickname}
+                      onChange={(e) => nicknameFromHandlerContent(e)}
+                      style={{ width: "80%" }}
+                    />
+                  </TableCell>
+                </TableRow>
                 <TableRow
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
@@ -223,24 +241,10 @@ function PostEdit() {
             </Table>
           </TableContainer>
         </div>
-        {/* file list에서 파일 하나씩 전개 -> 사진 하나만 업로드 가능하도록 했기 때문에 multiple 지움*/}
-        {/* {files != null ? (
-          <ul>
-            {files.map((file) => (
-              <li key={file.fileName}>
-                {file.fileName} &nbsp;&nbsp;
-                <button onClick={(e) => deleteFiles(e, file.fileNo, postNo)}>
-                  x
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <></>
-        )} */}
+
       </form>
     </div>
-  );
+    );
 }
 
-export default PostEdit;
+export default Profile;

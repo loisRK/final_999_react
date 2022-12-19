@@ -14,6 +14,7 @@ import {
   Toolbar,
   Typography,
   Modal,
+  Button
 } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { currentPositions } from "../api/Map";
+import Profile from "./Profile";
 // import Map from "./Map";
 
 function MyPage() {
@@ -66,6 +68,7 @@ function MyPage() {
   const token = window.localStorage.getItem("token");
   useEffect(() => {
     const data = axiosUser();
+    data.then((res) => setUserId(res.kakaoId));
     data.then((res) => setNickname(res.kakaoNickname));
     data.then((res) => setProfileImg(res.kakaoProfileImg));
     data.then((res) => setEmail(res.kakaoEmail));
@@ -154,6 +157,10 @@ function MyPage() {
     }
   };
 
+  const editMypage = (event) => {
+    navigate(`/profile?userId=${userId}&email=${email}&nickname=${nickname}&image=${profileImg}`);
+  }
+
   return (
     <div>
       <div>
@@ -227,7 +234,7 @@ function MyPage() {
                 ) : (
                   <img
                     className="post_img"
-                    src={`/img/${postDetail.postImg}`}
+                    src={postDetail.postImg}
                   />
                 )}
               </div>
@@ -279,7 +286,12 @@ function MyPage() {
         &nbsp;&nbsp;&nbsp;
         <Grid>{nickname}</Grid>
         <Grid>{email}</Grid>
-        <Grid>{userId}</Grid>
+        {/* <Grid>{userId}</Grid> */}
+        &nbsp;
+        <Button onClick={editMypage} justifycontent="flex-end"
+                    variant="contained"
+                    color="success">프로필 수정
+                    </Button>
       </Grid>
       <div
         id="map"
