@@ -168,18 +168,6 @@ const Chat = () => {
     });
   }, [socket]);
 
-  // 신고 당한 사람이 나인지 확인
-  // useEffect(() => {
-  // console.log(kakaoId);
-  // console.log(exit);
-  // 신고 당한 사람이 나면 강퇴당하기 실행
-  // ###################################################################################### 아래 주석 나중에 지우기.. exit 리스트 어떻게 할까..
-  // if (kakaoId === exit) {
-  //   handleClickOpenKick();
-  //   setExit("");
-  // }
-  // }, [exit]);
-
   // 내 리스트에 message data 추가 후
   // 소켓에 message data를 담아 서버에 전달 !
   const sendMessage = async () => {
@@ -326,12 +314,6 @@ const Chat = () => {
     });
 
     setTabooList(filterArr);
-
-    // setTabooList(delete tabooList[idx]);
-    // tabooList.splice(idx, 1);
-    // console.log(tabooList);
-    // await setTabooList(tabooList);
-    // setTabooList(tabooList.splice(idx, 1)); // 삭제된 금기어 리스트에서 지우기
   };
 
   // mui 적용
@@ -388,31 +370,6 @@ const Chat = () => {
             </Toolbar>
           </AppBar>
         </Box>
-        {/* <div className="w-full h-16 bg-gray-600 flex items-center p-3">
-          {/* <div className="w-12 h-12 bg-white rounded-full"></div>
-          {/* 프로필 지정 */}
-        {/* <Avatar alt={username} src={profileImg} className="w-12 h-12" />
-          <div className="m-5 text-white">
-            {clients !== "" ? (
-              <div className="flex">{`${clients} 명`}</div>
-            ) : (
-              <></>
-            )}
-            <div className="flex">
-              <div>{tags}</div>
-            </div>
-          </div> */}
-        {/* <a
-            href="/"
-            className="ml-auto text-white w-14 bg-gray-600 text-white h-8 rounded-xl"
-          >
-            EXIT
-          </a> */}
-        {/* <div className="ml-auto"> */}
-        {/* <Button variant="contained" style={{backgroundColor : "gray"}} onClick={handleClickOpen}>
-            EXIT
-          </Button> */}
-        {/* </div> */}
         <Dialog
           open={open}
           onClose={handleClose}

@@ -42,10 +42,10 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
 function Map({ token }) {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
-  const [roomNo, setRoomNo] = useState(null);
+  // const [roomNo, setRoomNo] = useState(null);
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
-  const [posts, setPosts] = useState([]);
+  // const [posts, setPosts] = useState([]);
   const [username, setUsername] = useState("gugu");
   const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
   const [modalOpen, setModalOpen] = useState(false);
@@ -86,15 +86,23 @@ function Map({ token }) {
     }
   };
   useEffect(() => {
-    const data = axiosUser();
-    data.then((res) => setUsername(res.kakaoNickname));
-    data
-      .then((res) => axioUserPosts(res.kakaoId))
-      .then((res) => setUserPosts(res));
-
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+      data
+        .then((res) => axioUserPosts(res.kakaoId))
+        .then((res) => setUserPosts(res));
+    }
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
 
+    // 생성된 채팅방 리스트 가져오기
+    const chatData = roomList();
+    // chatData.then((response) => console.log(response));
+    chatData.then((response) => setChatList(response));
+  }, []);
+
+  useEffect(() => {
     const options = {
       //지도를 생성할 때 필요한 기본 옵션
       // center: new window.kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
@@ -137,9 +145,9 @@ function Map({ token }) {
     // overlay.setMap(map);
 
     // 포스팅 마커 표시하기
-    const postsData = axiosGetAllPosts();
-    // postsData.then((res) => console.log(res));
-    postsData.then((res) => setPosts(res));
+    // const postsData = axiosGetAllPosts();
+    // // postsData.then((res) => console.log(res));
+    // postsData.then((res) => setPosts(res));
 
     // posts.forEach((post) => {
     userPosts.forEach((post) => {
@@ -172,11 +180,6 @@ function Map({ token }) {
         setModalOpen(true);
       });
     });
-
-    // 생성된 채팅방 리스트 가져오기
-    const chatData = roomList();
-    // chatData.then((response) => console.log(response));
-    chatData.then((response) => setChatList(response));
 
     // 채팅방 마커 표시하기
     // 채팅방 목록을 가져와서 forEach로 마커 생성
@@ -460,7 +463,8 @@ function Map({ token }) {
       currentPosition();
       map.setCenter(markerPosition);
     });
-  }, [latitude, longitude, posts.length, chatList.length]);
+  }, [latitude, longitude, chatList.length]);
+  // }, [latitude, longitude, posts.length, chatList.length]);
 
   return (
     <div>

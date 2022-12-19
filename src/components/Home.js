@@ -37,6 +37,7 @@ import { Container } from "@mui/system";
 import styled from "@emotion/styled";
 import { axiosUser } from "../api/User";
 import ChatList from "./ChatList";
+import MapTest from "./MapTest";
 
 const style = {
   position: "absolute",
@@ -202,7 +203,8 @@ function Home() {
           </Stack>
         </FormGroup>
       </div>
-      <div>{toggled === false ? <Map /> : <ChatList />}</div>
+      {/* <div>{toggled === false ? <MapTest token={token} /> : <ChatList />}</div> */}
+      <div>{toggled === false ? <Map token={token} /> : <ChatList />}</div>
       {/* <Map /> */}
       <br />
       <BottomNavigation
@@ -331,14 +333,12 @@ function Home() {
               alignItems: "center",
             }}
           />
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          <Grid id="modal-modal-description" sx={{ mt: 2 }}>
             <Grid container direction="row" alignItems="center">
               <Grid>
-              <Button
-                onClick={logout}
-                variant="outlined">
-                네
-              </Button>
+                <Button onClick={logout} variant="outlined">
+                  네
+                </Button>
               </Grid>
               &nbsp;&nbsp;&nbsp;
               <Grid>
@@ -346,11 +346,11 @@ function Home() {
                   onClick={() => setLogoutOpen(false)}
                   variant="contained"
                 >
-                    아니요
+                  아니요
                 </Button>
               </Grid>
             </Grid>
-          </Typography>
+          </Grid>
         </Box>
       </Modal>
     </div>
