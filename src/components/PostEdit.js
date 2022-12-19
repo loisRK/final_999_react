@@ -54,7 +54,6 @@ function PostEdit() {
   const [content, setContent] = useState("");
   const [fileImage, setFileImage] = useState("");
   const [addedFile, setAddedFile] = useState([]);
-  console.log("addedFile: " + addedFile);
 
   // 동기로 diary 데이터 불러오는 useEffect
   useEffect(() => {
@@ -86,6 +85,7 @@ function PostEdit() {
   function deleteFileImage(e) {
     console.log(fileImage);
     URL.revokeObjectURL(fileImage);
+
     setFileImage("");
     setAddedFile([]);
   }
@@ -107,6 +107,7 @@ function PostEdit() {
   const submit = (e) => {
     e.preventDefault();
     console.log("addedFile : " + addedFile[0]);
+    console.log("files : " + postImg);
     formData.append("content", content);
     formData.append("files", addedFile[0]);
 
