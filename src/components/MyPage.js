@@ -14,18 +14,23 @@ import {
   Toolbar,
   Typography,
   Modal,
-  Button
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
-import { Box } from "@mui/system";
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+// import { Box } from "@mui/system";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
 import { axioUserPosts, postData, axiosDeletePost } from "../api/Post";
 // import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { currentPositions } from "../api/Map";
@@ -161,6 +166,10 @@ function MyPage() {
     navigate(`/profile?userId=${userId}&email=${email}&nickname=${nickname}&image=${profileImg}`);
   }
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   return (
     <div>
       <div>
@@ -290,11 +299,33 @@ function MyPage() {
                     color="success">프로필 수정
                     </Button>
       </Grid>
-      <div
-        id="map"
-        className="map"
-        style={{ width: `"${window.innerWidth}"`, height: "45vh" }}
-      ></div>
+
+      <Box sx={{ width: '100%', typography: 'body1' }}>
+      <TabContext value={value}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleChange} aria-label="lab API tabs example">
+            <Tab label="Map" value="1" />
+            <Tab label="List" value="2" />
+
+          </TabList>
+        </Box>
+        <TabPanel value="1">
+          <div
+            id="map"
+            className="map"
+            style={{ width: `"${window.innerWidth}"`, height: "45vh" }}
+          ></div>
+        </TabPanel>
+        <TabPanel value="2">Item Two</TabPanel>
+      </TabContext>
+    </Box>
+
+
+
+
+
+
+
       <BottomNavigation
         sx={{
           background: "#B6E2A1",
