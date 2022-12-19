@@ -107,7 +107,6 @@ function PostEdit() {
   const submit = (e) => {
     e.preventDefault();
     console.log("addedFile : " + addedFile[0]);
-    console.log("files : " + postImg);
     formData.append("content", content);
     formData.append("files", addedFile[0]);
 

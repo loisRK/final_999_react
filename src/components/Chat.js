@@ -5,17 +5,19 @@ import Menu from "@mui/material/Menu";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import io from "socket.io-client";
 import { axiosUser } from "../api/User";
-import { useSearchParams } from "react-router-dom";
-import { axiosReportNum, roomInfo } from "../api/Chatting";
+import { useSearchParams, Link } from "react-router-dom";
 import {
   report,
+  roomInfo,
   client_in,
   client_out,
   insert_taboo,
   alltabooList,
   deleteTaboo,
+  deleteRoom,
 } from "../api/Chatting";
 import flyGugu from "../img/cutyDulgi.jpg";
+import gugueyes from "../img/gugugu.png";
 import {
   AppBar,
   Avatar,
@@ -57,13 +59,14 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Paper from "@material-ui/core/Paper";
 import { Input } from "postcss";
+import { async } from "@firebase/util";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
 // const socket = io.connect("http://192.168.0.13:9999");
-const socket = io.connect("http://192.168.0.25:9999");
-// const socket = io.connect("https://server.bnmnil96.repl.co");
+// const socket = io.connect("http://192.168.0.25:9999");
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -84,6 +87,8 @@ const Chat = () => {
   const [tabooList, setTabooList] = useState([]);
   const [clientKey, setClientKey] = useState([]);
   const [clientList, setClientList] = useState([]);
+  const [del, setDel] = useState(false);
+  const [clear, setClear] = useState(false);
 
   const [search, setSearch] = useSearchParams();
   const room = search.get("roomNo");
@@ -103,9 +108,13 @@ const Chat = () => {
     userData.then((res) => setKakaoId(res.kakaoId));
     userData.then((res) => setUsername(res.kakaoNickname));
     userData.then((res) => setProfileImg(res.kakaoProfileImg));
+
     // 같은 방으로 join
-    userData.then((res) => socket.emit("room", room));
+    socket.emit("room", room);
     console.log("CHATTING # : " + room);
+
+    // 룸 내 새로운 방문객 추가
+    userData.then((res) => dulgiInsert({ roomNo: room, dulgi: res.kakaoId }));
 
     // 이방의 채팅내용 모두 가져오기
     const messagedata = messageData();
@@ -123,12 +132,6 @@ const Chat = () => {
     // 방의 user_cnt +1
     client_in(room);
 
-    // // 룸 내 새로운 방문객 추가
-    // useEffect(() => {
-    // socket.emit("newDulgi", [room, kakaoId]);
-    // dulgiInsert({ roomNo: room, dulgi: kakaoId });
-    // }, []);
-
     // 방의 상세정보 조회
     const data = roomInfo(room);
     // 참여 인원 입력
@@ -145,7 +148,7 @@ const Chat = () => {
     const data1 = alltabooList(room);
     // data.then((response) => console.log(response));
     data1.then((response) => setTabooList(response));
-  }, [room]);
+  }, []);
 
   // 룸의 입장 인원을 카운트해주는 함수
   useEffect(() => {
@@ -187,6 +190,15 @@ const Chat = () => {
     });
   }, [socket]);
 
+  // 채팅방 소멸
+  useEffect(() => {
+    socket.on("returnRoomClear", (data) => {
+      if (data === "close") {
+        setClear(true);
+      }
+    });
+  }, [socket]);
+
   // 내 리스트에 message data 추가 후
   // 소켓에 message data를 담아 서버에 전달 !
   const sendMessage = async () => {
@@ -210,7 +222,7 @@ const Chat = () => {
         // messageUpdate(messageContent);
 
         // 메세지 리스트에 방금 보낸 메세지도 함께 추가.
-        setMessageList((prev) => [...prev, messageContent]);
+        // setMessageList((prev) => [...prev, messageContent]);
         setMessage("");
       }
     } else {
@@ -230,7 +242,7 @@ const Chat = () => {
         // messageUpdate(messageContent);
 
         // 메세지 리스트에 방금 보낸 메세지도 함께 추가.
-        setMessageList((prev) => [...prev, messageContent]);
+        // setMessageList((prev) => [...prev, messageContent]);
         setMessage("");
       }
     }
@@ -258,8 +270,35 @@ const Chat = () => {
     const dulgiData = dulgiList();
     dulgiData.then((res) => setClientKey([...Object.keys(res)]));
     dulgiData.then((res) => setClientList(Object.values(res)));
+    dulgiData.then((res) => handleClickOpens(Object.values(res)));
+  };
 
-    setOpen(true);
+  const handleClickOpens = (list) => {
+    if (
+      list.map((e, i) => (e.roomNo === room ? i : "")).filter(String).length > 5
+    ) {
+      // 남은 인원 5인 이상
+      setOpen(true);
+    }
+    // 5인 이하
+    else {
+      // 나가는 사람이 방장일 때
+      if (host === kakaoId) {
+        setDel(true);
+      } else if (
+        list
+          .map((e, i) => (e.dulgi === host && e.roomNo === room ? i : ""))
+          .filter(String).length >= 1
+      ) {
+        setOpen(true);
+      } else {
+        setDel(true);
+      }
+    }
+  };
+
+  const handleClosedel = () => {
+    setDel(false);
   };
 
   const handleClose = () => {
@@ -276,6 +315,39 @@ const Chat = () => {
 
   const tabooOpen = () => {
     setTaboo(true);
+  };
+
+  // 채팅방 퇴장하기
+  const chatOut = () => {
+    // 소켓에서 퇴장하기. socket.disconnect();
+    socket.emit("left", [username, room, kakaoId]);
+    // 소켓 연결 끊기
+    socket.disconnect();
+    // db인원 -1
+    client_out(room);
+    // 해당 아이디 index 찾기
+    let idx = clientList
+      .map((e, i) => (e.dulgi === kakaoId && e.roomNo === room ? i : ""))
+      .filter(String);
+    // console.log(idx);
+    // index에 해당하는 key 가져오기
+    let deletedulgi = Object.values(
+      clientKey
+        .map((e, i) => {
+          return clientKey[idx[i]];
+        })
+        .filter(String)
+    );
+    // console.log(deletedulgi);
+
+    deletedulgi.map((e, i) => {
+      deleteDulgi(e);
+      if (i === clientList.length - 1) {
+        deleteDulgi(e).then(() => {
+          document.location.href = "/";
+        });
+      }
+    });
   };
 
   // 신고하기 DB에 저장
@@ -403,28 +475,8 @@ const Chat = () => {
 
           <DialogActions>
             <Button
-              onClick={async () => {
-                // 소켓에서 퇴장하기. socket.disconnect();
-                socket.emit("left", [username, room, kakaoId]);
-                // 소켓 연결 끊기
-                socket.disconnect();
-                // db인원 -1
-                client_out(room);
-                console.log(clientKey);
-                console.log(clientList);
-                // 룸에서 해당 아이디 index 찾기
-                console.log(
-                  clientList
-                    .map((e, i) =>
-                      e.dulgi === "" && e.roomNo === room ? i : ""
-                    )
-                    .filter(String)
-                );
-                // index에 해당하는 key 가져오기
-                console.log();
-
-                // deleteDulgi("-NJ_snd1KErxGoK6okOn");
-                // document.location.href = "/";
+              onClick={() => {
+                chatOut();
               }}
               autoFocus
             >
@@ -632,6 +684,75 @@ const Chat = () => {
             autoFocus
           >
             확인
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={del}
+        onClose={handleClosedel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"5인 이하의 방은 퇴장시 해당방이 사라집니다."}
+        </DialogTitle>
+        {/* <img alt="flyGugu" src={flyGugu}></img> */}
+
+        <DialogActions>
+          <Button
+            onClick={() => {
+              // 소켓에서 퇴장하기. socket.disconnect();
+              socket.emit("left", [username, room, "close"]);
+              // 소켓 연결 끊기
+              socket.disconnect();
+              // db인원 -1
+              client_out(room);
+              // 룸에서 해당 아이디 index 찾기
+              let idx = clientList
+                .map((e, i) => (e.roomNo === room ? i : ""))
+                .filter(String);
+              // console.log(idx);
+              // index에 해당하는 key 가져오기
+              let deletedulgi = Object.values(
+                clientKey
+                  .map((e, i) => {
+                    return clientKey[idx[i]];
+                  })
+                  .filter(String)
+              );
+              console.log(deletedulgi);
+
+              deletedulgi.map((e, i) => {
+                deleteDulgi(e);
+                if (i === clientList.length - 1) {
+                  deleteDulgi(e).then(() => {
+                    deleteRoom(room);
+                    document.location.href = "/";
+                  });
+                }
+              });
+            }}
+            autoFocus
+          >
+            날아가기
+          </Button>
+          <Button onClick={handleClosedel}>둥지틀기</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={clear}
+        onClose={() => (document.location.href = "/")}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"모두가 떠나 홀로 남았습니다.."}
+        </DialogTitle>
+        <img alt="guguEyes" src={gugueyes}></img>
+
+        <DialogActions>
+          <Button onClick={() => (document.location.href = "/")} autoFocus>
+            날아가기
           </Button>
         </DialogActions>
       </Dialog>

@@ -40,7 +40,6 @@ import { Container } from "@mui/system";
 import { styled } from "@mui/material/styles";
 import { axiosUser } from "../api/User";
 import ChatList from "./ChatList";
-import MapTest from "./MapTest";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -431,26 +430,6 @@ function Home() {
               marginBottom: 20,
             }}
           />
-<<<<<<< HEAD
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Grid container direction="row" alignItems="center">
-              <Grid>
-                <Button onClick={logout} variant="outlined">
-                  네
-                </Button>
-              </Grid>
-              &nbsp;&nbsp;&nbsp;
-              <Grid>
-                <Button
-                  onClick={() => setLogoutOpen(false)}
-                  variant="contained"
-                >
-                  아니요
-                </Button>
-              </Grid>
-            </Grid>
-          </Typography>
-=======
           <Box>
             <Button onClick={logout} variant="outlined">
               네
@@ -460,7 +439,6 @@ function Home() {
               아니요
             </Button>
           </Box>
->>>>>>> 51c283b9f36704e7dfdc9efa4e51010c6bebaa31
         </Box>
       </Modal>
     </div>
