@@ -1,4 +1,5 @@
 /*global kakao*/
+// import PropTypes from 'prop-types';
 import {
   AccountCircleOutlined,
   HomeOutlined,
@@ -15,18 +16,23 @@ import {
   Typography,
   Modal,
   Button,
-  Tooltip,
+  IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
-import { Box } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+// import { Box } from "@mui/system";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
 import { axioUserPosts, postData, axiosDeletePost } from "../api/Post";
 // import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 import { useNavigate } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { currentPositions } from "../api/Map";
@@ -81,6 +87,9 @@ function MyPage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const ITEM_HEIGHT = 20;
+  const listInnerRef = useRef();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [end, setEnd] = useState(0);
 
   function currentPositions() {
     if (navigator.geolocation) {
@@ -383,20 +392,50 @@ function MyPage() {
             sx={{
               width: 100,
               height: 100,
+              border: "0.1px solid lightgray",
             }}
           />
         </Grid>
         &nbsp;&nbsp;&nbsp;
         <Grid>{nickname}</Grid>
-        <Grid>{email}</Grid>
+        <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
         {/* <Grid>{userId}</Grid> */}
         &nbsp;
       </Grid>
-      <div
-        id="map"
-        className="map"
-        style={{ width: `"${window.innerWidth}"`, height: "45vh" }}
-      ></div>
+
+      <Box sx={{ width: "100%", typography: "body1" }}>
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <TabList
+              onChange={handleChange}
+              centered
+              aria-label="lab API tabs example"
+            >
+              <Tab label="Map" value="1" sx={{ width: "50vw" }} />
+              <Tab label="List" value="2" sx={{ width: "50vw" }} />
+            </TabList>
+          </Box>
+          <TabPanel
+            value="1"
+            id="map"
+            sx={{ width: `"${window.innerWidth}"`, height: "37vh" }}
+          >
+            <div
+              id="map"
+              className="map"
+              style={{ width: `"${window.innerWidth}"`, height: "45vh" }}
+            ></div>
+          </TabPanel>
+          <TabPanel value="2">
+            {/* <Posts
+          onScroll={onScroll}
+          listInnerRef={listInnerRef}
+          posts={posts}
+        ></Posts> */}
+          </TabPanel>
+        </TabContext>
+      </Box>
+
       <BottomNavigation
         sx={{
           background: "#B6E2A1",
