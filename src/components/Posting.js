@@ -274,7 +274,7 @@ function Posting() {
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
+                fontFamily: "SEBANG_Gothic_Bold",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
                 color: "inherit",
@@ -293,7 +293,7 @@ function Posting() {
                 mr: 2,
                 display: { xs: "flex", md: "none" },
                 flexGrow: 1,
-                fontFamily: "monospace",
+                fontFamily: "SEBANG_Gothic_Bold",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
                 color: "inherit",
@@ -367,19 +367,16 @@ function Posting() {
         value={0}
       >
         <BottomNavigationAction
-          label="Posting"
           icon={<StickyNote2Outlined />}
           component={Link}
           to="/posting"
         />
         <BottomNavigationAction
-          label="Home"
           icon={<HomeOutlined />}
           component={Link}
           to="/"
         />
         <BottomNavigationAction
-          label="My Page"
           icon={<AccountCircleOutlined />}
           onClick={loginCheck}
         />

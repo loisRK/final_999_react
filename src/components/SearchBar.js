@@ -32,13 +32,6 @@ function SearchBar({ setSearchId, setCurrentPage, setPrevPage }) {
       setSearchId(text);
     }
 
-    // axios
-    //   .get("/api/searchController", {
-    //     params: { inputText: text },
-    //   })
-    //   .then((response) => setSearchPost(response.data.postList));
-    // // .then((response) => setData(response.data.postList));
-
     console.log("SEARCHBAR : ", text);
   };
 
@@ -63,12 +56,6 @@ function SearchBar({ setSearchId, setCurrentPage, setPrevPage }) {
         </div>
         <div className="item2">
           <button onClick={submit} className="magBtn">
-            {/* <Link to="/Body" state={{ data: data }}></Link> */}
-            {/* <img
-              className="magGlass"
-              src="https://cdn-icons-png.flaticon.com/512/2120/2120967.png"
-              alt="magGlass"
-            ></img> */}
             <SearchIcon sx={{ color: "#999999", fontSize: 35 }} />
           </button>
         </div>

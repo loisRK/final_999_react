@@ -17,13 +17,12 @@
 .section_view {
   width: 90%;
   height: auto;
-  border-bottom: 2px solid black;
+  border-bottom: 2px solid #999999;
   background: white;
   margin-left: auto;
   margin-right: auto;
   padding: 5px;
   display: flex;
-  border-bottom: 2px solid black;
 }
 
 /* 게시글 이미지 style */
