@@ -8,9 +8,11 @@ import MyPage from "./components/MyPage";
 import Chatting from "./components/Chatting";
 import KakaoRedirectLogin from "./api/KakaoRedirectLogin";
 import KakaoRedirectLogout from "./api/KakaoRedirectLogout";
+import KakaoRedirectSignup from "./api/KakaoRedirectSignup";
 import Chat from "./components/Chat";
 import PostEdit from "./components/PostEdit";
 import Profile from "./components/Profile";
+import Signup from "./components/Signup";
 
 function App() {
   return (
@@ -22,15 +24,14 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/posting/*" element={<Posting />} />
           <Route path="/chatting/*" element={<Chatting />} />
-          <Route path="/postEdit/*" element={<PostEdit />} /> 
+          <Route path="/postEdit/*" element={<PostEdit />} />
           <Route path="/insert/*" element={<InsertDiary />} />
-          <Route
-            path="/oauth/callback/kakao"
-            element={<KakaoRedirectLogin />}
-          />
+          {/* <Route path="/kakaoSignup" element={<KakaoRedirectSignup />} /> */}
+          <Route path="/checkMember" element={<KakaoRedirectLogin />} />
           <Route path="/kakaoLogout" element={<KakaoRedirectLogout />} />
           <Route path="/myPage" element={<MyPage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/chatting" element={<Chatting />} />
           <Route path={`/room/*`} element={<Chat />} />
         </Routes>
