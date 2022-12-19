@@ -7,9 +7,6 @@ import io from "socket.io-client";
 import { axiosUser } from "../api/User";
 import { useSearchParams } from "react-router-dom";
 import { axiosReportNum, roomInfo } from "../api/Chatting";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogTitle from "@mui/material/DialogTitle";
 import {
   report,
   client_in,
@@ -27,12 +24,20 @@ import {
   Grid,
   IconButton,
   Modal,
+  TextField,
   Toolbar,
   Tooltip,
   Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Paper from "@material-ui/core/Paper";
+import { Input } from "postcss";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
@@ -242,10 +247,6 @@ const Chat = () => {
     setOpen(false);
   };
 
-  const handleClickOpenKick = () => {
-    setOpenKick(true);
-  };
-
   const handleCloseKick = () => {
     setOpenKick(false);
   };
@@ -401,20 +402,11 @@ const Chat = () => {
         <div id="chat" className="w-auto h-[80vh] overflow-y-auto">
           {messageList &&
             messageList.map((msg, i) => (
-              <PopupState variant="popover" popupId="demo-popup-menu">
+              <PopupState key={i} variant="popover" popupId="demo-popup-menu">
                 {(popupState) => (
-                  <div onClick={inputIndex(i)}>
-                    {/* {username === msg.username ? ( */}
-                    {/* <div className="flex"> */}
+                  <div onClick={() => inputIndex(i)}>
                     {username !== msg.username ? (
-                      <div
-                        key={i}
-                        className={
-                          // username === msg.username
-                          //   ? "flex justify-end text-xs mr-4 font-semibold"
-                          "flex text-xs m-3 font-semibold"
-                        }
-                      >
+                      <div className={"flex text-xs m-3 font-semibold"}>
                         {msg.username}
                       </div>
                     ) : (
@@ -425,7 +417,6 @@ const Chat = () => {
                         username === msg.username ? "flex justify-end" : ""
                       }`}
                       variant="contained"
-                      {...bindTrigger(popupState)}
                     >
                       <div
                         className={` ${
@@ -434,24 +425,12 @@ const Chat = () => {
                             : "bg-blue-600 rounded-xl rounded-tl-none"
                         } h-auto p-2 text-white m-2 w-fit max-w-[30%] text-left p-2`}
                       >
-                        <div key={i} className="flex">
-                          {msg.message}
-                        </div>
+                        <div className="flex">{msg.message}</div>
                       </div>
                     </div>
                     {username !== msg.username ? (
-                      // <Menu>
-                      <Menu {...bindMenu(popupState)}>
-                        {/* <button
-                          component="MenuItem"
-                          sx={{ display: "inline" }}
-                          onClick={popupState.close}
-                        >
-                          🤐 차단하기
-                        </button>
-                        <br></br> */}
+                      <Menu>
                         <button
-                          key={i}
                           component="MenuItem"
                           sx={{ display: "inline" }}
                           onClick={() => {
@@ -471,64 +450,40 @@ const Chat = () => {
             ))}
         </div>
       </div>
-      {host === kakaoId ? (
-        <div className="absolute bottom-0 left-0 w-full h-[10%]">
+      <div className="absolute bottom-0 left-0 w-full h-[10%]">
+        {host === kakaoId ? (
           <button onClick={tabooOpen} className="w-12 h-12 border rounded-xl">
             +
           </button>
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-[70%] h-12 border p-3 outline-none rounded-xl"
-            type="text"
-            placeholder="message send"
-            onKeyPress={onKeyPress}
-          />
-          {message != null ? (
-            <button
-              onClick={sendMessage}
-              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-              style={{ backgroundColor: "#89ab79" }}
-            >
-              SEND
-            </button>
-          ) : (
-            <button
-              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-              style={{ backgroundColor: "#89ab79" }}
-            >
-              SEND
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="absolute bottom-0 left-0 w-full h-[10%]">
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-[80%] h-12 border p-3 outline-none rounded-xl"
-            type="text"
-            placeholder="message send"
-            onKeyPress={onKeyPress}
-          />
-          {message != null ? (
-            <button
-              onClick={sendMessage}
-              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-              style={{ backgroundColor: "#89ab79" }}
-            >
-              SEND
-            </button>
-          ) : (
-            <button
-              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-              style={{ backgroundColor: "#89ab79" }}
-            >
-              SEND
-            </button>
-          )}
-        </div>
-      )}
+        ) : (
+          <></>
+        )}
+        <input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="w-[70%] h-12 border p-3 outline-none rounded-xl"
+          type="text"
+          placeholder="message send"
+          onKeyPress={onKeyPress}
+        />
+        {message != null ? (
+          <button
+            onClick={sendMessage}
+            className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+            style={{ backgroundColor: "#89ab79" }}
+          >
+            SEND
+          </button>
+        ) : (
+          <button
+            className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+            style={{ backgroundColor: "#89ab79" }}
+          >
+            SEND
+          </button>
+        )}
+      </div>
+
       <Modal
         open={profileInfo}
         onClose={() => setProfileInfo(false)}
@@ -551,137 +506,74 @@ const Chat = () => {
             alignItems: "center",
           }}
         >
-          <Grid container>
-            <Grid item xs={6} alignItems="flex-end">
-              <Grid>
-                <img
-                  className="rounded-full"
-                  alt="gugu_tilt"
-                  src={ownerProfileImg}
-                  style={{
-                    height: 120,
-                    width: 120,
-                    position: "relative",
-                    display: "flex",
-                    alignItems: "center",
-                    margin: "auto",
-                  }}
-                />
-              </Grid>
-              <Grid style={{ float: "none" }}>
-                <Button
-                  style={{
-                    color: "#000000",
-                    alignItems: "center",
-                    position: "relative",
-                  }}
-                >
-                  {ownerName}
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid item xs={6} alignItems="flex-end">
-              <Grid item xs={5} style={{ float: "right" }}>
-                <IconButton
-                  component="label"
-                  style={{ color: "#89ab79" }}
-                  onClick={() => setProfileInfo(false)}
-                >
-                  <CancelIcon />
-                </IconButton>
-              </Grid>
-              <Grid item xs={15}>
-                ⛔금기어 목록⛔
-                {tabooList.map((value, index) => (
-                  <Typography key={index}>{value}</Typography>
-                ))}
-              </Grid>
-            </Grid>
-          </Grid>
+          <img
+            className="rounded-full"
+            alt="gugu_tilt"
+            src={ownerProfileImg}
+            style={{
+              height: 120,
+              width: 120,
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          />
+          {ownerName}
+          {/* <IconButton
+            component="label"
+            style={{ color: "#89ab79" }}
+            onClick={() => setProfileInfo(false)}
+          >
+            <CancelIcon />
+          </IconButton> */}
+          ⛔금기어 목록⛔
+          {tabooList.map((value, index) => (
+            <Typography key={index}>{value}</Typography>
+          ))}
         </Box>
       </Modal>
-      <Modal
-        open={taboo}
-        onClose={() => setTaboo(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            내 방 금기어 리스트
-          </Typography>
-          <Typography className="h-20vh">
-            {tabooList.map((taboo, idx) =>
-              taboo !== "" ? (
-                <Typography
-                  id="modal-modal-title"
-                  variant="h6"
-                  component="h2"
+
+      <Dialog open={taboo} onClose={() => setTaboo(false)}>
+        <DialogTitle>⛔내 방 금기어 리스트⛔</DialogTitle>
+        <DialogContent>
+          {tabooList.map((taboo, idx) =>
+            taboo !== "" ? (
+              <DialogContentText id="modal-modal-title" key={idx}>
+                <span key={idx + "번"} className="text-[14px]">
+                  {taboo}
+                </span>
+                &nbsp;&nbsp;&nbsp;
+                <button
+                  onClick={() => tabooDelete(idx)}
                   key={idx}
+                  className="text-[14px]"
                 >
-                  <span key={idx + "번"} className="text-[14px]">
-                    {taboo}
-                  </span>
-                  &nbsp;&nbsp;&nbsp;
-                  <button
-                    onClick={() => tabooDelete(idx)}
-                    key={idx}
-                    className="text-[14px]"
-                  >
-                    🗑
-                  </button>
-                </Typography>
-              ) : (
-                <></>
-              )
-            )}
-          </Typography>
-          <br></br>
-          <input
+                  <DeleteForeverIcon />
+                </button>
+              </DialogContentText>
+            ) : (
+              <></>
+            )
+          )}
+          <TextField
+            autoFocus
+            margin="dense"
+            label="추가 금기어 입력"
+            fullWidth
+            variant="standard"
             value={tabooWord}
             onChange={(e) => setTabooWord(e.target.value)}
             type="text"
-            placeholder="추가 금기어 입력"
-            className="h-10 w-[50%] border-solid border-2"
-          ></input>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Grid container direction="row" alignItems="center">
-              <Grid>
-                <button
-                  className="border-solid border-2 rounded-xl w-16"
-                  style={{ backgroundColor: "#89ab79" }}
-                  onClick={insertTaboo}
-                >
-                  insert
-                </button>{" "}
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button
-                  className="border-solid border-2 rounded-xl w-16"
-                  onClick={() => setTaboo(false)}
-                  style={{ backgroundColor: "#89ab79" }}
-                >
-                  close
-                </button>
-              </Grid>
-            </Grid>
-          </Typography>
-        </Box>
-      </Modal>
+            placeholder="taboo"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={insertTaboo}>Insert</Button>
+          <Button onClick={() => setTaboo(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
       <Dialog
         open={openKick}
         onClose={handleCloseKick}
