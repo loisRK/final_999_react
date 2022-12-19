@@ -371,7 +371,6 @@ const Chat = () => {
             </Toolbar>
           </AppBar>
         </Box>
-
         <Dialog
           open={open}
           onClose={handleClose}

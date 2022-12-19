@@ -14,8 +14,8 @@ export const createPost = async (formData) => {
         Authorization: token,
       },
     })
-    .then((res) => console.log("postNo : " + res.data));
-  // .then((document.location.href = "/posting"));
+    .then((res) => console.log("postNo : " + res.data))
+    .then((document.location.href = "/posting"));
 };
 
 // Post 전체 데이터 불러오기 - GET

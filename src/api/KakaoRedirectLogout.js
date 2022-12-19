@@ -19,7 +19,6 @@ const KakaoRedirectHandler = () => {
             },
           })
           .then((data) => {
-            console.log("## DATA : " + data);
             if (data) {
               window.localStorage.clear();
               navigate("/");
@@ -28,7 +27,7 @@ const KakaoRedirectHandler = () => {
           });
       } catch (error) {
         // 에러 발생 시, 에러 응답 출력
-        console.error("ERROR : " + error);
+        console.error("KakaoRedirectHandler ERROR : " + error);
       }
     })();
   }, []);

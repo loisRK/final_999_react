@@ -40,6 +40,7 @@ import { Container } from "@mui/system";
 import { styled } from "@mui/material/styles";
 import { axiosUser } from "../api/User";
 import ChatList from "./ChatList";
+import MapTest from "./MapTest";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
