@@ -18,7 +18,7 @@ export const axiosUserUpdate = async (userId, formData) => {
 
   await axios.put(`http://localhost:8080/api/updateUser/${userId}`, formData, {
     headers: {
-      "Contest-Type": "multipart/form-data",
+      "Content-Type": "multipart/form-data",
     },
   });
 };

@@ -40,16 +40,19 @@ function InsertDiary() {
     console.log(e.target.value);
     setContent(e.target.value);
   };
+
   const getFile = (e) => {
     console.log(e.target.files);
     const input = document.querySelector("#newfiles");
     const files = input.files;
     const arr = Array.from(files);
     console.log("arr : " + arr);
+
     for (let i = 0; i < arr.length; i++) {
       fileArr.push(arr[i]);
       console.log(arr[i]);
     }
+
     console.log(addedFile);
     console.log(fileArr);
   };

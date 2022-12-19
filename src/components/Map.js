@@ -116,13 +116,25 @@ function Map({ token }) {
     // 지도 생성
     const map = new kakao.maps.Map(container, options);
 
+    // 사용자 마커 이미지 옵션
+    const imageSrc = "place.png";
+    const imageSize = new kakao.maps.Size(40, 40); // 마커이미지의 크기
+    // const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
+
+    // 사용자 마커의 이미지 정보를 가지고 있는 마커이미지 생성
+    const userMarkerImg = new kakao.maps.MarkerImage(
+      imageSrc,
+      imageSize
+      // imageOption
+    );
+
     // 사용자 마커 위치 지정
     // 임시로 현재 위치로 지정함
     const markerPosition = new kakao.maps.LatLng(latitude, longitude);
     const userMarker = new kakao.maps.Marker({
       map: map,
       position: markerPosition,
-      // image: markerImage,
+      image: userMarkerImg,
       title: "현재 사용자의 위치",
     });
 
@@ -132,11 +144,6 @@ function Map({ token }) {
     userMarker.setMap(map); // 마커 객체 생성 시, map 지정해줬으면 setMap 안해줘도 됨
     // overlay.setMap(map);
 
-    // 포스팅 마커 표시하기
-    // const postsData = axiosGetAllPosts();
-    // // postsData.then((res) => console.log(res));
-    // postsData.then((res) => setPosts(res));
-
     // posts.forEach((post) => {
     userPosts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
@@ -145,7 +152,7 @@ function Map({ token }) {
       // 포스트 마커 이미지 옵션
       const imageSrc = "feather.png";
       const imageSize = new kakao.maps.Size(30, 30); // 마커이미지의 크기
-      const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
+      // const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
 
       // 포스트 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const postImage = new kakao.maps.MarkerImage(
@@ -413,10 +420,10 @@ function Map({ token }) {
       center: markerPosition, // 원의 중심좌표입니다
       radius: 1000, // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
       strokeWeight: 1, // 선의 두께입니다
-      strokeColor: "#00a0e9", // 선의 색깔입니다
+      strokeColor: "#555555", // 선의 색깔입니다
       strokeOpacity: 0.1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
       strokeStyle: "solid", // 선의 스타일입니다
-      fillColor: "#00a0e9", // 채우기 색깔입니다
+      fillColor: "#555555", // 채우기 색깔입니다
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
