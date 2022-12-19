@@ -83,8 +83,7 @@ function InsertDiary() {
         console.log("formdata확인" + key, ":", formData.get(key));
       }
 
-      createPost(formData)
-      .then((document.location.href = "/posting"));
+      createPost(formData).then((document.location.href = "/posting"));
       console.log("formData" + formData);
     }
   };

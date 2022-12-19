@@ -232,10 +232,7 @@ function MyPage() {
                 {postDetail.postImg === "" ? (
                   <></>
                 ) : (
-                  <img
-                    className="post_img"
-                    src={postDetail.postImg}
-                  />
+                  <img className="post_img" src={postDetail.postImg} />
                 )}
               </div>
             )}

@@ -28,6 +28,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { PhotoCamera } from "@mui/icons-material";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function PostEdit() {
   // textarea 글 분량에 따른 자동 높이 조절 메소드
@@ -50,7 +52,6 @@ function PostEdit() {
   // // formData 객체로 전달할 경우 필요한 변수
   // const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [postImg, setPostImg] = useState("");
   const [fileImage, setFileImage] = useState("");
   const [addedFile, setAddedFile] = useState([]);
 
@@ -60,7 +61,10 @@ function PostEdit() {
     datas.then((response) => setPost(response));
     datas.then((response) => setFiles(response.fileDTOs));
     datas.then((response) => setContent(response.postContent));
-    datas.then((response) => setPostImg(response.postImg));
+    datas.then((response) => setFileImage(response.postImg));
+    datas.then((response) =>
+      setAddedFile(new File([response, "oldFile", { type: "image/*" }]))
+    );
 
     console.log("post " + post);
     console.log("content " + content);
@@ -77,11 +81,12 @@ function PostEdit() {
   const formData = new FormData();
   const fileArr = new Array();
 
-  // 미리보기 삭제
+  // 이미지 파일 삭제
   function deleteFileImage(e) {
     console.log(fileImage);
     URL.revokeObjectURL(fileImage);
-    setFileImage(files);
+
+    setFileImage("");
     setAddedFile([]);
   }
 
@@ -201,22 +206,30 @@ function PostEdit() {
                     Photo
                   </TableCell>
                   <TableCell align="center">
-                    <input
-                      className="write_button"
-                      type="file"
-                      name="newFiles"
-                      id="newFiles"
-                      onChange={(e) => {
-                        getFile(e);
-                      }}
-                    />
-                    {/* 미리보기 사진 삭제 버튼 */}
-                    <button type="button" onClick={(e) => deleteFileImage(e)}>
-                      삭제
-                    </button>
                     <div align="center">
                       {fileImage && <img alt="sample" src={fileImage} />}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="label"
+                    >
+                      <input
+                        className="write_button"
+                        type="file"
+                        name="newFiles"
+                        id="newFiles"
+                        hidden
+                        onChange={(e) => getFile(e)}
+                      />
+                      <PhotoCamera />
+                    </IconButton>
+                    {/* 미리보기 사진 삭제 버튼 */}
+                    <IconButton onClick={(e) => deleteFileImage(e)}>
+                      <DeleteForeverIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               </TableBody>
