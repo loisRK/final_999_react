@@ -24,6 +24,7 @@ import {
   Avatar,
   Box,
   Button,
+  getButtonGroupUtilityClass,
   Grid,
   IconButton,
   Modal,
@@ -32,13 +33,30 @@ import {
   Typography,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
-import Paper from "@material-ui/core/Paper";
+import {
+  doc,
+  setDoc,
+  collection,
+  serverTimestamp,
+  query,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
+import {
+  messageData,
+  messageUpdate,
+  dulgiInsert,
+  dulgiList,
+  kickList,
+  dulgiKick,
+  deleteDulgi,
+} from "../api/Firebase";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-const socket = io.connect("http://192.168.0.13:9999");
-// const socket = io.connect("http://192.168.0.25:9999");
+// const socket = io.connect("http://192.168.0.13:9999");
+const socket = io.connect("http://192.168.0.25:9999");
 // const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
@@ -58,6 +76,7 @@ const Chat = () => {
   const [taboo, setTaboo] = useState(false);
   const [tabooWord, setTabooWord] = useState("");
   const [tabooList, setTabooList] = useState([]);
+  const [clientKey, setClientKey] = useState([]);
   const [clientList, setClientList] = useState([]);
 
   const [search, setSearch] = useSearchParams();
@@ -78,12 +97,31 @@ const Chat = () => {
     userData.then((res) => setKakaoId(res.kakaoId));
     userData.then((res) => setUsername(res.kakaoNickname));
     userData.then((res) => setProfileImg(res.kakaoProfileImg));
-    userData.then((res) => socket.emit("room", [room, res.kakaoId]));
-
+    // 같은 방으로 join
+    userData.then((res) => socket.emit("room", room));
     console.log("CHATTING # : " + room);
+
+    // 이방의 채팅내용 모두 가져오기
+    const messagedata = messageData();
+    // messagedata.then((res) => console.log(res));
+    // 데이터가 오브젝트 형식으로 오기 때문에 ex ( {1 : {name:~ , message :2~}})
+    // value 값만 가져와 리스트로 만들어주는 작업이 필요하다 . // Object.value(response)
+    messagedata.then((response) =>
+      setMessageList(
+        Object.values(response).filter(function (data) {
+          return data.room === room;
+        })
+      )
+    );
 
     // 방의 user_cnt +1
     client_in(room);
+
+    // // 룸 내 새로운 방문객 추가
+    // useEffect(() => {
+    // socket.emit("newDulgi", [room, kakaoId]);
+    // dulgiInsert({ roomNo: room, dulgi: kakaoId });
+    // }, []);
 
     // 방의 상세정보 조회
     const data = roomInfo(room);
@@ -102,40 +140,6 @@ const Chat = () => {
     // data.then((response) => console.log(response));
     data1.then((response) => setTabooList(response));
   }, [room]);
-
-  // 룸 내 새로운 방문객 추가
-  useEffect(() => {
-    socket.on("in", (data) => {
-      setClientList((prev) => [...prev, data]);
-      socket.emit("list", [room, "222"]);
-    });
-  }, [socket]);
-
-  // 추방자 리스트 받기
-  useEffect(() => {
-    socket.on("returnlist", (data) => {
-      console.log("추방자 리스트 : ", data);
-    });
-  }, [socket]);
-
-  // 퇴장시 clientList 에서 delete
-  useEffect(() => {
-    socket.on("out", (datas) => {
-      console.log(datas);
-      let filterArr = clientList.filter(function (data) {
-        return data !== datas;
-      });
-      setClientList(filterArr);
-    });
-    if (clientList.length < 5) {
-      let arr = clientList.filter(function (data) {
-        return data !== host;
-      });
-      if (arr === []) {
-        // 방 삭제 실행
-      }
-    }
-  }, [socket]);
 
   // 룸의 입장 인원을 카운트해주는 함수
   useEffect(() => {
@@ -166,7 +170,6 @@ const Chat = () => {
 
   // 새로운 채팅이 생성되면 스크롤를 최하단으로 내려줌.
   useEffect(() => {
-    console.log("방문목록", clientList);
     let chat = document.querySelector("#chat");
     chat.scrollTop = chat.scrollHeight;
   }, [messageList]);
@@ -209,7 +212,7 @@ const Chat = () => {
         // messageContent 값이 먼저 정의 된 후 메세지 전달.
         await socket.emit("message", messageContent);
 
-        // firebase data base에도 값 추가
+        // firebase realtime db 데이터 추가
         // messageUpdate(messageContent);
 
         // 메세지 리스트에 방금 보낸 메세지도 함께 추가.
@@ -257,6 +260,11 @@ const Chat = () => {
   const [openKick, setOpenKick] = React.useState(false);
 
   const handleClickOpen = () => {
+    // firebase 현재 참여목록 호출
+    const dulgiData = dulgiList();
+    dulgiData.then((res) => setClientKey([...Object.keys(res)]));
+    dulgiData.then((res) => setClientList(Object.values(res)));
+
     setOpen(true);
   };
 
@@ -390,7 +398,7 @@ const Chat = () => {
                 className="write_button"
                 type="submit"
                 defaultValue="save"
-                onClick={handleClickOpen}
+                onClick={() => handleClickOpen()}
                 style={{ backgroundColor: "#89ab79" }}
               >
                 EXIT
@@ -436,12 +444,28 @@ const Chat = () => {
 
           <DialogActions>
             <Button
-              onClick={() => {
+              onClick={async () => {
                 // 소켓에서 퇴장하기. socket.disconnect();
                 socket.emit("left", [username, room, kakaoId]);
+                // 소켓 연결 끊기
                 socket.disconnect();
+                // db인원 -1
                 client_out(room);
-                document.location.href = "/";
+                console.log(clientKey);
+                console.log(clientList);
+                // 룸에서 해당 아이디 index 찾기
+                console.log(
+                  clientList
+                    .map((e, i) =>
+                      e.dulgi === "" && e.roomNo === room ? i : ""
+                    )
+                    .filter(String)
+                );
+                // index에 해당하는 key 가져오기
+                console.log();
+
+                // deleteDulgi("-NJ_snd1KErxGoK6okOn");
+                // document.location.href = "/";
               }}
               autoFocus
             >

@@ -73,6 +73,11 @@ export const deleteTaboo = async (tabooWord) => {
   axios.get(`http://localhost:8080/api/deleteTaboo/${tabooWord}`);
 };
 
+// 5인 이하의 방 ( 방장이 없는 ) delete
+export const deleteRoom = async (roomNo) => {
+  axios.get(`http://localhost:8080/api/deleteRoom/${roomNo}`);
+};
+
 // // 신고 몇 번 당했는지 값 불러오기
 // export const axiosReportNum = async (roomNo, userId) => {
 //   const response = await axios.get(
