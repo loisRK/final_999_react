@@ -132,15 +132,27 @@ function ChatList() {
         //     chatList[i].chatLong
         //   ),
         // ]),
-        (getDistanceFromLatLonInKm(chatLat,chatLong,chatList[i].chatLat,chatList[i].chatLong) <= 1 ?
-          distanceList[i] = [chatList[i], getDistanceFromLatLonInKm(chatLat, chatLong, chatList[i].chatLat, chatList[i].chatLong )] : null        
-        )
+        getDistanceFromLatLonInKm(
+          chatLat,
+          chatLong,
+          chatList[i].chatLat,
+          chatList[i].chatLong
+        ) <= 1
+          ? (distanceList[i] = [
+              chatList[i],
+              getDistanceFromLatLonInKm(
+                chatLat,
+                chatLong,
+                chatList[i].chatLat,
+                chatList[i].chatLong
+              ),
+            ])
+          : null
       )
-    )
+    );
   }
 
   console.log("distanceList", distanceList);
-
 
   // distanceList를 거리순으로 정렬
   distanceList.sort(compareSecondColumn);

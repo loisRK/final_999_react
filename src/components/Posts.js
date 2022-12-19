@@ -103,7 +103,11 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
       <div
         onScroll={onScroll}
         ref={listInnerRef}
-        style={{ height: "73vh", overflowY: "scroll" }}
+        style={{
+          height: "73vh",
+          overflowY: "scroll",
+          fontFamily: "LeferiPoint-WhiteObliqueA",
+        }}
       >
         {posts.map((post) => {
           console.log(post);

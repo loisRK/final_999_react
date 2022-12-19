@@ -1,4 +1,5 @@
 import "../css/Home.css";
+import "../index.css";
 import { Link, useNavigate } from "react-router-dom";
 import Map from "./Map";
 import { useEffect, useState } from "react";
@@ -40,7 +41,6 @@ import { Container } from "@mui/system";
 import { styled } from "@mui/material/styles";
 import { axiosUser } from "../api/User";
 import ChatList from "./ChatList";
-import MapTest from "./MapTest";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -106,12 +106,12 @@ const style = {
   alignItems: "center",
 };
 
-const MyThemeComponent = styled("div")(({ theme }) => ({
-  color: theme.palette.primary.contrastText,
-  backgroundColor: theme.palette.primary.main,
-  padding: theme.spacing(1),
-  borderRadius: theme.shape.borderRadius,
-}));
+// const MyThemeComponent = styled("div")(({ theme }) => ({
+//   color: theme.palette.primary.contrastText,
+//   backgroundColor: theme.palette.primary.main,
+//   padding: theme.spacing(1),
+//   borderRadius: theme.shape.borderRadius,
+// }));
 
 function Home() {
   const token = window.localStorage.getItem("token");
@@ -210,8 +210,9 @@ function Home() {
                 sx={{
                   mr: 2,
                   display: { xs: "none", md: "flex" },
-                  fontFamily: "monospace",
+                  fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
+                  fontSize: "medium",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -229,8 +230,9 @@ function Home() {
                   mr: 2,
                   display: { xs: "flex", md: "none" },
                   flexGrow: 1,
-                  fontFamily: "monospace",
+                  fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
+                  fontSize: 30,
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -280,11 +282,16 @@ function Home() {
       <div>
         <FormGroup sx={{ alignContent: "center" }}>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Typography>Map</Typography>
-            {/* <FormControlLabel
-              control={<IOSSwitch sx={{ m: 1 }} defaultChecked />}
-              label="iOS style"
-            /> */}
+            <Typography
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                fontFamily: "SEBANG_Gothic_Bold",
+                color: "#999999",
+              }}
+            >
+              MAP
+            </Typography>
             <IOSSwitch
               sx={{ m: 1 }}
               checked={toggled}
@@ -292,13 +299,16 @@ function Home() {
               inputProps={{ "aria-label": "ant design" }}
               onChange={(e) => setToggled(e.target.checked)}
             />
-            {/* <Switch
-              checked={toggled}
-              size="large"
-              inputProps={{ "aria-label": "ant design" }}
-              onChange={(e) => setToggled(e.target.checked)}
-            /> */}
-            <Typography>List</Typography>
+            <Typography
+              style={{
+                fontSize: 20,
+                fontWeight: 700,
+                fontFamily: "SEBANG_Gothic_Bold",
+                color: "#999999",
+              }}
+            >
+              LIST
+            </Typography>
           </Stack>
         </FormGroup>
       </div>
@@ -317,19 +327,19 @@ function Home() {
         value={1}
       >
         <BottomNavigationAction
-          label="Posting"
+          // label="Posting"
           icon={<StickyNote2Outlined />}
           component={Link}
           to="/posting"
         />
         <BottomNavigationAction
-          label="Home"
+          // label="Home"
           icon={<HomeOutlined />}
           component={Link}
           to="/"
         />
         <BottomNavigationAction
-          label="My Page"
+          // label="My Page"
           icon={<AccountCircleOutlined />}
           onClick={loginCheck}
         />
