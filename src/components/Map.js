@@ -205,8 +205,8 @@ function Map({ token }) {
       // 채팅방 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const markerImage = new kakao.maps.MarkerImage(
         imageSrc,
-        imageSize,
-        imageOption
+        imageSize
+        // imageOption
       );
       // 채팅방 마커 객체 생성
       const roomMarkers = new kakao.maps.Marker({
