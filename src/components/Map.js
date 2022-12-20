@@ -86,6 +86,7 @@ function Map({ token }) {
       console.log("GPS를 지원하지 않습니다.");
     }
   };
+
   useEffect(() => {
     if (token !== null) {
       const data = axiosUser();
@@ -160,6 +161,7 @@ function Map({ token }) {
         imageSize
         // imageOption
       );
+
       // 채팅방 마커 객체 생성
       const postMarkers = new kakao.maps.Marker({
         map: map,
@@ -189,7 +191,7 @@ function Map({ token }) {
       // 채팅방 마커 이미지 옵션
       const imageSrc = "bidulgi.png";
       const imageSize = new kakao.maps.Size(50, 50); // 마커이미지의 크기
-      const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
+      // const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
 
       // 채팅방 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const markerImage = new kakao.maps.MarkerImage(
@@ -434,7 +436,7 @@ function Map({ token }) {
       currentPosition();
       map.setCenter(markerPosition);
     });
-  }, [latitude, longitude, chatList.length]);
+  }, [latitude, longitude, chatList.length, userPosts.length]);
   // }, [latitude, longitude, posts.length, chatList.length]);
 
   return (

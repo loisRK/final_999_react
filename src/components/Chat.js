@@ -504,6 +504,7 @@ const Chat = () => {
                         username === msg.username ? "flex justify-end" : ""
                       }`}
                       variant="contained"
+                      {...bindTrigger(popupState)}
                     >
                       <div
                         className={` ${
@@ -516,7 +517,8 @@ const Chat = () => {
                       </div>
                     </div>
                     {username !== msg.username ? (
-                      <Menu>
+                      // <Menu>
+                      <Menu {...bindMenu(popupState)}>
                         <button
                           component="MenuItem"
                           sx={{ display: "inline" }}

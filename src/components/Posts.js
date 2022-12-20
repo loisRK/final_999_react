@@ -214,7 +214,9 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
         PaperProps={{
           style: {
             maxHeight: ITEM_HEIGHT * 4.5,
-            width: "20ch",
+            width: "10ch",
+            alignItems: "center",
+            fontFamily: "LeferiPoint-WhiteObliqueA",
           },
         }}
       >

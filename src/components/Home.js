@@ -33,7 +33,6 @@ import { KAKAO_AUTH_URL } from "./KakaoLoginData";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
 import { KAKAO_LOGOUT_URL } from "./KakaoLogoutData";
 import gugu from "../img/bidulgi.png";
-import dulgi from "../img/graydulgi.png";
 import gugu_tilt from "../img/dulgi_headtilt.png";
 import gugu_login from "../img/dulgi_login.jpg";
 import { Container } from "@mui/system";

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // User 정보 불러오기 - GET
 export const axiosUser = async () => {
@@ -21,4 +22,23 @@ export const axiosUserUpdate = async (userId, formData) => {
       "Content-Type": "multipart/form-data",
     },
   });
+};
+
+// User 정보 보내기 - GET
+export const userWithdraw = async () => {
+  const token = window.localStorage.getItem("token");
+  const response = await axios
+    .get("http://localhost:8080/api/guguWithdraw", {
+      headers: {
+        Authorization: token,
+      },
+    })
+    .then((data) => {
+      if (data) {
+        window.localStorage.clear();
+        window.location.href = "/";
+        console.log("## DATA : " + data);
+      }
+    });
+  return response;
 };
