@@ -23,7 +23,6 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
   const [postNo, setPostNo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userId, setUserId] = useState("");
-  const [likesList, setLikesList] = useState(likes);
   const open = Boolean(anchorEl);
   console.log("### Posts.js likes : " + likes);
 

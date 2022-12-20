@@ -691,7 +691,6 @@ const Chat = () => {
           placeholder="message send"
           style={{ marginLeft: 10, marginRight: 10 }}
           onKeyPress={onKeyPress}
-          style={{ marginLeft: 10, marginRight: 10 }}
         />
         {message != null ? (
           <button
