@@ -20,6 +20,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
@@ -222,53 +223,6 @@ function MyPage() {
     setValue(newValue);
   };
 
-  // infinite scrolling
-  const listInnerRef = useRef();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [prevPage, setPrevPage] = useState(0); // storing prev page number
-  const [posts, setPosts] = useState([]);
-  const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
-  const [end, setEnd] = useState(0);
-
-  useEffect(() => {
-    // infinite scroll 테스트
-    if (!wasLastList && prevPage !== currentPage) {
-      console.log("인피니티 스크롤");
-      axiosUser().then((res) => {
-        console.log("##### id : " + res.kakaoId);
-          axiosMypagePosts(
-            posts,
-            setWasLastList,
-            setPrevPage,
-            setPosts,
-            currentPage,
-            res.kakaoId, 
-            setEnd
-          );
-      });
-          
-        };
-  }, [
-    currentPage,
-    wasLastList,
-    prevPage,
-  ]);
-
-  const onScroll = () => {
-    if (listInnerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-      if (
-        Math.ceil(scrollTop) + clientHeight >= scrollHeight &&
-        currentPage < end
-      ) {
-        console.log(
-          "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
-        );
-        setCurrentPage(currentPage + 1);
-      }
-    }
-  };
-
   return (
     <div className="wrap1">
       <div className="header">
@@ -352,6 +306,75 @@ function MyPage() {
             </Toolbar>
           </Container>
         </AppBar>
+        <Modal
+          open={modalOpen}
+          onClose={() => {
+            setModalOpen(false);
+          }}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 400,
+              bgcolor: "white",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+            }}
+          >
+            {postDetail === null ? (
+              <></>
+            ) : (
+              <div>
+                <span className="dot_btn">
+                  {" "}
+                  <IconButton
+                    aria-label="more"
+                    id="long-button"
+                    aria-controls={modalOpen ? "long-menu" : undefined}
+                    aria-expanded={modalOpen ? "true" : undefined}
+                    aria-haspopup="true"
+                    onClick={(e) =>
+                      handleClick(e, postDetail.postNo, postDetail.kakaoId)
+                    }
+                  >
+                    <MoreVertIcon />
+                  </IconButton>
+                </span>
+                <div id="modal-modal-title" variant="h6" component="h2"></div>
+                <div className="flex">
+                  <Avatar
+                    className="profile_img"
+                    src={postDetail.userDTO.kakaoProfileImg}
+                    width="100px"
+                    height="100px"
+                  />
+                </div>
+                <div id="modal-modal-description" sx={{ mt: 2 }}>
+                  <b>@{postDetail.userDTO.kakaoNickname}</b>
+                  &nbsp;&nbsp;
+                  <span className="post_detail">
+                    {postDetail.postDate.substr(0, 10)}
+                  </span>
+                </div>
+                <div className="post_content">{postDetail.postContent}</div>
+                {postDetail.postImg === "" ? (
+                  <></>
+                ) : (
+                  <img
+                    className="post_img"
+                    src={postDetail.postImg}
+                  />
+                )}
+              </div>
+            )}
+          </Box>
+        </Modal>
       </div>
       <div>
         <div className="mypagePostModal">

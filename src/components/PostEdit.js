@@ -28,6 +28,8 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SendIcon from "@mui/icons-material/Send";
 import { PhotoCamera } from "@mui/icons-material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
@@ -55,6 +57,12 @@ function PostEdit() {
   const [fileImage, setFileImage] = useState("");
   const [addedFile, setAddedFile] = useState([]);
 
+  const [alertStatus, setAlertStatus] = useState(false);
+
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
+
   // 동기로 diary 데이터 불러오는 useEffect
   useEffect(() => {
     const datas = postData(postNo);
@@ -70,6 +78,7 @@ function PostEdit() {
     console.log("content " + content);
     console.log("post.content " + post.postContent);
   }, []);
+  console.log("file" , fileImage)
   // fileNo(FileEntity PK)로 해당 file 삭제
   const deleteFiles = (e, fileNo, postNo) => {
     e.preventDefault();
@@ -102,6 +111,7 @@ function PostEdit() {
   function getFile(e) {
     setAddedFile(e.target.files);
     saveFileImage(e);
+    console.log("addedFile : " + addedFile[0]);
   }
 
   const submit = (e) => {
@@ -115,10 +125,9 @@ function PostEdit() {
       console.log("formdata확인" + key, ":", formData.get(key));
     }
 
-    postUpdate(postNo, formData, currentPage).then(
-      (document.location.href = `/posting`)
-    );
-  };
+    postUpdate(postNo, formData, currentPage)
+      .then((document.location.href = `/posting`));
+};
 
   return (
     <div>
@@ -158,10 +167,10 @@ function PostEdit() {
                 sx={{ flexGrow: 1 }}
                 style={{ color: "#4d5749" }}
               >
-                Post Edit Page (PostNo : {postNo})
+                Post Edit Page
               </Typography>
               {/* 수정 submit버튼 */}
-              <Button
+              {/* <Button
                 color="inherit"
                 variant="outlined"
                 className="write_button"
@@ -170,7 +179,17 @@ function PostEdit() {
                 style={{ backgroundColor: "#89ab79" }}
               >
                 Submit
-              </Button>
+              </Button> */}
+              <Button color="success" endIcon={<SendIcon />} type="submit">
+            Send
+          </Button>
+          <Button
+            color="error"
+            endIcon={<DeleteIcon />}
+            onClick={() => (window.location.href = "/")}
+          >
+            Cancel
+          </Button>
             </Toolbar>
           </AppBar>
         </Box>
@@ -206,7 +225,7 @@ function PostEdit() {
                   </TableCell>
                   <TableCell align="center">
                     <div align="center">
-                      {fileImage && <img alt="sample" src={fileImage} />}
+                      {fileImage && <img className="post_img" alt="sample" src={fileImage} />}
                     </div>
                   </TableCell>
                   <TableCell>

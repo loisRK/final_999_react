@@ -16,10 +16,15 @@ import {
 import { roomList } from "../api/Chatting";
 import { useNavigate } from "react-router-dom";
 
-// [{db안에 있는 data}, 거리] -> 가까운 순으로 정렬
-const distanceList = [];
-// 거리를 기준으로 정렬된 db data
-const chatInfo = [];
+// 가까운 순서대로 정렬
+function compareSecondColumn(a, b) {
+  if (a[1] === b[1]) {
+    return 0;
+  } else {
+    return a[1] < b[1] ? -1 : 1;
+  }
+}
+
 
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   function deg2rad(deg) {
@@ -67,6 +72,8 @@ function ChatList() {
   const [chatLong, setchatLong] = useState(0);
   const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
   const [toggled, setToggled] = useState(true);
+  const [distanceList, setDistanceList] = useState([]); // [{db안에 있는 data}, 거리] -> 가까운 순으로 정렬
+  const [chatInfo, setChatInfo] = useState([]); // 거리를 기준으로 정렬된 db data
 
   const navigate = useNavigate();
 
@@ -157,19 +164,19 @@ function ChatList() {
   // distanceList를 거리순으로 정렬
   distanceList.sort(compareSecondColumn);
 
-  function compareSecondColumn(a, b) {
-    if (a[1] === b[1]) {
-      return 0;
-    } else {
-      return a[1] < b[1] ? -1 : 1;
-    }
-  }
+  // function compareSecondColumn(a, b) {
+  //   if (a[1] === b[1]) {
+  //     return 0;
+  //   } else {
+  //     return a[1] < b[1] ? -1 : 1;
+  //   }
+  // }
 
   // distanceList에서 data만 가져옴
   distanceList.map(
     (dli, i) => (chatInfo[i] = distanceList[i][0]),
+    );
     console.log("chatInfo", chatInfo)
-  );
 
   // 첫 페이지 0번
   const [page, setPage] = useState(0);

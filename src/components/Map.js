@@ -14,10 +14,15 @@ import {
   Typography,
   Modal,
   Avatar,
+  IconButton,
+  Menu,
+  MenuItem
 } from "@mui/material";
 import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import { axiosDeletePost } from "../api/Post";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -54,6 +59,11 @@ function Map({ token }) {
   const [userPosts, setUserPosts] = useState([]);
   // const [overlayState, setOverlayState] = useState("open");
   var overlayState = "open";
+  const loginOptions = ["수정하기", "삭제하기"];
+  const [postNo, setPostNo] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const ITEM_HEIGHT = 20;
+  const postOpen = Boolean(anchorEl);
 
   const alertClick = () => {
     setOpen(!open);
@@ -86,22 +96,6 @@ function Map({ token }) {
       console.log("GPS를 지원하지 않습니다.");
     }
   };
-  useEffect(() => {
-    if (token !== null) {
-      const data = axiosUser();
-      data.then((res) => setUsername(res.kakaoNickname));
-      data
-        .then((res) => axioUserPosts(res.kakaoId))
-        .then((res) => setUserPosts(res));
-    }
-    // 페이지 로드 시 현재 위치 지정
-    currentPosition();
-
-    // 생성된 채팅방 리스트 가져오기
-    const chatData = roomList();
-    // chatData.then((response) => console.log(response));
-    chatData.then((response) => setChatList(response));
-  }, []);
 
   useEffect(() => {
     const options = {
@@ -437,6 +431,46 @@ function Map({ token }) {
   }, [latitude, longitude, userPosts.length, chatList.length]);
   // }, [latitude, longitude, posts.length, chatList.length]);
 
+  useEffect(() => {
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+      data
+        .then((res) => axioUserPosts(res.kakaoId))
+        .then((res) => setUserPosts(res));
+    }
+    // 페이지 로드 시 현재 위치 지정
+    currentPosition();
+
+    // 생성된 채팅방 리스트 가져오기
+    const chatData = roomList();
+    // chatData.then((response) => console.log(response));
+    chatData.then((response) => setChatList(response));
+  }, []);
+
+  const handleClick = (event, postNo) => {
+    // console.log("handleClick : " + postNo + " " + postOwner);
+    setAnchorEl(event.currentTarget);
+    setPostNo(postNo);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const editOrDelete = (event) => {
+    console.log(event.currentTarget);
+
+    if (event.currentTarget.innerText === "수정하기") {
+      console.log("수정 눌렀을 때 : " + postNo);
+      navigate(`/postEdit?postNo=${postNo}`);
+    } else {
+      console.log("삭제 눌렀을 때 : " + postNo);
+      axiosDeletePost(postNo);
+      window.location.href="/posting/*"
+    }
+  };
+
   return (
     <div>
       <div>
@@ -466,6 +500,21 @@ function Map({ token }) {
               <></>
             ) : (
               <div>
+                <span className="dot_btn">
+                  {" "}
+                  <IconButton
+                    aria-label="more"
+                    id="long-button"
+                    aria-controls={modalOpen ? "long-menu" : undefined}
+                    aria-expanded={modalOpen ? "true" : undefined}
+                    aria-haspopup="true"
+                    onClick={(e) =>
+                      handleClick(e, postDetail.postNo, postDetail.kakaoId)
+                    }
+                  >
+                    <MoreVertIcon />
+                  </IconButton>
+                </span>
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
@@ -478,15 +527,9 @@ function Map({ token }) {
                   height="100px"
                 />
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  {postDetail.userDTO.kakaoNickname}
+                  <b>@{postDetail.userDTO.kakaoNickname}</b> &nbsp;&nbsp;
+                  <span className="post_detail">{postDetail.postDate.substr(0, 10)}</span>
                 </Typography>
-                <span className="post_detail">
-                  @{postDetail.userDTO.kakaoNickname}
-                </span>
-                &nbsp;
-                <span className="post_detail">{postDetail.postDate}</span>&nbsp;
-                <span className="post_detail">post#{postDetail.postNo}</span>
-                &nbsp;
                 <div className="post_content">{postDetail.postContent}</div>
                 {postDetail.postImg === "" ? (
                   <></>
@@ -498,6 +541,27 @@ function Map({ token }) {
           </Box>
         </Modal>
       </div>
+      <Menu
+        id="long-menu"
+        MenuListProps={{
+          "aria-labelledby": "long-button",
+        }}
+        anchorEl={anchorEl}
+        open={postOpen}
+        onClose={handleClose}
+        PaperProps={{
+          style: {
+            maxHeight: ITEM_HEIGHT * 4.5,
+            width: "20ch",
+          },
+        }}
+      >
+        {loginOptions.map((option) => (
+          <MenuItem key={option} onClick={(e) => editOrDelete(e)}>
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
 
       <div className="map_wrap" style={{ position: "relative" }}>
         <div
