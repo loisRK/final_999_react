@@ -238,16 +238,16 @@ function MyPage() {
       console.log("인피니티 스크롤");
       axiosUser().then((res) => {
         console.log("##### id : " + res.kakaoId);
-          axiosMypagePosts(
-            posts,
-            setWasLastList,
-            setPrevPage,
-            setPosts,
-            setLikes,
-            currentPage,
-            res.kakaoId, 
-            setEnd
-          );
+        axiosMypagePosts(
+          posts,
+          setWasLastList,
+          setPrevPage,
+          setPosts,
+          setLikes,
+          currentPage,
+          res.kakaoId,
+          setEnd
+        );
       });
           
         };
