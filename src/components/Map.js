@@ -86,22 +86,6 @@ function Map({ token }) {
       console.log("GPS를 지원하지 않습니다.");
     }
   };
-  useEffect(() => {
-    if (token !== null) {
-      const data = axiosUser();
-      data.then((res) => setUsername(res.kakaoNickname));
-      data
-        .then((res) => axioUserPosts(res.kakaoId))
-        .then((res) => setUserPosts(res));
-    }
-    // 페이지 로드 시 현재 위치 지정
-    currentPosition();
-
-    // 생성된 채팅방 리스트 가져오기
-    const chatData = roomList();
-    // chatData.then((response) => console.log(response));
-    chatData.then((response) => setChatList(response));
-  }, []);
 
   useEffect(() => {
     const options = {
@@ -434,8 +418,25 @@ function Map({ token }) {
       currentPosition();
       map.setCenter(markerPosition);
     });
-  }, [latitude, longitude, chatList.length]);
+  }, [latitude, longitude, userPosts.length, chatList.length]);
   // }, [latitude, longitude, posts.length, chatList.length]);
+
+  useEffect(() => {
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+      data
+        .then((res) => axioUserPosts(res.kakaoId))
+        .then((res) => setUserPosts(res));
+    }
+    // 페이지 로드 시 현재 위치 지정
+    currentPosition();
+
+    // 생성된 채팅방 리스트 가져오기
+    const chatData = roomList();
+    // chatData.then((response) => console.log(response));
+    chatData.then((response) => setChatList(response));
+  }, []);
 
   return (
     <div>

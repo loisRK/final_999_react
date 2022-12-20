@@ -1,21 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { axiosDeletePost, axiosLike, postData } from "../api/Post";
 import { useNavigate } from "react-router-dom";
-import { Avatar, Checkbox, Snackbar, Alert } from "@mui/material";
-import { Favorite, FavoriteBorder, MoreVertIcon } from "@mui/icons-material";
+import {
+  Avatar,
+  Checkbox,
+  Snackbar,
+  Alert,
+  FormControlLabel,
+  Badge,
+} from "@mui/material";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { axiosUser } from "../api/User";
 
 const ITEM_HEIGHT = 20;
 
-const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
+const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
   const navigate = useNavigate();
   const [postNo, setPostNo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userId, setUserId] = useState("");
+  const [likesList, setLikesList] = useState(likes);
   const open = Boolean(anchorEl);
+  console.log("### Posts.js likes : " + likes);
 
   const token = window.localStorage.getItem("token");
   const [alertStatus, setAlertStatus] = useState(false);
@@ -28,10 +38,12 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     }
   }, []);
 
-  const heartClick = (postNum, liked) => {
+  console.log(likes);
+
+  const heartClick = (event, postNum, liked, idx) => {
     // 데이터 전송을 위한 form, file 객체 생성
     const formData = new FormData();
-    console.log("postNo : " + postNum + "  kakaoId : " + userId);
+    // console.log("postNo : " + postNum + "  kakaoId : " + userId);
     formData.append("postNo", postNum);
     formData.append("userId", userId);
 
@@ -47,7 +59,22 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
     }
 
     axiosLike(formData);
+    // console.log("##### checked : " + event.target.checked);
+
+    onChange(idx, event.target.checked);
   };
+
+  const onChange = useCallback((idx, checked) => {
+    setLikes((prevItems) =>
+      prevItems.map((item, index) => {
+        return index === idx && checked // 인덱스가 같고 true
+          ? item + checked
+          : index === idx && !checked // 인덱스가 같고 false
+          ? item - 1
+          : item;
+      })
+    );
+  }, []);
 
   const handleClick = (event, postNo, postOwner) => {
     // console.log("handleClick : " + postNo + " " + postOwner);
@@ -67,15 +94,15 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
 
   const loginOptions = ["수정하기", "삭제하기"];
   const editOrDelete = (event) => {
-    console.log(event.currentTarget);
+    // console.log(event.currentTarget);
     if (userId === "") {
       alertClick();
     } else {
       if (event.currentTarget.innerText === "수정하기") {
-        console.log("수정 눌렀을 때 : " + postNo);
+        // console.log("수정 눌렀을 때 : " + postNo);
         navigate(`/postEdit?postNo=${postNo}`);
       } else {
-        console.log("삭제 눌렀을 때 : " + postNo);
+        // console.log("삭제 눌렀을 때 : " + postNo);
         axiosDeletePost(postNo).then((document.location.href = `/posting`));
       }
     }
@@ -108,14 +135,7 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
           fontFamily: "LeferiPoint-WhiteObliqueA",
         }}
       >
-        {posts.map((post) => {
-          console.log(post);
-          console.log(userId);
-          // like가 Promise 객체로 불러와지기 때문에 이렇게 사용할 수가 없다
-          // posts 자체를 불러올 때 afterLike 변수값까지 같이 가져올 수 있는 DTO를 새로 만들어야 한다.
-          // let liked = axiosGetLike(userId, post.postNo);
-          // console.log("get liked : " + post.postNo + " " + liked);
-
+        {posts.map((post, idx) => {
           return (
             <div key={post.postNo} className="post_box">
               <Snackbar
@@ -149,29 +169,18 @@ const Posts = ({ onScroll, listInnerRef, posts, currentPage }) => {
                     <span className="post_detail">{time(post.postDate)}</span>
                     <br />
                     <span className="heart_btn">
-                      {token !== null ? (
-                        <Checkbox
-                          defaultChecked={post.afterLike === 1 ? true : false}
-                          icon={<FavoriteBorder />}
-                          checkedIcon={<Favorite />}
-                          onChange={() =>
-                            heartClick(post.postNo, post.afterLike)
-                          }
-                          color="warning"
-                        />
-                      ) : (
-                        <Checkbox
-                          defaultChecked={post.afterLike === 1 ? true : false}
-                          disabled
-                          icon={<FavoriteBorder />}
-                          checkedIcon={<Favorite />}
-                          onChange={() =>
-                            heartClick(post.postNo, post.afterLike)
-                          }
-                          color="warning"
-                        />
-                      )}
-                      <span>{post.likeCnt}</span>
+                      <Checkbox
+                        defaultChecked={post.afterLike === 1 ? true : false}
+                        disabled={token === null ? true : false}
+                        icon={<FavoriteBorder />}
+                        checkedIcon={<Favorite />}
+                        value={likes[idx]}
+                        onChange={(event) =>
+                          heartClick(event, post.postNo, post.afterLike, idx)
+                        }
+                        color="warning"
+                      />
+                      <span>{likes[idx]}</span>
                     </span>
                     <span className="dot_btn">
                       {" "}

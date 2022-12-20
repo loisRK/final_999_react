@@ -28,6 +28,7 @@ import {
   Menu,
   MenuItem,
   FormControlLabel,
+  Grid,
 } from "@mui/material";
 import { KAKAO_AUTH_URL } from "./KakaoLoginData";
 import kakao_login_medium_wide from "../img/kakao_login_medium_wide.png";
@@ -37,10 +38,10 @@ import dulgi from "../img/graydulgi.png";
 import gugu_tilt from "../img/dulgi_headtilt.png";
 import gugu_login from "../img/dulgi_login.jpg";
 import { Container } from "@mui/system";
-// import styled from "@emotion/styled";
 import { styled } from "@mui/material/styles";
 import { axiosUser } from "../api/User";
 import ChatList from "./ChatList";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -93,31 +94,69 @@ const IOSSwitch = styled((props) => (
   },
 }));
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-  alignItems: "center",
-};
-
-// const MyThemeComponent = styled("div")(({ theme }) => ({
-//   color: theme.palette.primary.contrastText,
-//   backgroundColor: theme.palette.primary.main,
-//   padding: theme.spacing(1),
-//   borderRadius: theme.shape.borderRadius,
-// }));
-
 function Home() {
   const token = window.localStorage.getItem("token");
   const [settings, setSettings] = useState([]);
+  const [profileSettings, setProfileSettings] = useState([]);
+  const [open, setOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
+  const [toggled, setToggled] = useState(false);
+  const [nickname, setNickname] = useState("gugu");
+  const [profileImg, setProfileImg] = useState(
+    "https://cdn-icons-png.flaticon.com/128/1077/1077063.png"
+  );
+  const [email, setEmail] = useState("gugu@999.com");
+  const [userId, setUserId] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
 
+  // 하단 바 로그인 상태별 paging 옵션
+  const [alertStatus, setAlertStatus] = useState(false);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [anchorElUserProfile, setAnchorElUserProfile] = useState(null);
+
+  const navigate = useNavigate();
+
+  const handleClick = (event) => {
+    // console.log("handleClick : " + postNo + " " + postOwner);
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const editMypage = () => {
+    navigate(
+      `/profile?userId=${userId}&email=${email}&nickname=${nickname}&image=${profileImg}`
+    );
+  };
+
+  const handleOpenUserProfileMenu = (event) => {
+    setAnchorElUserProfile(event.currentTarget);
+  };
+
+  const handleCloseUserProfileMenu = () => {
+    setAnchorElUserProfile(null);
+  };
+
+  const profileMenuAction = (setting) => {
+    console.log("menu test: " + setting);
+    handleCloseUserProfileMenu();
+    switch (setting) {
+      case "Edit Profile":
+        // 내 프로필 모달로 보여주기
+        editMypage();
+        // alert("프로필수정하기");
+        break;
+      // case "Logout":
+      //   // kakaoLogout 이동
+      //   setLogoutOpen(true);
+      //   break;
+      default:
+        alert("아무것도 선택하지 않음");
+    }
+  };
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -136,7 +175,8 @@ function Home() {
         break;
       case "My Profile":
         // 내 프로필 모달로 보여주기
-        alert("프로필보여주기");
+        // alert("프로필보여주기");
+        setProfileOpen(true);
         break;
       case "Logout":
         // kakaoLogout 이동
@@ -155,21 +195,9 @@ function Home() {
     window.location.href = KAKAO_LOGOUT_URL;
   };
 
-  const [open, setOpen] = useState(false);
-  const [logoutOpen, setLogoutOpen] = useState(false);
-  const [toggled, setToggled] = useState(false);
-
-  // 하단 바 로그인 상태별 paging 옵션
-  const [alertStatus, setAlertStatus] = useState(false);
-  const navigate = useNavigate();
-
   const alertClick = () => {
     setAlertStatus(!alertStatus);
   };
-
-  const [profileImg, setProfileImg] = useState(
-    "https://cdn-icons-png.flaticon.com/128/1077/1077063.png"
-  );
 
   const loginCheck = () => {
     if (token === null) {
@@ -183,7 +211,11 @@ function Home() {
     if (token !== null) {
       const data = axiosUser();
       data.then((res) => setProfileImg(res.kakaoProfileImg));
+      data.then((res) => setUserId(res.kakaoId));
+      data.then((res) => setNickname(res.kakaoNickname));
+      data.then((res) => setEmail(res.kakaoEmail));
       setSettings(["My Profile", "Logout"]);
+      setProfileSettings(["Edit Profile"]);
     } else {
       setSettings(["Login"]);
     }
@@ -212,7 +244,7 @@ function Home() {
                   display: { xs: "none", md: "flex" },
                   fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
-                  fontSize: "medium",
+                  fontSize: "large",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -313,7 +345,9 @@ function Home() {
         </FormGroup>
       </div>
       <br />
-      <div>{toggled === false ? <Map token={token} /> : <ChatList />}</div>
+      <div>
+        {toggled === false ? <Map token={token} /> : <ChatList token={token} />}
+      </div>
       {/* <Map /> */}
       <br />
       <BottomNavigation
@@ -328,19 +362,19 @@ function Home() {
       >
         <BottomNavigationAction
           // label="Posting"
-          icon={<StickyNote2Outlined />}
+          icon={<StickyNote2Outlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/posting"
         />
         <BottomNavigationAction
           // label="Home"
-          icon={<HomeOutlined />}
+          icon={<HomeOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/"
         />
         <BottomNavigationAction
           // label="My Page"
-          icon={<AccountCircleOutlined />}
+          icon={<AccountCircleOutlined sx={{ transform: "scale(1.3)" }} />}
           onClick={loginCheck}
         />
       </BottomNavigation>
@@ -403,6 +437,95 @@ function Home() {
               onClick={handleLogin}
             />
           </Typography>
+        </Box>
+      </Modal>
+      <Modal
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <span className="dot_btn">
+            {" "}
+            <IconButton
+              aria-label="more"
+              id="long-button"
+              aria-controls={profileOpen ? "long-menu" : undefined}
+              aria-expanded={profileOpen ? "true" : undefined}
+              aria-haspopup="true"
+              sx={{ alignContent: "right" }}
+              onClick={(e) => handleOpenUserProfileMenu(e)}
+            >
+              <MoreVertIcon />
+            </IconButton>
+          </span>
+          <Grid
+            container
+            justifycontent="center"
+            direction="column"
+            alignItems="center"
+            padding={3}
+            style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
+          >
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUserProfile}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUserProfile)}
+              onClose={handleCloseUserProfileMenu}
+            >
+              {profileSettings.map((setting) => (
+                <MenuItem
+                  key={setting}
+                  onClick={() => profileMenuAction(setting)}
+                >
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+            <Grid>
+              <Avatar
+                className="profileImg"
+                alt="gugu"
+                src={profileImg}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  border: "0.1px solid lightgray",
+                }}
+              />
+            </Grid>
+            &nbsp;&nbsp;&nbsp;
+            <Grid>{nickname}</Grid>
+            <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
+            {/* <Grid>{userId}</Grid> */}
+            &nbsp;
+          </Grid>
         </Box>
       </Modal>
       <Modal

@@ -248,7 +248,7 @@ function MyPage() {
                   display: { xs: "none", md: "flex" },
                   fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
-                  fontSize: "medium",
+                  fontSize: "large",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -418,8 +418,24 @@ function MyPage() {
               centered
               aria-label="lab API tabs example"
             >
-              <Tab label="Map" value="1" sx={{ width: "50vw" }} />
-              <Tab label="List" value="2" sx={{ width: "50vw" }} />
+              <Tab
+                label="Map"
+                value="1"
+                sx={{
+                  width: "50vw",
+                  fontFamily: "LeferiPoint-WhiteObliqueA",
+                  fontWeight: "bold",
+                }}
+              />
+              <Tab
+                label="List"
+                value="2"
+                sx={{
+                  width: "50vw",
+                  fontFamily: "LeferiPoint-WhiteObliqueA",
+                  fontWeight: "bold",
+                }}
+              />
             </TabList>
           </Box>
           <TabPanel
@@ -455,17 +471,17 @@ function MyPage() {
         value={2}
       >
         <BottomNavigationAction
-          icon={<StickyNote2Outlined />}
+          icon={<StickyNote2Outlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/posting"
         />
         <BottomNavigationAction
-          icon={<HomeOutlined />}
+          icon={<HomeOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/"
         />
         <BottomNavigationAction
-          icon={<AccountCircleOutlined />}
+          icon={<AccountCircleOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/myPage"
         />

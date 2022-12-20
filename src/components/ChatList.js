@@ -12,6 +12,8 @@ import {
   Paper,
   TableFooter,
   TablePagination,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { roomList } from "../api/Chatting";
 import { useNavigate } from "react-router-dom";
@@ -62,13 +64,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function ChatList() {
+function ChatList({ token }) {
   const [chatLat, setLatitude] = useState(0);
   const [chatLong, setchatLong] = useState(0);
   const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
-  const [toggled, setToggled] = useState(true);
+  const [open, setOpen] = useState(false);
 
-  const navigate = useNavigate();
+  const alertClick = () => {
+    setOpen(!open);
+  };
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
   // geolocation으로 현재 위치 가져오는 함수 (Geolocation.getCurrentPosition(success, error, [options]))
@@ -223,7 +227,9 @@ function ChatList() {
                       {" "}
                       <button
                         onClick={() => {
-                          window.location.href = `room?roomNo=${c.roomNo}`;
+                          token !== null
+                            ? (window.location.href = `room?roomNo=${c.roomNo}`)
+                            : alertClick();
                         }}
                       >
                         같이놀기
@@ -246,6 +252,20 @@ function ChatList() {
           </Table>
         </TableContainer>
       </div>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={2000}
+        onClose={alertClick}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          로그인이 필요한 기능입니다.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
