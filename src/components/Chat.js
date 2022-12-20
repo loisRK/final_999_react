@@ -39,15 +39,6 @@ import {
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {
-  doc,
-  setDoc,
-  collection,
-  serverTimestamp,
-  query,
-  onSnapshot,
-  orderBy,
-} from "firebase/firestore";
-import {
   messageData,
   messageUpdate,
   dulgiInsert,
@@ -59,11 +50,11 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Paper from "@material-ui/core/Paper";
 import { Input } from "postcss";
-import { async } from "@firebase/util";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
+// const socket = io.connect("http://192.168.0.147:9999");
 // const socket = io.connect("http://192.168.0.13:9999");
 // const socket = io.connect("http://192.168.0.25:9999");
 const socket = io.connect("https://server.bnmnil96.repl.co");
@@ -395,6 +386,12 @@ const Chat = () => {
     }
   };
 
+  const handleKeyPress = (e) => {
+    if (e.keyCode === 13) {
+      insertTaboo();
+    }
+  };
+
   // 금기어 삭제
   const tabooDelete = async (idx) => {
     console.log(tabooList[idx]);
@@ -412,7 +409,10 @@ const Chat = () => {
 
   return (
     // items-center justify-center
-    <div className="flex flex-col h-fit ">
+    <div
+      className="flex flex-col h-fit"
+      style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
+    >
       <div className="w-full h-screen bg-white relative overflow-y-auto">
         <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static" sx={{ background: "#B6E2A1" }}>
@@ -455,7 +455,11 @@ const Chat = () => {
                 type="submit"
                 defaultValue="save"
                 onClick={() => handleClickOpen()}
-                style={{ backgroundColor: "#89ab79" }}
+                style={{
+                  backgroundColor: "#89ab79",
+                  fontFamily: "LeferiPoint-WhiteObliqueA",
+                  fontWeight: "bold",
+                }}
               >
                 EXIT
               </Button>
@@ -467,14 +471,22 @@ const Chat = () => {
           onClose={handleClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
+          sx={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
         >
-          <DialogTitle id="alert-dialog-title">
+          <DialogTitle
+            id="alert-dialog-title"
+            sx={{ fontFamily: "LeferiPoint-WhiteObliqueA", fontWeight: "bold" }}
+          >
             {"조금 더 자유로워지시겠습니까?"}
           </DialogTitle>
           <img alt="flyGugu" src={flyGugu}></img>
 
           <DialogActions>
             <Button
+              style={{
+                fontFamily: "LeferiPoint-WhiteObliqueA",
+                fontWeight: "bold",
+              }}
               onClick={() => {
                 chatOut();
               }}
@@ -482,7 +494,15 @@ const Chat = () => {
             >
               날아가기
             </Button>
-            <Button onClick={handleClose}>둥지틀기</Button>
+            <Button
+              style={{
+                fontFamily: "LeferiPoint-WhiteObliqueA",
+                fontWeight: "bold",
+              }}
+              onClick={handleClose}
+            >
+              둥지틀기
+            </Button>
           </DialogActions>
         </Dialog>
         {/* </div> */}
@@ -521,7 +541,10 @@ const Chat = () => {
                       <Menu {...bindMenu(popupState)}>
                         <button
                           component="MenuItem"
-                          sx={{ display: "inline" }}
+                          style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
+                          sx={{
+                            display: "inline",
+                          }}
                           onClick={() => {
                             popupState.close();
                             reportUser(this);
@@ -559,7 +582,7 @@ const Chat = () => {
           <button
             onClick={sendMessage}
             className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-            style={{ backgroundColor: "#89ab79" }}
+            style={{ backgroundColor: "#89ab79", fontWeight: "bold" }}
           >
             SEND
           </button>
@@ -593,6 +616,7 @@ const Chat = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
+            fontFamily: "LeferiPoint-WhiteObliqueA",
           }}
         >
           <img
@@ -601,14 +625,14 @@ const Chat = () => {
             src={ownerProfileImg}
             style={{
               height: 120,
-              width: 120,
+              width: "auto",
               position: "relative",
               display: "flex",
               alignItems: "center",
               marginBottom: 20,
             }}
           />
-          {ownerName}
+          <b>{ownerName}의 방</b>
           {/* <IconButton
             component="label"
             style={{ color: "#89ab79" }}
@@ -653,6 +677,7 @@ const Chat = () => {
             variant="standard"
             value={tabooWord}
             onChange={(e) => setTabooWord(e.target.value)}
+            onKeyDown={(e) => handleKeyPress(e)}
             type="text"
             placeholder="taboo"
           />
