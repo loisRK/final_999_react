@@ -89,13 +89,13 @@ export const axiosLike = async (formData) => {
   return response.data;
 };
 
-// 해당 user의 포스팅 like 정보 가져오기 - GET (사용안하면 삭제)
-export const axiosGetLike = async (postNo, userId) => {
-  const response = await axios.get(
-    `http://localhost:8080/api/getLike?postNo=${postNo}&userId=${userId}`
-  );
-  return response.data;
-};
+// 해당 user의 포스팅 like 정보 가져오기 - GET
+// export const axiosGetLike = async (postNo, userId) => {
+//   const response = await axios.get(
+//     `http://localhost:8080/api/getLike?postNo=${postNo}&userId=${userId}`
+//   );
+//   return response.data;
+// };
 
 // 전체 포스트랑 like 정보 다 가져오는거 도전!!!! (사용안하면 삭제)
 export const axiosAllPostAndLike = async (
@@ -131,12 +131,14 @@ export const axioUserPosts = async (userId) => {
 // Post랑 like 정보 전체 데이터 불러오기 - GET
 export const axiosPostLike = async (
   posts,
+  likes,
   setWasLastList,
   setPrevPage,
   setPosts,
+  setLikes,
   currentPage,
   loginId,
-  searchId, 
+  searchId,
   setEnd
 ) => {
   // console.log("currentPage" + currentPage);
@@ -146,11 +148,11 @@ export const axiosPostLike = async (
     `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}&searchId=${searchId}`
   );
 
-  console.log("## inside axiosPostLike : " + response.data.dtoList);
-  console.log("## inside axiosPostLike : " + response.data.page);
+  // console.log("## inside axiosPostLike : " + response.data.dtoList);
+  // console.log("## inside axiosPostLike : " + response.data.page);
   // 데이터가 없으면 마지막 페이지였다는걸 표시
   if (!response.data.dtoList.length) {
-    console.log("마지막 페이지 입니다.");
+    // console.log("마지막 페이지 입니다.");
     setWasLastList(true);
     return;
   }
@@ -158,15 +160,22 @@ export const axiosPostLike = async (
   setPrevPage(currentPage);
   // setPrevPage(response.data.page);
   let result = [];
+  let likeResult = [];
+  // console.log(
+  //   "####### likes : " + response.data.dtoList.map((dto) => dto.likeCnt)
+  // );
   if (searchId === 0 || currentPage !== 1) {
-    console.log("1페이지가 아닐때 : " + currentPage);
+    // console.log("1페이지가 아닐때 : " + currentPage);
     result = [...posts, ...response.data.dtoList];
+    likeResult = [...likes, ...response.data.dtoList.map((dto) => dto.likeCnt)];
   } else {
-    console.log("검색했을 때 " + currentPage);
+    // console.log("검색했을 때 " + currentPage);
     result = [...response.data.dtoList];
+    likeResult = [...response.data.dtoList.map((dto) => dto.likeCnt)];
   }
 
   setPosts(result);
+  setLikes(likeResult);
 };
 
 // insert Diary - post (사용안하면 삭제)
@@ -200,7 +209,6 @@ export const axiosData = async (
   setPrevPage(currentPage);
   setPosts([...posts, ...response.data.dtoList]);
 };
-
 
 // Mypage용 전체 데이터 불러오기 (loginId로 검색)
 // Post랑 like 정보 전체 데이터 불러오기 - GET

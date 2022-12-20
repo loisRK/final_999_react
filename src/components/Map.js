@@ -16,7 +16,7 @@ import {
   Avatar,
   IconButton,
   Menu,
-  MenuItem
+  MenuItem,
 } from "@mui/material";
 import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
@@ -151,7 +151,7 @@ function Map({ token }) {
       // 포스트 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const postImage = new kakao.maps.MarkerImage(
         imageSrc,
-        imageSize,
+        imageSize
         // imageOption
       );
       // 포스트 마커 객체 생성
@@ -467,7 +467,7 @@ function Map({ token }) {
     } else {
       console.log("삭제 눌렀을 때 : " + postNo);
       axiosDeletePost(postNo);
-      window.location.href="/posting/*"
+      window.location.href = "/posting/*";
     }
   };
 
@@ -528,7 +528,9 @@ function Map({ token }) {
                 />
                 <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                   <b>@{postDetail.userDTO.kakaoNickname}</b> &nbsp;&nbsp;
-                  <span className="post_detail">{postDetail.postDate.substr(0, 10)}</span>
+                  <span className="post_detail">
+                    {postDetail.postDate.substr(0, 10)}
+                  </span>
                 </Typography>
                 <div className="post_content">{postDetail.postContent}</div>
                 {postDetail.postImg === "" ? (
