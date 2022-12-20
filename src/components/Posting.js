@@ -243,30 +243,6 @@ function Posting() {
 
   return (
     <div id="post-box">
-      {/* <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <Typography
-              variant="h6"
-              noWrap
-              position="static"
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              Posting
-            </Typography>
-          </Toolbar>
-        </Container>
-      </AppBar> */}
       <AppBar position="static" sx={{ background: "#B6E2A1" }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>

@@ -98,6 +98,23 @@ function Map({ token }) {
   };
 
   useEffect(() => {
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+      data
+        .then((res) => axioUserPosts(res.kakaoId))
+        .then((res) => setUserPosts(res));
+    }
+    // 페이지 로드 시 현재 위치 지정
+    currentPosition();
+
+    // 생성된 채팅방 리스트 가져오기
+    const chatData = roomList();
+    // chatData.then((response) => console.log(response));
+    chatData.then((response) => setChatList(response));
+  }, []);
+
+  useEffect(() => {
     const options = {
       //지도를 생성할 때 필요한 기본 옵션
       center: new window.kakao.maps.LatLng(latitude, longitude), //지도의 현재 사용자 좌표.
@@ -183,7 +200,7 @@ function Map({ token }) {
       // 채팅방 마커 이미지 옵션
       const imageSrc = "bidulgi.png";
       const imageSize = new kakao.maps.Size(50, 50); // 마커이미지의 크기
-      const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
+      // const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
 
       // 채팅방 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const markerImage = new kakao.maps.MarkerImage(

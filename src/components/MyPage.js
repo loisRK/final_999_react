@@ -23,7 +23,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
@@ -45,6 +44,9 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { currentPositions } from "../api/Map";
 import Profile from "./Profile";
 import gugu from "../img/bidulgi.png";
+import gugu_tilt from "../img/dulgi_headtilt.png";
+import { KAKAO_LOGOUT_URL } from "./KakaoLogoutData";
+
 import Posts from "./Posts";
 // import Map from "./Map";
 
@@ -69,15 +71,19 @@ function MyPage() {
       case "Edit Profile":
         // 내 프로필 모달로 보여주기
         editMypage();
-        alert("프로필수정하기");
         break;
       case "Logout":
         // kakaoLogout 이동
         setLogoutOpen(true);
+
         break;
       default:
         alert("아무것도 선택하지 않음");
     }
+  };
+
+  const logout = () => {
+    window.location.href = KAKAO_LOGOUT_URL;
   };
 
   const [nickname, setNickname] = useState("gugu");
@@ -226,6 +232,53 @@ function MyPage() {
   const [value, setValue] = React.useState("1");
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const [value, setValue] = React.useState("1");
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  // infinite scrolling
+  const listInnerRef = useRef();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [prevPage, setPrevPage] = useState(0); // storing prev page number
+  const [posts, setPosts] = useState([]);
+  const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
+  const [end, setEnd] = useState(0);
+
+  useEffect(() => {
+    // infinite scroll 테스트
+    if (!wasLastList && prevPage !== currentPage) {
+      console.log("인피니티 스크롤");
+      axiosUser().then((res) => {
+        console.log("##### id : " + res.kakaoId);
+        axiosMypagePosts(
+          posts,
+          setWasLastList,
+          setPrevPage,
+          setPosts,
+          currentPage,
+          res.kakaoId,
+          setEnd
+        );
+      });
+    }
+  }, [currentPage, wasLastList, prevPage]);
+
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      if (
+        Math.ceil(scrollTop) + clientHeight >= scrollHeight &&
+        currentPage < end
+      ) {
+        console.log(
+          "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
+        );
+        setCurrentPage(currentPage + 1);
+      }
+    }
   };
 
   return (
@@ -567,6 +620,53 @@ function MyPage() {
           </MenuItem>
         ))}
       </Menu>
+      <Modal
+        open={logoutOpen}
+        onClose={() => setLogoutOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            로그아웃 하시겠습니까?
+          </Typography>
+          <img
+            alt="gugu_tilt"
+            src={gugu_tilt}
+            style={{
+              height: 150,
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          />
+          <Box>
+            <Button onClick={logout} variant="outlined">
+              네
+            </Button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button onClick={() => setLogoutOpen(false)} variant="contained">
+              아니요
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 }
