@@ -78,7 +78,7 @@ function PostEdit() {
     console.log("content " + content);
     console.log("post.content " + post.postContent);
   }, []);
-  console.log("file" , fileImage)
+  console.log("file", fileImage);
   // fileNo(FileEntity PK)로 해당 file 삭제
   const deleteFiles = (e, fileNo, postNo) => {
     e.preventDefault();
@@ -95,7 +95,9 @@ function PostEdit() {
     console.log(fileImage);
     URL.revokeObjectURL(fileImage);
 
+    // 미리보기 리셋
     setFileImage("");
+    // form에 전달할 첨부파일 리셋
     setAddedFile([]);
   }
 
@@ -119,15 +121,17 @@ function PostEdit() {
     console.log("addedFile : " + addedFile[0]);
     formData.append("content", content);
     formData.append("files", addedFile[0]);
+    formData.append("stringFile", fileImage);
 
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
       console.log("formdata확인" + key, ":", formData.get(key));
     }
 
-    postUpdate(postNo, formData, currentPage)
-      .then((document.location.href = `/posting`));
-};
+    postUpdate(postNo, formData, currentPage).then(
+      (document.location.href = `/posting`)
+    );
+  };
 
   return (
     <div>
@@ -181,15 +185,15 @@ function PostEdit() {
                 Submit
               </Button> */}
               <Button color="success" endIcon={<SendIcon />} type="submit">
-            Send
-          </Button>
-          <Button
-            color="error"
-            endIcon={<DeleteIcon />}
-            onClick={() => (window.location.href = "/")}
-          >
-            Cancel
-          </Button>
+                Send
+              </Button>
+              <Button
+                color="error"
+                endIcon={<DeleteIcon />}
+                onClick={() => (window.location.href = "/")}
+              >
+                Cancel
+              </Button>
             </Toolbar>
           </AppBar>
         </Box>
@@ -225,7 +229,13 @@ function PostEdit() {
                   </TableCell>
                   <TableCell align="center">
                     <div align="center">
-                      {fileImage && <img className="post_img" alt="sample" src={fileImage} />}
+                      {fileImage && (
+                        <img
+                          className="post_img"
+                          alt="sample"
+                          src={fileImage}
+                        />
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>

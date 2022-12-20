@@ -461,7 +461,7 @@ const Chat = () => {
 
     report(formData).then((data) => {
       console.log("#### 신고 숫자 : " + data);
-      if (data === 1) {
+      if (data === 3) {
         console.log("### 신고 3번 이상!!!!!");
         socket.emit("reported", [reportMessage.userId, room]);
       }
@@ -689,6 +689,7 @@ const Chat = () => {
           className="w-[70%] h-12 border p-3 outline-none rounded-xl"
           type="text"
           placeholder="message send"
+          style={{ marginLeft: 10, marginRight: 10 }}
           onKeyPress={onKeyPress}
         />
         {message != null ? (
@@ -771,10 +772,12 @@ const Chat = () => {
           <Typography className="h-[30vh] overflow-y-auto">
             {tabooList.map((taboo, idx) =>
               taboo !== "" ? (
-                <DialogContentText id="modal-modal-title" key={idx}>
-                  <span key={idx + "번"} className="text-[14px]">
-                    {idx + 1 + ". " + taboo}
-                  </span>
+                <DialogContentText
+                  id="modal-modal-title"
+                  key={idx + "번"}
+                  className="text-[14px]"
+                >
+                  {idx + 1 + ". " + taboo}
                   &nbsp;&nbsp;&nbsp;
                   <button
                     onClick={() => tabooDelete(idx)}

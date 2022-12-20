@@ -217,6 +217,7 @@ export const axiosMypagePosts = async (
   setWasLastList,
   setPrevPage,
   setPosts,
+  setLikes,
   currentPage,
   loginId,
   setEnd
@@ -238,6 +239,10 @@ export const axiosMypagePosts = async (
   setEnd(response.data.end);
   setPrevPage(currentPage);
   let result = [];
+  let likeResult = [];
   result = [...posts, ...response.data.dtoList];
+  likeResult = [...response.data.dtoList.map((dto) => dto.likeCnt)];
+
   setPosts(result);
+  setLikes(likeResult);
 };

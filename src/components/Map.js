@@ -103,8 +103,10 @@ function Map({ token }) {
 
   // 카카오톡 id와 차단목록 가져오기.
   useEffect(() => {
-    const userData = axiosUser();
-    userData.then((res) => setKakaoId(res.kakaoId));
+    if (token !== null) {
+      const userData = axiosUser();
+      userData.then((res) => setKakaoId(res.kakaoId));
+    }
 
     const dulgiData = kickList();
     dulgiData.then((res) => setKickLists(Object.values(res)));
