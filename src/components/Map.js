@@ -18,6 +18,7 @@ import {
 import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import { kickList } from "../api/Firebase";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -52,6 +53,9 @@ function Map({ token }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postDetail, setPostDetail] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
+  const [kakaoId, setKakaoId] = useState("");
+  const [kickLists, setKickLists] = useState([]);
+
   // const [overlayState, setOverlayState] = useState("open");
   var overlayState = "open";
 
@@ -86,6 +90,16 @@ function Map({ token }) {
       console.log("GPS를 지원하지 않습니다.");
     }
   };
+
+  // 카카오톡 id와 차단목록 가져오기.
+  useEffect(() => {
+    const userData = axiosUser();
+    userData.then((res) => setKakaoId(res.kakaoId));
+
+    const dulgiData = kickList();
+    dulgiData.then((res) => setKickLists(Object.values(res)));
+  }, []);
+
   useEffect(() => {
     if (token !== null) {
       const data = axiosUser();
@@ -259,7 +273,15 @@ function Map({ token }) {
       enterElement.className = "enteroveray";
       enterElement.innerHTML = `<div class="boxtitle">${room.title}<br/>${room.userCnt}명<br/>입장하기</div>`;
 
-      if (distance <= 1) {
+      const roomNo = roomMarker.getTitle();
+      // 추방자 찾기
+      let outDulgi = kickLists.filter(function (data) {
+        return data.kickDulgi === kakaoId && data.roomNo === roomNo;
+      });
+
+      if (outDulgi.length >= 1) {
+        enterOverlay.setContent(blockElement);
+      } else if (distance <= 1) {
         enterOverlay.setContent(enterElement);
       } else {
         enterOverlay.setContent(blockElement);
@@ -269,7 +291,6 @@ function Map({ token }) {
 
       // enterElement를 클릭했을 때 실행될 함수
       enterElement.onclick = function () {
-        const roomNo = roomMarker.getTitle();
         console.log("ROOM NO : " + roomNo);
         if (token !== null) {
           navigate(`/room?roomNo=${roomNo}`);

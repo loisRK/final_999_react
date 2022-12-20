@@ -36,7 +36,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Alert,
 } from "@mui/material";
+import Snackbar from "@mui/material/Snackbar";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {
   messageData,
@@ -48,15 +50,13 @@ import {
   deleteDulgi,
 } from "../api/Firebase";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import Paper from "@material-ui/core/Paper";
-import { Input } from "postcss";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
 // const socket = io.connect("http://192.168.0.13:9999");
-// const socket = io.connect("http://192.168.0.25:9999");
-const socket = io.connect("https://server.bnmnil96.repl.co");
+const socket = io.connect("http://192.168.0.25:9999");
+// const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -79,6 +79,12 @@ const Chat = () => {
   const [clientList, setClientList] = useState([]);
   const [del, setDel] = useState(false);
   const [clear, setClear] = useState(false);
+  const [alertStatus, setAlertStatus] = useState(false);
+  const [alerts, setAlerts] = useState(false);
+  const [visitor, setVisitor] = useState("");
+  const [outGoing, setOutGoing] = useState("");
+  const [count, setCount] = useState([]);
+  const [kickLists, setKickLists] = useState([]);
 
   const [search, setSearch] = useSearchParams();
   const room = search.get("roomNo");
@@ -94,17 +100,29 @@ const Chat = () => {
   // // 첫 입장시 데이터 정보 저장.
   useEffect(() => {
     const userData = axiosUser();
+    const dulgiData = dulgiList();
 
     userData.then((res) => setKakaoId(res.kakaoId));
-    userData.then((res) => setUsername(res.kakaoNickname));
+    userData
+      .then((res) => setUsername(res.kakaoNickname))
+      .then(() =>
+        dulgiData.then(
+          (res) =>
+            Object.values(res).filter(function (data) {
+              return data.dulgi === kakaoId && data.roomNo === room;
+            }).length >= 1
+              ? ""
+              : client_in(room), // 방의 user_cnt +1
+          userData.then(
+            (res) => dulgiInsert({ roomNo: room, dulgi: res.kakaoId }) // 룸 내 새로운 방문객 추가
+          )
+        )
+      );
     userData.then((res) => setProfileImg(res.kakaoProfileImg));
-
     // 같은 방으로 join
-    socket.emit("room", room);
-    console.log("CHATTING # : " + room);
+    userData.then((res) => socket.emit("room", [room, res.kakaoNickname]));
 
-    // 룸 내 새로운 방문객 추가
-    userData.then((res) => dulgiInsert({ roomNo: room, dulgi: res.kakaoId }));
+    console.log("CHATTING # : " + room);
 
     // 이방의 채팅내용 모두 가져오기
     const messagedata = messageData();
@@ -119,8 +137,9 @@ const Chat = () => {
       )
     );
 
-    // 방의 user_cnt +1
-    client_in(room);
+    // 추방자 리스트 모두 가져오기.
+    const dulgilist = kickList();
+    dulgilist.then((res) => setKickLists(Object.values(res)));
 
     // 방의 상세정보 조회
     const data = roomInfo(room);
@@ -144,7 +163,18 @@ const Chat = () => {
   useEffect(() => {
     socket.on("clients", (data) => {
       // console.log(data);
-      setClients(data);
+      setClients(data[0]);
+      setVisitor(data[1]);
+      alertClick();
+    });
+  }, [socket]);
+
+  // 룸 퇴장 인원 화면에 띄워주기
+  useEffect(() => {
+    socket.on("out", (data) => {
+      setOutGoing(data[0]);
+      setClients(data[1]);
+      alertClick2();
     });
   }, [socket]);
 
@@ -177,6 +207,8 @@ const Chat = () => {
   useEffect(() => {
     socket.on("reportedGugu", (data) => {
       console.log("추방될 사람 id : " + data);
+      setCount((prev) => [...prev, { roomNo: room, kickDulgi: data }]);
+      dulgiKick({ roomNo: room, kickDulgi: data });
     });
   }, [socket]);
 
@@ -209,7 +241,7 @@ const Chat = () => {
         await socket.emit("message", messageContent);
 
         // firebase realtime db 데이터 추가
-        // messageUpdate(messageContent);
+        messageUpdate(messageContent);
 
         // 메세지 리스트에 방금 보낸 메세지도 함께 추가.
         // setMessageList((prev) => [...prev, messageContent]);
@@ -222,6 +254,7 @@ const Chat = () => {
           // message: message,
           message: message,
           userId: kakaoId,
+          profile: profileImg,
           room: room,
           date: new Date().toLocaleString(), // 2022. 12. 7. 오전 11:24:42
         };
@@ -229,7 +262,7 @@ const Chat = () => {
         await socket.emit("message", messageContent);
 
         // firebase data base에도 값 추가
-        // messageUpdate(messageContent);
+        messageUpdate(messageContent);
 
         // 메세지 리스트에 방금 보낸 메세지도 함께 추가.
         // setMessageList((prev) => [...prev, messageContent]);
@@ -296,7 +329,7 @@ const Chat = () => {
   };
 
   const handleCloseKick = () => {
-    setOpenKick(false);
+    setOpenKick(true);
   };
 
   const inputIndex = (i) => {
@@ -305,6 +338,78 @@ const Chat = () => {
 
   const tabooOpen = () => {
     setTaboo(true);
+  };
+
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
+
+  const alertClick2 = () => {
+    setAlerts(!alerts);
+  };
+
+  // 추방자 리스트 확인 후 추방하기 !
+  useEffect(() => {
+    let outDulgi = count.filter(function (data) {
+      return data.kickDulgi === kakaoId && data.roomNo === room;
+    });
+    if (outDulgi.length >= 1) {
+      chatOut2();
+      handleCloseKick();
+    }
+  }, [count.length]);
+
+  // 뒤로가기시 방 퇴장
+  const handleEvent = () => {
+    window.history.pushState(null, "", window.location.href);
+    handleClickOpen();
+  };
+
+  useEffect(() => {
+    window.history.pushState(null, "", window.location.href);
+    window.addEventListener("popstate", handleEvent);
+    return () => {
+      window.removeEventListener("popstate", handleEvent);
+    };
+  }, []);
+
+  // // 새로고침 막기 -> 브라우저 종료시 인원 -1
+  window.addEventListener("unload", (event) => {
+    // 표준에 따라 기본 동작 방지
+    event.preventDefault();
+    chatOut();
+
+    // document.location.href = "/";
+
+    // Chrome에서는 returnValue 설정이 필요함
+    event.returnValue = "";
+  });
+  // 채팅방 퇴장하기2
+  const chatOut2 = () => {
+    // 소켓에서 퇴장하기. socket.disconnect();
+    socket.emit("left", [username, room, kakaoId]);
+    // 소켓 연결 끊기
+    socket.disconnect();
+    // db인원 -1
+    client_out(room);
+    // 해당 아이디 index 찾기
+    let idx = clientList
+      .map((e, i) => (e.dulgi === kakaoId && e.roomNo === room ? i : ""))
+      .filter(String);
+    // console.log(idx);
+    // index에 해당하는 key 가져오기
+    let deletedulgi = Object.values(
+      clientKey
+        .map((e, i) => {
+          return clientKey[idx[i]];
+        })
+        .filter(String)
+    );
+    // console.log(deletedulgi);
+
+    deletedulgi.map((e, i) => {
+      deleteDulgi(e);
+    });
   };
 
   // 채팅방 퇴장하기
@@ -353,9 +458,9 @@ const Chat = () => {
 
     report(formData).then((data) => {
       console.log("#### 신고 숫자 : " + data);
-      if (data >= 3) {
+      if (data === 1) {
         console.log("### 신고 3번 이상!!!!!");
-        socket.emit("reported", [reportMessage.userId, reportMessage.room]);
+        socket.emit("reported", [reportMessage.userId, room]);
       }
     });
 
@@ -403,6 +508,11 @@ const Chat = () => {
   return (
     // items-center justify-center
     <div className="flex flex-col h-fit ">
+      <body
+        onload="noBack();"
+        onpageshow="if(event.persisted) noBack();"
+        onunload=""
+      ></body>
       <div className="w-full h-screen bg-white relative overflow-y-auto">
         <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static" sx={{ background: "#B6E2A1" }}>
@@ -484,6 +594,12 @@ const Chat = () => {
                   <div onClick={() => inputIndex(i)}>
                     {username !== msg.username ? (
                       <div className={"flex text-xs m-3 font-semibold"}>
+                        <img
+                          alt="guguProfile"
+                          src={msg.profile}
+                          className="w-6 h-6 rounded-full border-2"
+                        ></img>{" "}
+                        &nbsp;&nbsp;
                         {msg.username}
                       </div>
                     ) : (
@@ -494,6 +610,7 @@ const Chat = () => {
                         username === msg.username ? "flex justify-end" : ""
                       }`}
                       variant="contained"
+                      {...bindTrigger(popupState)}
                     >
                       <div
                         className={` ${
@@ -506,7 +623,8 @@ const Chat = () => {
                       </div>
                     </div>
                     {username !== msg.username ? (
-                      <Menu>
+                      // <Menu>
+                      <Menu {...bindMenu(popupState)}>
                         <button
                           component="MenuItem"
                           sx={{ display: "inline" }}
@@ -604,35 +722,42 @@ const Chat = () => {
           >
             <CancelIcon />
           </IconButton> */}
-          ⛔금기어 목록⛔
-          {tabooList.map((value, index) => (
-            <Typography key={index}>{value}</Typography>
-          ))}
+          <br />
+          <br />
+          <Typography>⛔금기어 목록⛔</Typography>
+          <br />
+          <Typography className="h-[30vh] overflow-y-auto">
+            {tabooList.map((value, index) => (
+              <Typography key={index}>{value}</Typography>
+            ))}
+          </Typography>
         </Box>
       </Modal>
 
       <Dialog open={taboo} onClose={() => setTaboo(false)}>
         <DialogTitle>⛔내 방 금기어 리스트⛔</DialogTitle>
         <DialogContent>
-          {tabooList.map((taboo, idx) =>
-            taboo !== "" ? (
-              <DialogContentText id="modal-modal-title" key={idx}>
-                <span key={idx + "번"} className="text-[14px]">
-                  {taboo}
-                </span>
-                &nbsp;&nbsp;&nbsp;
-                <button
-                  onClick={() => tabooDelete(idx)}
-                  key={idx}
-                  className="text-[14px]"
-                >
-                  <DeleteForeverIcon />
-                </button>
-              </DialogContentText>
-            ) : (
-              <></>
-            )
-          )}
+          <Typography className="h-[30vh] overflow-y-auto">
+            {tabooList.map((taboo, idx) =>
+              taboo !== "" ? (
+                <DialogContentText id="modal-modal-title" key={idx}>
+                  <span key={idx + "번"} className="text-[14px]">
+                    {idx + 1 + ". " + taboo}
+                  </span>
+                  &nbsp;&nbsp;&nbsp;
+                  <button
+                    onClick={() => tabooDelete(idx)}
+                    key={idx}
+                    className="text-[14px]"
+                  >
+                    <DeleteForeverIcon />
+                  </button>
+                </DialogContentText>
+              ) : (
+                <></>
+              )
+            )}
+          </Typography>
           <TextField
             autoFocus
             margin="dense"
@@ -653,7 +778,11 @@ const Chat = () => {
 
       <Dialog
         open={openKick}
-        onClose={handleCloseKick}
+        onClose={() => {
+          document.location.href = "/";
+
+          setOpenKick(false);
+        }}
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
@@ -665,10 +794,6 @@ const Chat = () => {
         <DialogActions>
           <Button
             onClick={() => {
-              // 소켓에서 퇴장하기. socket.disconnect();
-              socket.emit("left", [username, room, kakaoId]);
-              socket.disconnect();
-              client_out(room);
               document.location.href = "/";
             }}
             autoFocus
@@ -746,6 +871,34 @@ const Chat = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alerts}
+        autoHideDuration={3000}
+        onClose={alertClick2}
+      >
+        <Alert severity="info" sx={{ width: "100%" }}>
+          {`${outGoing} 둘기가 떠났습니다...`}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertStatus}
+        autoHideDuration={3000}
+        onClose={alertClick}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          {`${visitor} 둘기가 합류하였습니다`}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
