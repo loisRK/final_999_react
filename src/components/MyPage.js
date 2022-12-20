@@ -20,7 +20,6 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Tooltip,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
@@ -226,6 +225,48 @@ function MyPage() {
   const [value, setValue] = React.useState("1");
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  // infinite scrolling
+  const listInnerRef = useRef();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [prevPage, setPrevPage] = useState(0); // storing prev page number
+  const [posts, setPosts] = useState([]);
+  const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
+  const [end, setEnd] = useState(0);
+
+  useEffect(() => {
+    // infinite scroll 테스트
+    if (!wasLastList && prevPage !== currentPage) {
+      console.log("인피니티 스크롤");
+      axiosUser().then((res) => {
+        console.log("##### id : " + res.kakaoId);
+        axiosMypagePosts(
+          posts,
+          setWasLastList,
+          setPrevPage,
+          setPosts,
+          currentPage,
+          res.kakaoId,
+          setEnd
+        );
+      });
+    }
+  }, [currentPage, wasLastList, prevPage]);
+
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      if (
+        Math.ceil(scrollTop) + clientHeight >= scrollHeight &&
+        currentPage < end
+      ) {
+        console.log(
+          "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
+        );
+        setCurrentPage(currentPage + 1);
+      }
+    }
   };
 
   return (
