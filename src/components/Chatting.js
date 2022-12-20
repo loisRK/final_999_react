@@ -1,29 +1,32 @@
 import axios, { all } from "axios";
 import { createRooms } from "../api/Chatting";
 import React, { FormEvent, useEffect, useState } from "react";
-import { Box,
-   Button,
-   Modal,
-   Typography,
-   Table,
-   TableBody,
-   TableCell,
-   TableContainer,
-   TableHead,
-   TableRow,
-   Paper,
-   AppBar,
-   Toolbar,
-   Tooltip,
-   IconButton,
-   Avatar,
-   TextField
- } from "@mui/material";
+import {
+  Box,
+  Button,
+  Modal,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  AppBar,
+  Toolbar,
+  Tooltip,
+  IconButton,
+  Avatar,
+  TextField,
+  Alert,
+} from "@mui/material";
 import { Form } from "react-router-dom";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { axiosUser } from "../api/User";
 import Autocomplete from "@mui/material/Autocomplete";
 import gugu from "../img/bidulgi.png";
+import Snackbar from "@mui/material/Snackbar";
 // import io from "socket.io-client";
 
 function Chatting() {
@@ -37,6 +40,8 @@ function Chatting() {
   const [category, setCategory] = useState("");
   const [userId, setUserId] = useState("");
   const [tag, setTag] = useState("");
+  const [alertStatus, setAlertStatus] = useState(false);
+  const [alerts, setAlerts] = useState(false);
 
   useEffect(() => {
     if (token !== null) {
@@ -59,34 +64,49 @@ function Chatting() {
   const goHome = (e) => {
     navigate("/");
   };
+
+  const alertClick = () => {
+    setAlertStatus(!alertStatus);
+  };
+
+  const alertClick2 = () => {
+    setAlerts(!alerts);
+  };
+
   const [search, setSearch] = useSearchParams();
   const roomLatitude = search.get("latitude");
   const roomLongitude = search.get("longitude");
   const createRoom = async (e, nickname, newNickname, tag, category) => {
-    formData.append("userId", userId); // 카카오아이디
-    formData.append("nickname", nickname); // 카카오닉네임
-    formData.append("newNickname", newNickname); // 익명닉네임
-    formData.append("tag", tag); // ex ) #배고프다 #맛집추천 #미사역
-    formData.append("chatLat", roomLatitude);
-    formData.append("chatLong", roomLongitude);
-    formData.append("category", category); // 카테고리 (심심, 긴급, 질문, 추천)
+    if (category === "") {
+      alertClick2();
+    } else if (tag === "") {
+      alertClick();
+    } else {
+      formData.append("userId", userId); // 카카오아이디
+      formData.append("nickname", nickname); // 카카오닉네임
+      formData.append("newNickname", newNickname); // 익명닉네임
+      formData.append("tag", tag); // ex ) #배고프다 #맛집추천 #미사역
+      formData.append("chatLat", roomLatitude);
+      formData.append("chatLong", roomLongitude);
+      formData.append("category", category); // 카테고리 (심심, 긴급, 질문, 추천)
 
-    console.log(
-      nickname +
-        newNickname +
-        tag +
-        "위도: " +
-        roomLatitude +
-        "경도: " +
-        roomLongitude
-    );
-    const data = createRooms(formData);
-    data.then((res) => console.log(res));
-    data.then((res) => {
-      navigate(`/room?roomNo=${String(res)}`);
-    });
+      console.log(
+        nickname +
+          newNickname +
+          tag +
+          "위도: " +
+          roomLatitude +
+          "경도: " +
+          roomLongitude
+      );
+      const data = createRooms(formData);
+      data.then((res) => console.log(res));
+      data.then((res) => {
+        navigate(`/room?roomNo=${String(res)}`);
+      });
 
-    // await navigate(`/room/${room_no}`);
+      // await navigate(`/room/${room_no}`);
+    }
   };
   const options = ["심심 🎈", "질문 ❔", "추천 👍🏻", "긴급 🚨"];
 
@@ -112,9 +132,9 @@ function Chatting() {
                   }}
                   sx={{ p: 0 }}
                 >
-                <Avatar alt="gugu" src={gugu} />
-              </IconButton>
-            </Tooltip>
+                  <Avatar alt="gugu" src={gugu} />
+                </IconButton>
+              </Tooltip>
             </Box>
             {/* 페이지 중앙에 제목 */}
             <Typography
@@ -123,12 +143,12 @@ function Chatting() {
               sx={{ flexGrow: 1 }}
               style={{ color: "#4d5749" }}
             >
-            채팅방 개설
-           </Typography>
+              채팅방 개설
+            </Typography>
           </Toolbar>
         </AppBar>
       </Box>
-      <br/>
+      <br />
       {token !== null ? (
         <>
           <TableContainer component={Paper}>
@@ -137,22 +157,24 @@ function Chatting() {
                 <TableRow>
                   <TableCell align="right">카테고리</TableCell>
                   <TableCell align="center">
-                  <Autocomplete
-                    align="center"
-                    category={category}
-                    onInputChange={(event, newInputValue) => {
-                      setCategory(newInputValue);
-                    }}
-                    id="controllable-states-demo"
-                    options={options}
-                    sx={{ width: 300 }}
-                    renderInput={(params) => <TextField {...params} label="Category" />}
-                  />
+                    <Autocomplete
+                      align="center"
+                      category={category}
+                      onInputChange={(event, newInputValue) => {
+                        setCategory(newInputValue);
+                      }}
+                      id="controllable-states-demo"
+                      options={options}
+                      sx={{ width: 300 }}
+                      renderInput={(params) => (
+                        <TextField {...params} label="Category *(필수)" />
+                      )}
+                    />
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow
+                {/* <TableRow
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row" align="right">
@@ -170,7 +192,7 @@ function Chatting() {
                     align="center"
                   />
                   </TableCell>
-                </TableRow>
+                </TableRow> */}
                 <TableRow
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
@@ -178,16 +200,16 @@ function Chatting() {
                     방 제목 입력
                   </TableCell>
                   <TableCell align="left">
-                  <TextField
-                    name="tag"
-                    onChange={getTag}
-                    value={tag}
-                    placeholder="방 제목 입력"
-                    multiline
-                    variant="standard"
-                    style={{ width: "70%" }}
-                    align="center"
-                  />
+                    <TextField
+                      name="tag"
+                      onChange={getTag}
+                      value={tag}
+                      placeholder="방 제목 입력 *(필수)"
+                      multiline
+                      variant="standard"
+                      style={{ width: "70%" }}
+                      align="center"
+                    />
                   </TableCell>
                 </TableRow>
               </TableBody>
@@ -238,8 +260,38 @@ function Chatting() {
         <div>채팅방 개설은 회원만 가능합니다.</div>
       )}
       <div>
-        <Button onClick={goHome} color="success">Home</Button>
+        <Button onClick={goHome} color="success">
+          Home
+        </Button>
       </div>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={alerts}
+        autoHideDuration={3000}
+        onClose={alertClick2}
+      >
+        <Alert severity="warning" sx={{ width: "100%" }}>
+          {`카테고리를 입력해 주세요`}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "center",
+        }}
+        open={alertStatus}
+        autoHideDuration={3000}
+        onClose={alertClick}
+      >
+        <Alert severity="warning" sx={{ width: "100%" }}>
+          {`방 제목을 입력해 주세요`}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

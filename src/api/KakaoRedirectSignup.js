@@ -18,7 +18,7 @@ export const axiosSignup = async (formData) => {
     .then((res) => {
       console.log(res.headers.authorization);
       window.localStorage.setItem("token", res.headers.authorization);
-      document.location.href = "/myPage";
+      document.location.href = "/";
     });
 };
 
