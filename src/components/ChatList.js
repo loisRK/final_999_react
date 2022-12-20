@@ -12,14 +12,20 @@ import {
   Paper,
   TableFooter,
   TablePagination,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import { roomList } from "../api/Chatting";
 import { useNavigate } from "react-router-dom";
 
-// [{db안에 있는 data}, 거리] -> 가까운 순으로 정렬
-const distanceList = [];
-// 거리를 기준으로 정렬된 db data
-const chatInfo = [];
+// 가까운 순서대로 정렬
+function compareSecondColumn(a, b) {
+  if (a[1] === b[1]) {
+    return 0;
+  } else {
+    return a[1] < b[1] ? -1 : 1;
+  }
+}
 
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   function deg2rad(deg) {
@@ -62,13 +68,18 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function ChatList() {
+function ChatList({ token }) {
   const [chatLat, setLatitude] = useState(0);
   const [chatLong, setchatLong] = useState(0);
   const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
+  const [open, setOpen] = useState(false);
   const [toggled, setToggled] = useState(true);
+  const [distanceList, setDistanceList] = useState([]); // [{db안에 있는 data}, 거리] -> 가까운 순으로 정렬
+  const [chatInfo, setChatInfo] = useState([]); // 거리를 기준으로 정렬된 db data
 
-  const navigate = useNavigate();
+  const alertClick = () => {
+    setOpen(!open);
+  };
 
   // navigator.geolocation 으로 Geolocation API 에 접근(사용자의 브라우저가 위치 정보 접근 권한 요청)
   // geolocation으로 현재 위치 가져오는 함수 (Geolocation.getCurrentPosition(success, error, [options]))
@@ -157,19 +168,17 @@ function ChatList() {
   // distanceList를 거리순으로 정렬
   distanceList.sort(compareSecondColumn);
 
-  function compareSecondColumn(a, b) {
-    if (a[1] === b[1]) {
-      return 0;
-    } else {
-      return a[1] < b[1] ? -1 : 1;
-    }
-  }
+  // function compareSecondColumn(a, b) {
+  //   if (a[1] === b[1]) {
+  //     return 0;
+  //   } else {
+  //     return a[1] < b[1] ? -1 : 1;
+  //   }
+  // }
 
   // distanceList에서 data만 가져옴
-  distanceList.map(
-    (dli, i) => (chatInfo[i] = distanceList[i][0]),
-    console.log("chatInfo", chatInfo)
-  );
+  distanceList.map((dli, i) => (chatInfo[i] = distanceList[i][0]));
+  console.log("chatInfo", chatInfo);
 
   // 첫 페이지 0번
   const [page, setPage] = useState(0);
@@ -223,7 +232,9 @@ function ChatList() {
                       {" "}
                       <button
                         onClick={() => {
-                          window.location.href = `room?roomNo=${c.roomNo}`;
+                          token !== null
+                            ? (window.location.href = `room?roomNo=${c.roomNo}`)
+                            : alertClick();
                         }}
                       >
                         같이놀기
@@ -246,6 +257,20 @@ function ChatList() {
           </Table>
         </TableContainer>
       </div>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={open}
+        autoHideDuration={2000}
+        onClose={alertClick}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          로그인이 필요한 기능입니다.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

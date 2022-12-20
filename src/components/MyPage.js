@@ -13,16 +13,15 @@ import {
   Container,
   Grid,
   Toolbar,
+  Tooltip,
   Typography,
   Modal,
   Button,
   IconButton,
   Menu,
   MenuItem,
-  Tooltip,
 } from "@mui/material";
 import Box from "@mui/material/Box";
-import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
@@ -31,7 +30,12 @@ import TabPanel from "@mui/lab/TabPanel";
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
-import { axioUserPosts, postData, axiosDeletePost } from "../api/Post";
+import {
+  axioUserPosts,
+  postData,
+  axiosDeletePost,
+  axiosMypagePosts,
+} from "../api/Post";
 // import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
 import { useNavigate } from "react-router-dom";
@@ -39,6 +43,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { currentPositions } from "../api/Map";
 import Profile from "./Profile";
 import gugu from "../img/bidulgi.png";
+import gugu_tilt from "../img/dulgi_headtilt.png";
+import { KAKAO_LOGOUT_URL } from "./KakaoLogoutData";
+
+import Posts from "./Posts";
 // import Map from "./Map";
 
 function MyPage() {
@@ -62,15 +70,19 @@ function MyPage() {
       case "Edit Profile":
         // 내 프로필 모달로 보여주기
         editMypage();
-        alert("프로필수정하기");
         break;
       case "Logout":
         // kakaoLogout 이동
         setLogoutOpen(true);
+
         break;
       default:
         alert("아무것도 선택하지 않음");
     }
+  };
+
+  const logout = () => {
+    window.location.href = KAKAO_LOGOUT_URL;
   };
 
   const [nickname, setNickname] = useState("gugu");
@@ -88,9 +100,6 @@ function MyPage() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const ITEM_HEIGHT = 20;
-  const listInnerRef = useRef();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [end, setEnd] = useState(0);
 
   function currentPositions() {
     if (navigator.geolocation) {
@@ -220,9 +229,50 @@ function MyPage() {
   };
 
   const [value, setValue] = React.useState("1");
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  // infinite scrolling
+  const listInnerRef = useRef();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [prevPage, setPrevPage] = useState(0); // storing prev page number
+  const [posts, setPosts] = useState([]);
+  const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
+  const [end, setEnd] = useState(0);
+
+  useEffect(() => {
+    // infinite scroll 테스트
+    if (!wasLastList && prevPage !== currentPage) {
+      console.log("인피니티 스크롤");
+      axiosUser().then((res) => {
+        console.log("##### id : " + res.kakaoId);
+        axiosMypagePosts(
+          posts,
+          setWasLastList,
+          setPrevPage,
+          setPosts,
+          currentPage,
+          res.kakaoId,
+          setEnd
+        );
+      });
+    }
+  }, [currentPage, wasLastList, prevPage]);
+
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      if (
+        Math.ceil(scrollTop) + clientHeight >= scrollHeight &&
+        currentPage < end
+      ) {
+        console.log(
+          "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
+        );
+        setCurrentPage(currentPage + 1);
+      }
+    }
   };
 
   return (
@@ -248,7 +298,7 @@ function MyPage() {
                   display: { xs: "none", md: "flex" },
                   fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
-                  fontSize: "medium",
+                  fontSize: "large",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -308,7 +358,6 @@ function MyPage() {
             </Toolbar>
           </Container>
         </AppBar>
-
         <Modal
           open={modalOpen}
           onClose={() => {
@@ -359,18 +408,12 @@ function MyPage() {
                   />
                 </div>
                 <div id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>{postDetail.userDTO.kakaoNickname}</b>
-                </div>
-                <div>
-                  <span className="post_detail">
-                    @{postDetail.userDTO.kakaoNickname}
-                  </span>
-                  &nbsp;&nbsp;&nbsp;
+                  <b>@{postDetail.userDTO.kakaoNickname}</b>
+                  &nbsp;&nbsp;
                   <span className="post_detail">
                     {postDetail.postDate.substr(0, 10)}
                   </span>
                 </div>
-                &nbsp;&nbsp;&nbsp;
                 <div className="post_content">{postDetail.postContent}</div>
                 {postDetail.postImg === "" ? (
                   <></>
@@ -382,66 +425,146 @@ function MyPage() {
           </Box>
         </Modal>
       </div>
-
-      <Grid
-        container
-        justifycontent="center"
-        direction="column"
-        alignItems="center"
-        padding={3}
-        style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
-      >
-        <Grid>
-          <Avatar
-            className="profileImg"
-            alt="gugu"
-            src={profileImg}
-            sx={{
-              width: 100,
-              height: 100,
-              border: "0.1px solid lightgray",
+      <div>
+        <div className="mypagePostModal">
+          <Modal
+            open={modalOpen}
+            onClose={() => {
+              setModalOpen(false);
             }}
-          />
-        </Grid>
-        &nbsp;&nbsp;&nbsp;
-        <Grid>{nickname}</Grid>
-        <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
-        {/* <Grid>{userId}</Grid> */}
-        &nbsp;
-      </Grid>
-
-      <Box sx={{ width: "100%", typography: "body1" }}>
-        <TabContext value={value}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList
-              onChange={handleChange}
-              centered
-              aria-label="lab API tabs example"
-            >
-              <Tab label="Map" value="1" sx={{ width: "50vw" }} />
-              <Tab label="List" value="2" sx={{ width: "50vw" }} />
-            </TabList>
-          </Box>
-          <TabPanel
-            value="1"
-            id="map"
-            sx={{ width: `"${window.innerWidth}"`, height: "37vh" }}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
           >
-            <div
-              id="map"
-              className="map"
-              style={{ width: `"${window.innerWidth}"`, height: "45vh" }}
-            ></div>
-          </TabPanel>
-          <TabPanel value="2">
-            {/* <Posts
-          onScroll={onScroll}
-          listInnerRef={listInnerRef}
-          posts={posts}
-        ></Posts> */}
-          </TabPanel>
-        </TabContext>
-      </Box>
+            <Box
+              sx={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: 400,
+                bgcolor: "white",
+                border: "2px solid #000",
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              {postDetail === null ? (
+                <></>
+              ) : (
+                <div>
+                  <span className="dot_btn">
+                    {" "}
+                    <IconButton
+                      aria-label="more"
+                      id="long-button"
+                      aria-controls={modalOpen ? "long-menu" : undefined}
+                      aria-expanded={modalOpen ? "true" : undefined}
+                      aria-haspopup="true"
+                      onClick={(e) =>
+                        handleClick(e, postDetail.postNo, postDetail.kakaoId)
+                      }
+                    >
+                      <MoreVertIcon />
+                    </IconButton>
+                  </span>
+                  <div id="modal-modal-title" variant="h6" component="h2"></div>
+                  <div className="flex">
+                    <Avatar
+                      className="profile_img"
+                      src={postDetail.userDTO.kakaoProfileImg}
+                      width="100px"
+                      height="100px"
+                    />
+                  </div>
+                  <div id="modal-modal-description" sx={{ mt: 2 }}>
+                    <b>{postDetail.userDTO.kakaoNickname}</b>
+                  </div>
+                  <div>
+                    <span className="post_detail">
+                      @{postDetail.userDTO.kakaoNickname}
+                    </span>
+                    &nbsp;&nbsp;&nbsp;
+                    <span className="post_detail">
+                      {postDetail.postDate.substr(0, 10)}
+                    </span>
+                  </div>
+                  &nbsp;&nbsp;&nbsp;
+                  <div className="post_content">{postDetail.postContent}</div>
+                  {postDetail.postImg === "" ? (
+                    <></>
+                  ) : (
+                    <img className="post_img" src={postDetail.postImg} />
+                  )}
+                </div>
+              )}
+            </Box>
+          </Modal>
+        </div>
+        <br />
+        <br />
+        <br />
+        <div className="mypageInfo">
+          <Grid
+            container
+            justifycontent="center"
+            direction="column"
+            alignItems="center"
+            padding={3}
+            style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
+          >
+            <Grid>
+              <Avatar
+                className="profileImg"
+                alt="gugu"
+                src={profileImg}
+                sx={{
+                  width: 100,
+                  height: 100,
+                  border: "0.1px solid lightgray",
+                  zIndex: 0,
+                }}
+              />
+            </Grid>
+            &nbsp;&nbsp;&nbsp;
+            <Grid>{nickname}</Grid>
+            <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
+          </Grid>
+        </div>
+
+        <div className="mypageTab">
+          <Box sx={{ width: "100%", typography: "body1" }}>
+            <TabContext value={value}>
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <TabList
+                  onChange={handleChange}
+                  centered
+                  aria-label="lab API tabs example"
+                >
+                  <Tab label="Map" value="1" sx={{ width: "50vw" }} />
+                  <Tab label="List" value="2" sx={{ width: "50vw" }} />
+                </TabList>
+              </Box>
+              <TabPanel
+                value="1"
+                id="map"
+                sx={{ width: `"${window.innerWidth}"`, height: "40vh" }}
+              ></TabPanel>
+              <TabPanel
+                value="2"
+                id="postList"
+                sx={{ width: `"${window.innerWidth}"`, height: "20px" }}
+              >
+                <Posts
+                  sx={{ height: "30vh !important" }}
+                  onScroll={onScroll}
+                  listInnerRef={listInnerRef}
+                  posts={posts}
+                ></Posts>
+              </TabPanel>
+            </TabContext>
+          </Box>
+        </div>
+      </div>
 
       <BottomNavigation
         sx={{
@@ -455,17 +578,17 @@ function MyPage() {
         value={2}
       >
         <BottomNavigationAction
-          icon={<StickyNote2Outlined />}
+          icon={<StickyNote2Outlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/posting"
         />
         <BottomNavigationAction
-          icon={<HomeOutlined />}
+          icon={<HomeOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/"
         />
         <BottomNavigationAction
-          icon={<AccountCircleOutlined />}
+          icon={<AccountCircleOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/myPage"
         />
@@ -480,8 +603,8 @@ function MyPage() {
         onClose={handleClose}
         PaperProps={{
           style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: "20ch",
+            maxHeight: ITEM_HEIGHT * 6,
+            width: "15ch",
           },
         }}
       >
@@ -491,6 +614,53 @@ function MyPage() {
           </MenuItem>
         ))}
       </Menu>
+      <Modal
+        open={logoutOpen}
+        onClose={() => setLogoutOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            로그아웃 하시겠습니까?
+          </Typography>
+          <img
+            alt="gugu_tilt"
+            src={gugu_tilt}
+            style={{
+              height: 150,
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          />
+          <Box>
+            <Button onClick={logout} variant="outlined">
+              네
+            </Button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <Button onClick={() => setLogoutOpen(false)} variant="contained">
+              아니요
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   );
 }

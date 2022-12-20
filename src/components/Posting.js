@@ -55,7 +55,7 @@ function Posting() {
   };
 
   const menuAction = (setting) => {
-    console.log("menu test: " + setting);
+    // console.log("menu test: " + setting);
     handleCloseUserMenu();
     switch (setting) {
       case "Login":
@@ -129,6 +129,7 @@ function Posting() {
   const [currentPage, setCurrentPage] = useState(1);
   const [prevPage, setPrevPage] = useState(0); // storing prev page number
   const [posts, setPosts] = useState([]);
+  const [likes, setLikes] = useState([]);
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
   const [searchId, setSearchId] = useState(null);
   const [end, setEnd] = useState(0);
@@ -146,18 +147,20 @@ function Posting() {
   }, [wasLastList]);
 
   useEffect(() => {
-    console.log("키워드" + searchId);
+    // console.log("키워드" + searchId);
     // infinite scroll 테스트
     if (!wasLastList && prevPage !== currentPage) {
       {
         token !== null
           ? axiosUser().then((res) => {
-              console.log("##### id : " + res.kakaoId);
+              // console.log("##### id : " + res.kakaoId);
               axiosPostLike(
                 posts,
+                likes,
                 setWasLastList,
                 setPrevPage,
                 setPosts,
+                setLikes,
                 currentPage,
                 res.kakaoId,
                 searchId !== null ? searchId : "null",
@@ -166,9 +169,11 @@ function Posting() {
             })
           : axiosPostLike(
               posts,
+              likes,
               setWasLastList,
               setPrevPage,
               setPosts,
+              setLikes,
               currentPage,
               999,
               searchId !== null ? searchId : "null",
@@ -183,7 +188,7 @@ function Posting() {
     wasLastList,
     prevPage,
   ]);
-  console.log("######## POSTS : " + posts);
+  // console.log("######## POSTS : " + posts);
 
   useEffect(() => {
     token !== null
@@ -192,9 +197,11 @@ function Posting() {
           // console.log("##### id : " + res.kakaoId);
           axiosPostLike(
             posts,
+            likes,
             setWasLastList,
             setPrevPage,
             setPosts,
+            setLikes,
             currentPage,
             res.kakaoId,
             searchId !== null ? searchId : "null",
@@ -203,15 +210,19 @@ function Posting() {
         })
       : axiosPostLike(
           posts,
+          likes,
           setWasLastList,
           setPrevPage,
           setPosts,
+          setLikes,
           currentPage,
           999,
           searchId !== null ? searchId : "null",
           setEnd
         );
   }, [searchId]);
+
+  console.log("### Posting.js likes : " + likes);
 
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -232,30 +243,6 @@ function Posting() {
 
   return (
     <div id="post-box">
-      {/* <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <Typography
-              variant="h6"
-              noWrap
-              position="static"
-              component="a"
-              href="/"
-              sx={{
-                mr: 2,
-                display: { xs: "none", md: "flex" },
-                fontFamily: "monospace",
-                fontWeight: 700,
-                letterSpacing: ".3rem",
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              Posting
-            </Typography>
-          </Toolbar>
-        </Container>
-      </AppBar> */}
       <AppBar position="static" sx={{ background: "#B6E2A1" }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -264,7 +251,7 @@ function Posting() {
                 document.location.href = "/";
               }}
             >
-              <Avatar alt="gugu" src={gugu} />
+              <Avatar alt="gugu" src={gugu}/>
             </IconButton>
             <Typography
               variant="h6"
@@ -276,6 +263,7 @@ function Posting() {
                 display: { xs: "none", md: "flex" },
                 fontFamily: "SEBANG_Gothic_Bold",
                 fontWeight: 700,
+                fontSize: "large",
                 letterSpacing: ".3rem",
                 color: "inherit",
                 textDecoration: "none",
@@ -306,7 +294,7 @@ function Posting() {
               <Tooltip title="Account settings">
                 <IconButton size="small" onClick={handleOpenUserMenu}>
                   {token ? (
-                    <Avatar alt="myProfile" src={profileImg} />
+                    <Avatar alt="myProfile" src={profileImg}/>
                   ) : (
                     <Avatar />
                   )}
@@ -355,6 +343,8 @@ function Posting() {
         onScroll={onScroll}
         listInnerRef={listInnerRef}
         posts={posts}
+        likes={likes}
+        setLikes={setLikes}
       ></Posts>
       <BottomNavigation
         sx={{
@@ -367,17 +357,17 @@ function Posting() {
         value={0}
       >
         <BottomNavigationAction
-          icon={<StickyNote2Outlined />}
+          icon={<StickyNote2Outlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/posting"
         />
         <BottomNavigationAction
-          icon={<HomeOutlined />}
+          icon={<HomeOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/"
         />
         <BottomNavigationAction
-          icon={<AccountCircleOutlined />}
+          icon={<AccountCircleOutlined sx={{ transform: "scale(1.3)" }} />}
           onClick={loginCheck}
         />
       </BottomNavigation>

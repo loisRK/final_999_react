@@ -1,3 +1,10 @@
+.Posting {
+  overflow-y: hidden;
+}
+.Posting .allPosting {
+  overflow-y: hidden;
+  height: 73vh;
+}
 .postPage {
   background: white;
   height: 100%;
@@ -81,9 +88,10 @@
 /* 이미지 크기 조절 */
 .post_img {
   margin-top: 15px;
-  max-width: 40%;
+  max-width: 30vw;
   border-radius: 20px;
-  height: auto;
+  height: 30vh;
+  object-fit: contain;
 }
 
 /* 수정/삭제 점점점 버튼 스타일 */

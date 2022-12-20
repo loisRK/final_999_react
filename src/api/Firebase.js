@@ -1,4 +1,3 @@
-import { async } from "@firebase/util";
 import axios from "axios";
 
 // firebase database에 접근하여 모든 message 정보 가져오기.
