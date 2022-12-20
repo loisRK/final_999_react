@@ -125,12 +125,13 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
   }
 
   return (
-    <div>
+    <div className="Posting">
       <div
+        className="allPosting"
         onScroll={onScroll}
         ref={listInnerRef}
         style={{
-          height: "73vh",
+          // height: "30vh",
           overflowY: "scroll",
           fontFamily: "LeferiPoint-WhiteObliqueA",
         }}
@@ -156,6 +157,7 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
                 <Avatar
                   className="profile_img"
                   src={post.kakaoProfileImg}
+                  sx={{border: "0.1px solid lightgray"}}
                   width="100px"
                   height="100px"
                 />
@@ -221,8 +223,8 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
         onClose={handleClose}
         PaperProps={{
           style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: "20ch",
+            maxHeight: ITEM_HEIGHT * 6,
+            width: "15ch",
           },
         }}
       >
