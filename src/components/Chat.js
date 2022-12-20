@@ -39,15 +39,6 @@ import {
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import {
-  doc,
-  setDoc,
-  collection,
-  serverTimestamp,
-  query,
-  onSnapshot,
-  orderBy,
-} from "firebase/firestore";
-import {
   messageData,
   messageUpdate,
   dulgiInsert,
@@ -59,7 +50,6 @@ import {
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Paper from "@material-ui/core/Paper";
 import { Input } from "postcss";
-import { async } from "@firebase/util";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";

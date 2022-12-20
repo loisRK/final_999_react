@@ -264,7 +264,7 @@ function Posting() {
                 document.location.href = "/";
               }}
             >
-              <Avatar alt="gugu" src={gugu} />
+              <Avatar alt="gugu" src={gugu}/>
             </IconButton>
             <Typography
               variant="h6"
@@ -306,7 +306,7 @@ function Posting() {
               <Tooltip title="Account settings">
                 <IconButton size="small" onClick={handleOpenUserMenu}>
                   {token ? (
-                    <Avatar alt="myProfile" src={profileImg} />
+                    <Avatar alt="myProfile" src={profileImg}/>
                   ) : (
                     <Avatar />
                   )}

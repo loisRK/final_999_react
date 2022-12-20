@@ -1,3 +1,10 @@
+.Posting {
+  overflow-y: hidden;
+}
+.Posting .allPosting {
+  overflow-y: hidden;
+  height: 73vh;
+}
 .postPage {
   background: white;
   height: 100%;

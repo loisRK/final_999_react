@@ -45,3 +45,14 @@
   color: "#23bf58 !important";
   transform: "translateX(26px) !important";
 }
+
+.header {
+  position: fixed;
+  width: 100%;
+  z-index: 10;
+}
+
+.wrap1 {
+  min-height: 100%;
+
+}
