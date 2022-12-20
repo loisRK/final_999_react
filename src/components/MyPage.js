@@ -22,6 +22,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import Box from "@mui/material/Box";
+import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
@@ -43,9 +44,6 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { currentPositions } from "../api/Map";
 import Profile from "./Profile";
 import gugu from "../img/bidulgi.png";
-import gugu_tilt from "../img/dulgi_headtilt.png";
-import { KAKAO_LOGOUT_URL } from "./KakaoLogoutData";
-
 import Posts from "./Posts";
 // import Map from "./Map";
 
@@ -70,19 +68,15 @@ function MyPage() {
       case "Edit Profile":
         // 내 프로필 모달로 보여주기
         editMypage();
+        alert("프로필수정하기");
         break;
       case "Logout":
         // kakaoLogout 이동
         setLogoutOpen(true);
-
         break;
       default:
         alert("아무것도 선택하지 않음");
     }
-  };
-
-  const logout = () => {
-    window.location.href = KAKAO_LOGOUT_URL;
   };
 
   const [nickname, setNickname] = useState("gugu");
@@ -242,6 +236,8 @@ function MyPage() {
   const [wasLastList, setWasLastList] = useState(false); // setting a flag to know the last list
   const [end, setEnd] = useState(0);
 
+  const [likes, setLikes] = useState([]);
+
   useEffect(() => {
     // infinite scroll 테스트
     if (!wasLastList && prevPage !== currentPage) {
@@ -253,6 +249,7 @@ function MyPage() {
           setWasLastList,
           setPrevPage,
           setPosts,
+          setLikes,
           currentPage,
           res.kakaoId,
           setEnd
@@ -560,6 +557,8 @@ function MyPage() {
                   onScroll={onScroll}
                   listInnerRef={listInnerRef}
                   posts={posts}
+                  setLikes={setLikes}
+                  likes={likes}
                 ></Posts>
               </TabPanel>
             </TabContext>
@@ -579,17 +578,17 @@ function MyPage() {
         value={2}
       >
         <BottomNavigationAction
-          icon={<StickyNote2Outlined sx={{ transform: "scale(1.3)" }} />}
+          icon={<StickyNote2Outlined />}
           component={Link}
           to="/posting"
         />
         <BottomNavigationAction
-          icon={<HomeOutlined sx={{ transform: "scale(1.3)" }} />}
+          icon={<HomeOutlined />}
           component={Link}
           to="/"
         />
         <BottomNavigationAction
-          icon={<AccountCircleOutlined sx={{ transform: "scale(1.3)" }} />}
+          icon={<AccountCircleOutlined />}
           component={Link}
           to="/myPage"
         />
@@ -615,53 +614,6 @@ function MyPage() {
           </MenuItem>
         ))}
       </Menu>
-      <Modal
-        open={logoutOpen}
-        onClose={() => setLogoutOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            로그아웃 하시겠습니까?
-          </Typography>
-          <img
-            alt="gugu_tilt"
-            src={gugu_tilt}
-            style={{
-              height: 150,
-              position: "relative",
-              display: "flex",
-              alignItems: "center",
-              marginBottom: 20,
-            }}
-          />
-          <Box>
-            <Button onClick={logout} variant="outlined">
-              네
-            </Button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button onClick={() => setLogoutOpen(false)} variant="contained">
-              아니요
-            </Button>
-          </Box>
-        </Box>
-      </Modal>
     </div>
   );
 }

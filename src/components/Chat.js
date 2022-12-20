@@ -698,6 +698,7 @@ const Chat = () => {
           className="w-[70%] h-12 border p-3 outline-none rounded-xl"
           type="text"
           placeholder="message send"
+          style={{ marginLeft: 10, marginRight: 10 }}
           onKeyPress={onKeyPress}
         />
         {message != null ? (
