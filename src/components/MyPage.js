@@ -359,23 +359,20 @@ function MyPage() {
                   />
                 </div>
                 <div id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>{postDetail.userDTO.kakaoNickname}</b>
-                </div>
-                <div>
-                  <span className="post_detail">
-                    @{postDetail.userDTO.kakaoNickname}
-                  </span>
-                  &nbsp;&nbsp;&nbsp;
+                  <b>@{postDetail.userDTO.kakaoNickname}</b>
+                  &nbsp;&nbsp;
                   <span className="post_detail">
                     {postDetail.postDate.substr(0, 10)}
                   </span>
                 </div>
-                &nbsp;&nbsp;&nbsp;
                 <div className="post_content">{postDetail.postContent}</div>
                 {postDetail.postImg === "" ? (
                   <></>
                 ) : (
-                  <img className="post_img" src={postDetail.postImg} />
+                  <img
+                    className="post_img"
+                    src={postDetail.postImg}
+                  />
                 )}
               </div>
             )}
