@@ -21,6 +21,7 @@ import {
 import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
+import { kickList } from "../api/Firebase";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { axiosDeletePost } from "../api/Post";
 
@@ -57,6 +58,9 @@ function Map({ token }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postDetail, setPostDetail] = useState(null);
   const [userPosts, setUserPosts] = useState([]);
+  const [kakaoId, setKakaoId] = useState("");
+  const [kickLists, setKickLists] = useState([]);
+
   // const [overlayState, setOverlayState] = useState("open");
   var overlayState = "open";
   const loginOptions = ["수정하기", "삭제하기"];
@@ -96,6 +100,15 @@ function Map({ token }) {
       console.log("GPS를 지원하지 않습니다.");
     }
   };
+
+  // 카카오톡 id와 차단목록 가져오기.
+  useEffect(() => {
+    const userData = axiosUser();
+    userData.then((res) => setKakaoId(res.kakaoId));
+
+    const dulgiData = kickList();
+    dulgiData.then((res) => setKickLists(Object.values(res)));
+  }, []);
 
   useEffect(() => {
     if (token !== null) {
@@ -205,8 +218,8 @@ function Map({ token }) {
       // 채팅방 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const markerImage = new kakao.maps.MarkerImage(
         imageSrc,
-        imageSize,
-        imageOption
+        imageSize
+        // imageOption
       );
       // 채팅방 마커 객체 생성
       const roomMarkers = new kakao.maps.Marker({
@@ -270,7 +283,15 @@ function Map({ token }) {
       enterElement.className = "enteroveray";
       enterElement.innerHTML = `<div class="boxtitle">${room.title}<br/>${room.userCnt}명<br/>입장하기</div>`;
 
-      if (distance <= 1) {
+      const roomNo = roomMarker.getTitle();
+      // 추방자 찾기
+      let outDulgi = kickLists.filter(function (data) {
+        return data.kickDulgi === kakaoId && data.roomNo === roomNo;
+      });
+
+      if (outDulgi.length >= 1) {
+        enterOverlay.setContent(blockElement);
+      } else if (distance <= 1) {
         enterOverlay.setContent(enterElement);
       } else {
         enterOverlay.setContent(blockElement);
@@ -280,7 +301,6 @@ function Map({ token }) {
 
       // enterElement를 클릭했을 때 실행될 함수
       enterElement.onclick = function () {
-        const roomNo = roomMarker.getTitle();
         console.log("ROOM NO : " + roomNo);
         if (token !== null) {
           navigate(`/room?roomNo=${roomNo}`);

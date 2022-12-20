@@ -20,7 +20,6 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  Tooltip,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
@@ -227,11 +226,6 @@ function MyPage() {
     navigate(
       `/profile?userId=${userId}&email=${email}&nickname=${nickname}&image=${profileImg}`
     );
-  };
-
-  const [value, setValue] = React.useState("1");
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
   };
 
   const [value, setValue] = React.useState("1");
