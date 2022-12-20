@@ -157,10 +157,10 @@ function Map({ token }) {
       // 포스트 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const postImage = new kakao.maps.MarkerImage(
         imageSrc,
-        imageSize
+        imageSize,
         // imageOption
       );
-      // 채팅방 마커 객체 생성
+      // 포스트 마커 객체 생성
       const postMarkers = new kakao.maps.Marker({
         map: map,
         position: postLatlng,
@@ -194,8 +194,8 @@ function Map({ token }) {
       // 채팅방 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const markerImage = new kakao.maps.MarkerImage(
         imageSrc,
-        imageSize
-        // imageOption
+        imageSize,
+        imageOption
       );
       // 채팅방 마커 객체 생성
       const roomMarkers = new kakao.maps.Marker({
@@ -286,7 +286,7 @@ function Map({ token }) {
     postingElement.title = "포스팅 작성";
     postingElement.innerHTML =
       '<span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
-      '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>';
+      '            <span class="title">깃털꽂기</span>';
 
     var chattingElement = document.createElement("li");
     chattingElement.className = "chatting";
@@ -434,7 +434,7 @@ function Map({ token }) {
       currentPosition();
       map.setCenter(markerPosition);
     });
-  }, [latitude, longitude, chatList.length]);
+  }, [latitude, longitude, userPosts.length, chatList.length]);
   // }, [latitude, longitude, posts.length, chatList.length]);
 
   return (

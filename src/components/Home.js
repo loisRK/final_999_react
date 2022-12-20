@@ -278,7 +278,7 @@ function Home() {
         </AppBar>
         <div className="headerLeft"></div>
       </div>
-      <br />
+      <br /><br /><br /><br />
       <div>
         <FormGroup sx={{ alignContent: "center" }}>
           <Stack direction="row" spacing={1} alignItems="center">
@@ -314,7 +314,6 @@ function Home() {
       </div>
       <br />
       <div>{toggled === false ? <Map token={token} /> : <ChatList />}</div>
-      {/* <Map /> */}
       <br />
       <BottomNavigation
         sx={{

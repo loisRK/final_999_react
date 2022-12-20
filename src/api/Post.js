@@ -18,7 +18,7 @@ export const createPost = async (formData) => {
     .then((document.location.href = "/posting"));
 };
 
-// Post 전체 데이터 불러오기 - GET
+// Post 전체 데이터 불러오기 - GET (사용안하면 삭제)
 export const postAllData = async (
   posts,
   setWasLastList,
@@ -89,7 +89,7 @@ export const axiosLike = async (formData) => {
   return response.data;
 };
 
-// 해당 user의 포스팅 like 정보 가져오기 - GET
+// 해당 user의 포스팅 like 정보 가져오기 - GET (사용안하면 삭제)
 export const axiosGetLike = async (postNo, userId) => {
   const response = await axios.get(
     `http://localhost:8080/api/getLike?postNo=${postNo}&userId=${userId}`
@@ -97,7 +97,7 @@ export const axiosGetLike = async (postNo, userId) => {
   return response.data;
 };
 
-// 전체 포스트랑 like 정보 다 가져오는거 도전!!!!
+// 전체 포스트랑 like 정보 다 가져오는거 도전!!!! (사용안하면 삭제)
 export const axiosAllPostAndLike = async (
   posts,
   setWasLastList,
@@ -136,11 +136,12 @@ export const axiosPostLike = async (
   setPosts,
   currentPage,
   loginId,
-  searchId,
+  searchId, 
   setEnd
 ) => {
-  console.log(currentPage);
-  console.log("searchId : " + searchId);
+  // console.log("currentPage" + currentPage);
+  // console.log("searchId : " + searchId);
+  // console.log("loginId : " + loginId);
   const response = await axios.get(
     `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}&searchId=${searchId}`
   );
@@ -168,7 +169,7 @@ export const axiosPostLike = async (
   setPosts(result);
 };
 
-// insert Diary - post
+// insert Diary - post (사용안하면 삭제)
 export const createDiary = async (formData) => {
   axios
     .post("http://localhost:8080/api/insert", formData, {
@@ -180,7 +181,7 @@ export const createDiary = async (formData) => {
     .then((document.location.href = "/posting"));
 };
 
-// Diary 전체 데이터 불러오기 - GET
+// Diary 전체 데이터 불러오기 - GET (사용안하면 삭제)
 export const axiosData = async (
   posts,
   setWasLastList,
@@ -198,4 +199,37 @@ export const axiosData = async (
   }
   setPrevPage(currentPage);
   setPosts([...posts, ...response.data.dtoList]);
+};
+
+
+// Mypage용 전체 데이터 불러오기 (loginId로 검색)
+// Post랑 like 정보 전체 데이터 불러오기 - GET
+export const axiosMypagePosts = async (
+  posts,
+  setWasLastList,
+  setPrevPage,
+  setPosts,
+  currentPage,
+  loginId,
+  setEnd
+) => {
+  console.log("currentPage" + currentPage);
+  console.log("loginId : " + loginId);
+  const response = await axios.get(
+    `http://localhost:8080/api/mypagePosts?page=${currentPage}&size=10&loginId=${loginId}`
+  );
+
+  console.log("## inside axiosPostLike : " + response.data.dtoList);
+  console.log("## inside axiosPostLike : " + response.data.page);
+  // 데이터가 없으면 마지막 페이지였다는걸 표시
+  if (!response.data.dtoList.length) {
+    console.log("마지막 페이지 입니다.");
+    setWasLastList(true);
+    return;
+  }
+  setEnd(response.data.end);
+  setPrevPage(currentPage);
+  let result = [];
+  result = [...posts, ...response.data.dtoList];
+  setPosts(result);
 };
