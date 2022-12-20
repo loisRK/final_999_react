@@ -22,8 +22,14 @@ import {
   TableHead,
   TableRow,
   Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { axiosSignup } from "../api/KakaoRedirectSignup";
+import { PhotoCamera } from "@mui/icons-material";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function Profile() {
   const [search, setSearch] = useSearchParams();
@@ -33,10 +39,11 @@ function Profile() {
   const [files, setFiles] = useState([]);
 
   // formData 객체로 전달할 경우 필요한 변수
-  const [nickname, setNickname] = useState(search.get("nickname"));
+  // const [nickname, setNickname] = useState(search.get("nickname"));
+  const [nickname, setNickname] = useState("gugu");
   const [gender, setGender] = useState(search.get("gender"));
   const [age, setAge] = useState(search.get("age"));
-  const [fileImage, setFileImage] = useState("");
+  const [fileImage, setFileImage] = useState(gugu);
   const [addedFile, setAddedFile] = useState([search.get("image")]);
   const [currentNickname, setCurrentNickname] = useState(
     search.get("nickname")
@@ -165,15 +172,15 @@ function Profile() {
           padding={3}
         >
           <Grid>
-            <Avatar
-              className="profileImg"
-              alt="gugu"
-              src={addedFile[0]}
-              sx={{
-                width: 100,
-                height: 100,
-              }}
-            />
+            <div align="center">
+              {fileImage && (
+                <Avatar
+                  alt="sample"
+                  style={{ width: 100, height: 100 }}
+                  src={fileImage}
+                />
+              )}
+            </div>
           </Grid>
         </Grid>
         &nbsp;&nbsp;&nbsp;
@@ -184,72 +191,101 @@ function Profile() {
               <TableBody>
                 <TableRow>
                   <TableCell align="center">Nickname</TableCell>
+                  {/* 닉네임 수정 */}
                   <TableCell align="center">
-                    {/* 닉네임 수정 */}
                     <TextField
                       id="content"
                       name="content"
                       multiline
-                      variant="standard"
-                      defaultValue={currentNickname}
+                      variant="outlined"
+                      defaultValue={nickname}
                       onChange={(e) => nicknameFromHandlerContent(e)}
-                      style={{ width: "80%" }}
+                      // style={{ width: "50%" }}
+                      sx={{ m: 1, minWidth: 180 }}
                     />
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell align="center">Gender</TableCell>
+                  {/* 성별 수정 */}
                   <TableCell align="center">
-                    {/* 성별 수정 */}
-                    <TextField
-                      id="content"
-                      name="content"
-                      multiline
-                      variant="standard"
-                      defaultValue={currentGender}
-                      onChange={(e) => genderFromHandlerContent(e)}
-                      style={{ width: "80%" }}
-                    />
+                    <FormControl sx={{ m: 1, minWidth: 200 }}>
+                      <InputLabel id="demo-simple-select-label">
+                        gender
+                      </InputLabel>
+                      <Select
+                        id="gender"
+                        name="gender"
+                        value={gender}
+                        size={"large"}
+                        label="gender"
+                        onChange={(e) => genderFromHandlerContent(e)}
+                      >
+                        <MenuItem value="">
+                          <em>선택안함</em>
+                        </MenuItem>
+                        <MenuItem value={"female"}>여자</MenuItem>
+                        <MenuItem value={"male"}>남자</MenuItem>
+                        <MenuItem value={"nogender"}>안알려줌</MenuItem>
+                      </Select>
+                    </FormControl>
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell align="center">Age Range</TableCell>
+                  {/* 연령대 수정 */}
                   <TableCell align="center">
-                    {/* 나이대 수정 */}
-                    <TextField
-                      id="content"
-                      name="content"
-                      multiline
-                      variant="standard"
-                      defaultValue={currentAge}
-                      onChange={(e) => ageFromHandlerContent(e)}
-                      style={{ width: "80%" }}
-                    />
+                    <FormControl sx={{ m: 1, minWidth: 200 }}>
+                      <InputLabel id="demo-simple-select-filled-label">
+                        Age Range
+                      </InputLabel>
+                      <Select
+                        id="ageRange"
+                        name="ageRange"
+                        value={age}
+                        size={"large"}
+                        label={"Age Range"}
+                        onChange={(e) => ageFromHandlerContent(e)}
+                      >
+                        <MenuItem value="">
+                          <em>선택안함</em>
+                        </MenuItem>
+                        <MenuItem value={"0~9"}>0 - 9</MenuItem>
+                        <MenuItem value={"10~19"}>10 - 19</MenuItem>
+                        <MenuItem value={"20~29"}>20 - 29</MenuItem>
+                        <MenuItem value={"30~39"}>30 - 39</MenuItem>
+                        <MenuItem value={"40~49"}>40 - 49</MenuItem>
+                        <MenuItem value={"50~59"}>50 - 59</MenuItem>
+                        <MenuItem value={"60~69"}>60 - 69</MenuItem>
+                        <MenuItem value={"70~79"}>70 - 79</MenuItem>
+                      </Select>
+                    </FormControl>
                   </TableCell>
                 </TableRow>
                 <TableRow
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row" align="center">
-                    Photo
+                    Profile Image
                   </TableCell>
                   <TableCell align="center">
-                    <input
-                      className="write_button"
-                      type="file"
-                      name="newFiles"
-                      id="newFiles"
-                      onChange={(e) => {
-                        getFile(e);
-                      }}
-                    />
-                    {/* 미리보기 사진 삭제 버튼 */}
-                    <button type="button" onClick={(e) => deleteFileImage(e)}>
-                      삭제
-                    </button>
-                    <div align="center">
-                      {fileImage && <img alt="sample" src={fileImage} />}
-                    </div>
+                    <IconButton
+                      color="primary"
+                      aria-label="upload picture"
+                      component="label"
+                    >
+                      <input
+                        type="file"
+                        name="newfiles"
+                        id="newfiles"
+                        onChange={getFile}
+                        hidden
+                      />
+                      <PhotoCamera />
+                    </IconButton>
+                    <IconButton onClick={(e) => deleteFileImage(e)}>
+                      <DeleteForeverIcon />
+                    </IconButton>
                   </TableCell>
                 </TableRow>
               </TableBody>

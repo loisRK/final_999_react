@@ -9,33 +9,6 @@ const KakaoRedirectLogin = () => {
   // 로그인 성공시 MyPage로 이동시키기위해 useNavigate 사용
   const navigate = useNavigate();
 
-  // const axisoLogin = async () => {
-  //   try {
-  //     const res = await axios
-  //       // 백엔드 주소 뒤에 인가코드 붙여서 GET 설정
-  //       // 백엔드는 이 주소를 통해 뒤에 붙여져있는 인가코드를 전달 받게 된다.
-  //       .get(`http://localhost:8080/api/oauth/token?code=${code}`)
-  //       // 백엔드 쪽에서 보내준 응답 확인
-  //       .then((response) => {
-  //         // console.log("응답 확인", response);
-  //         // 백엔드로부터 받아온 토큰을 token 변수에 저장
-  //         const userExist = response.headers.userexist;
-  //         const token = response.headers.authorization;
-  //         // 토큰을 현재 서버의 로컬 스토리지에 저장
-  //         window.localStorage.setItem("token", token);
-  //         // console.log("response : " + response.headers);
-  //         // console.log("token : " + token);
-  //         // console.log("userExist : " + userExist);
-  //         {
-  //           userExist === "no" ? navigate("/profile") : navigate("/");
-  //         }
-  //       });
-  //   } catch (error) {
-  //     // 에러 발생 시, 에러 응답 출력
-  //     console.error("KakaoRedirectLogin ERROR : " + error);
-  //   }
-  // };
-
   useEffect(() => {
     // 백엔드로부터 인가코드 넘기고 jwt 토큰 받기
     (async () => {
@@ -56,47 +29,9 @@ const KakaoRedirectLogin = () => {
               ? navigate("/signup") // 회원가입 페이지 띄우기
               : navigate("/"); // 로그인 끝
           }
-          // switch (key) {
-          //   case "signup":
-          //     navigate("/signup");
-          //     break;
-          //   default:
-          //     navigate("/");
-          // }
         });
     })();
   }, []);
-
-  // useEffect(() => {
-  //   // 백엔드로부터 인가코드 넘기고 jwt 토큰 받기
-  //   (async () => {
-  //     try {
-  //       const res = await axios
-  //         // 백엔드 주소 뒤에 인가코드 붙여서 GET 설정
-  //         // 백엔드는 이 주소를 통해 뒤에 붙여져있는 인가코드를 전달 받게 된다.
-  //         .get(`http://localhost:8080/api/checkMember?code=${code}`)
-  //         // .get(`http://localhost:8080/api/oauth/token?code=${code}`)
-  //         // 백엔드 쪽에서 보내준 응답 확인
-  //         .then((response) => {
-  //           // console.log("응답 확인", response);
-  //           // 백엔드로부터 받아온 토큰을 token 변수에 저장
-  //           const userExist = response.headers.userexist;
-  //           const token = response.headers.authorization;
-  //           // 토큰을 현재 서버의 로컬 스토리지에 저장
-  //           window.localStorage.setItem("token", token);
-  //           // console.log("response : " + response.headers);
-  //           // console.log("token : " + token);
-  //           // console.log("userExist : " + userExist);
-  //           {
-  //             userExist === "no" ? navigate("/profile") : navigate("/");
-  //           }
-  //         });
-  //     } catch (error) {
-  //       // 에러 발생 시, 에러 응답 출력
-  //       console.error("KakaoRedirectLogin ERROR : " + error);
-  //     }
-  //   })();
-  // }, []);
 
   return (
     <div>
