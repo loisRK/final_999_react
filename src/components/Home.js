@@ -202,7 +202,7 @@ function Home() {
           </Stack>
         </FormGroup>
       </div>
-      <div>{toggled === false ? <Map /> : <ChatList />}</div>
+      <div>{toggled === false ? <Map token={token} /> : <ChatList />}</div>
       {/* <Map /> */}
       <br />
       <BottomNavigation

@@ -40,6 +40,7 @@ function InsertDiary() {
     console.log(e.target.value);
     setContent(e.target.value);
   };
+  
   const getFile = (e) => {
     console.log(e.target.files);
     const input = document.querySelector("#newfiles");
@@ -83,8 +84,8 @@ function InsertDiary() {
         console.log("formdata확인" + key, ":", formData.get(key));
       }
 
-      createPost(formData);
-      // .then((document.location.href = "/posting"));
+      createPost(formData)
+      .then((document.location.href = "/posting"));
       console.log("formData" + formData);
     }
   };

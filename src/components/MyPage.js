@@ -237,7 +237,7 @@ function MyPage() {
                 </span> */}
                 {/* <span className="post_detail">{time(postDetail.postDate)}</span>&nbsp; */}
                 {/* <span className="post_detail">post#{postDetail.postNo}</span> */}
-                <div className="post_content">{postDetail.postContent}</div>
+                <span className="post_content">{postDetail.postContent}</span>
                 {postDetail.postImg === "" ? (
                   <></>
                 ) : (

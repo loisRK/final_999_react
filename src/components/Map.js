@@ -86,12 +86,13 @@ function Map({ token }) {
     }
   };
   useEffect(() => {
+    if (token != null) {
     const data = axiosUser();
     data.then((res) => setUsername(res.kakaoNickname));
     data
       .then((res) => axioUserPosts(res.kakaoId))
       .then((res) => setUserPosts(res));
-
+    }
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
 
