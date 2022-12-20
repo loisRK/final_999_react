@@ -5,39 +5,66 @@ import Menu from "@mui/material/Menu";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import io from "socket.io-client";
 import { axiosUser } from "../api/User";
-import { useSearchParams } from "react-router-dom";
-import { axiosReportNum, roomInfo } from "../api/Chatting";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogTitle from "@mui/material/DialogTitle";
+import { useSearchParams, Link } from "react-router-dom";
 import {
   report,
+  roomInfo,
   client_in,
   client_out,
   insert_taboo,
   alltabooList,
   deleteTaboo,
+  deleteRoom,
 } from "../api/Chatting";
 import flyGugu from "../img/cutyDulgi.jpg";
+import gugueyes from "../img/gugugu.png";
 import {
   AppBar,
   Avatar,
   Box,
   Button,
+  getButtonGroupUtilityClass,
   Grid,
   IconButton,
   Modal,
+  TextField,
   Toolbar,
   Tooltip,
   Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import {
+  doc,
+  setDoc,
+  collection,
+  serverTimestamp,
+  query,
+  onSnapshot,
+  orderBy,
+} from "firebase/firestore";
+import {
+  messageData,
+  messageUpdate,
+  dulgiInsert,
+  dulgiList,
+  kickList,
+  dulgiKick,
+  deleteDulgi,
+} from "../api/Firebase";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Paper from "@material-ui/core/Paper";
+import { Input } from "postcss";
+import { async } from "@firebase/util";
 
 // 내가 만든 firebase의 프로젝트의 URL 이다.
 // const databaseURL = "https://test-project-c773d-default-rtdb.firebaseio.com/";
 
-// const socket = io.connect("http://192.168.0.81:9999");
+// const socket = io.connect("http://192.168.0.13:9999");
 // const socket = io.connect("http://192.168.0.25:9999");
 const socket = io.connect("https://server.bnmnil96.repl.co");
 
@@ -58,7 +85,10 @@ const Chat = () => {
   const [taboo, setTaboo] = useState(false);
   const [tabooWord, setTabooWord] = useState("");
   const [tabooList, setTabooList] = useState([]);
+  const [clientKey, setClientKey] = useState([]);
   const [clientList, setClientList] = useState([]);
+  const [del, setDel] = useState(false);
+  const [clear, setClear] = useState(false);
 
   const [search, setSearch] = useSearchParams();
   const room = search.get("roomNo");
@@ -79,8 +109,25 @@ const Chat = () => {
     userData.then((res) => setUsername(res.kakaoNickname));
     userData.then((res) => setProfileImg(res.kakaoProfileImg));
 
+    // 같은 방으로 join
+    socket.emit("room", room);
     console.log("CHATTING # : " + room);
-    socket.emit("room", [room, kakaoId]);
+
+    // 룸 내 새로운 방문객 추가
+    userData.then((res) => dulgiInsert({ roomNo: room, dulgi: res.kakaoId }));
+
+    // 이방의 채팅내용 모두 가져오기
+    const messagedata = messageData();
+    // messagedata.then((res) => console.log(res));
+    // 데이터가 오브젝트 형식으로 오기 때문에 ex ( {1 : {name:~ , message :2~}})
+    // value 값만 가져와 리스트로 만들어주는 작업이 필요하다 . // Object.value(response)
+    messagedata.then((response) =>
+      setMessageList(
+        Object.values(response).filter(function (data) {
+          return data.room === room;
+        })
+      )
+    );
 
     // 방의 user_cnt +1
     client_in(room);
@@ -101,32 +148,7 @@ const Chat = () => {
     const data1 = alltabooList(room);
     // data.then((response) => console.log(response));
     data1.then((response) => setTabooList(response));
-  }, [room]);
-
-  // 룸 내 새로운 방문객 추가
-  useEffect(() => {
-    socket.on("in", (data) => {
-      setClientList((prev) => [...prev, data]);
-    });
-  }, [socket]);
-
-  // 퇴장시 clientList 에서 delete
-  useEffect(() => {
-    socket.on("out", (datas) => {
-      let filterArr = clientList.filter(function (data) {
-        return data !== datas;
-      });
-      setClientList(filterArr);
-    });
-    if (clientList.length < 5) {
-      let arr = clientList.filter(function (data) {
-        return data !== host;
-      });
-      if (arr === []) {
-        // 방 삭제 실행
-      }
-    }
-  }, [socket]);
+  }, []);
 
   // 룸의 입장 인원을 카운트해주는 함수
   useEffect(() => {
@@ -168,17 +190,14 @@ const Chat = () => {
     });
   }, [socket]);
 
-  // 신고 당한 사람이 나인지 확인
-  // useEffect(() => {
-  // console.log(kakaoId);
-  // console.log(exit);
-  // 신고 당한 사람이 나면 강퇴당하기 실행
-  // ###################################################################################### 아래 주석 나중에 지우기.. exit 리스트 어떻게 할까..
-  // if (kakaoId === exit) {
-  //   handleClickOpenKick();
-  //   setExit("");
-  // }
-  // }, [exit]);
+  // 채팅방 소멸
+  useEffect(() => {
+    socket.on("returnRoomClear", (data) => {
+      if (data === "close") {
+        setClear(true);
+      }
+    });
+  }, [socket]);
 
   // 내 리스트에 message data 추가 후
   // 소켓에 message data를 담아 서버에 전달 !
@@ -199,11 +218,11 @@ const Chat = () => {
         // messageContent 값이 먼저 정의 된 후 메세지 전달.
         await socket.emit("message", messageContent);
 
-        // firebase data base에도 값 추가
+        // firebase realtime db 데이터 추가
         // messageUpdate(messageContent);
 
         // 메세지 리스트에 방금 보낸 메세지도 함께 추가.
-        setMessageList((prev) => [...prev, messageContent]);
+        // setMessageList((prev) => [...prev, messageContent]);
         setMessage("");
       }
     } else {
@@ -223,7 +242,7 @@ const Chat = () => {
         // messageUpdate(messageContent);
 
         // 메세지 리스트에 방금 보낸 메세지도 함께 추가.
-        setMessageList((prev) => [...prev, messageContent]);
+        // setMessageList((prev) => [...prev, messageContent]);
         setMessage("");
       }
     }
@@ -247,15 +266,43 @@ const Chat = () => {
   const [openKick, setOpenKick] = React.useState(false);
 
   const handleClickOpen = () => {
-    setOpen(true);
+    // firebase 현재 참여목록 호출
+    const dulgiData = dulgiList();
+    dulgiData.then((res) => setClientKey([...Object.keys(res)]));
+    dulgiData.then((res) => setClientList(Object.values(res)));
+    dulgiData.then((res) => handleClickOpens(Object.values(res)));
+  };
+
+  const handleClickOpens = (list) => {
+    if (
+      list.map((e, i) => (e.roomNo === room ? i : "")).filter(String).length > 5
+    ) {
+      // 남은 인원 5인 이상
+      setOpen(true);
+    }
+    // 5인 이하
+    else {
+      // 나가는 사람이 방장일 때
+      if (host === kakaoId) {
+        setDel(true);
+      } else if (
+        list
+          .map((e, i) => (e.dulgi === host && e.roomNo === room ? i : ""))
+          .filter(String).length >= 1
+      ) {
+        setOpen(true);
+      } else {
+        setDel(true);
+      }
+    }
+  };
+
+  const handleClosedel = () => {
+    setDel(false);
   };
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleClickOpenKick = () => {
-    setOpenKick(true);
   };
 
   const handleCloseKick = () => {
@@ -268,6 +315,39 @@ const Chat = () => {
 
   const tabooOpen = () => {
     setTaboo(true);
+  };
+
+  // 채팅방 퇴장하기
+  const chatOut = () => {
+    // 소켓에서 퇴장하기. socket.disconnect();
+    socket.emit("left", [username, room, kakaoId]);
+    // 소켓 연결 끊기
+    socket.disconnect();
+    // db인원 -1
+    client_out(room);
+    // 해당 아이디 index 찾기
+    let idx = clientList
+      .map((e, i) => (e.dulgi === kakaoId && e.roomNo === room ? i : ""))
+      .filter(String);
+    // console.log(idx);
+    // index에 해당하는 key 가져오기
+    let deletedulgi = Object.values(
+      clientKey
+        .map((e, i) => {
+          return clientKey[idx[i]];
+        })
+        .filter(String)
+    );
+    // console.log(deletedulgi);
+
+    deletedulgi.map((e, i) => {
+      deleteDulgi(e);
+      if (i === clientList.length - 1) {
+        deleteDulgi(e).then(() => {
+          document.location.href = "/";
+        });
+      }
+    });
   };
 
   // 신고하기 DB에 저장
@@ -326,12 +406,6 @@ const Chat = () => {
     });
 
     setTabooList(filterArr);
-
-    // setTabooList(delete tabooList[idx]);
-    // tabooList.splice(idx, 1);
-    // console.log(tabooList);
-    // await setTabooList(tabooList);
-    // setTabooList(tabooList.splice(idx, 1)); // 삭제된 금기어 리스트에서 지우기
   };
 
   // mui 적용
@@ -380,7 +454,7 @@ const Chat = () => {
                 className="write_button"
                 type="submit"
                 defaultValue="save"
-                onClick={handleClickOpen}
+                onClick={() => handleClickOpen()}
                 style={{ backgroundColor: "#89ab79" }}
               >
                 EXIT
@@ -402,11 +476,7 @@ const Chat = () => {
           <DialogActions>
             <Button
               onClick={() => {
-                // 소켓에서 퇴장하기. socket.disconnect();
-                socket.emit("left", [username, room, kakaoId]);
-                socket.disconnect();
-                client_out(room);
-                document.location.href = "/";
+                chatOut();
               }}
               autoFocus
             >
@@ -419,20 +489,11 @@ const Chat = () => {
         <div id="chat" className="w-auto h-[80vh] overflow-y-auto">
           {messageList &&
             messageList.map((msg, i) => (
-              <PopupState variant="popover" popupId="demo-popup-menu">
+              <PopupState key={i} variant="popover" popupId="demo-popup-menu">
                 {(popupState) => (
-                  <div onclick={inputIndex(i)}>
-                    {/* {username === msg.username ? ( */}
-                    {/* <div className="flex"> */}
+                  <div onClick={() => inputIndex(i)}>
                     {username !== msg.username ? (
-                      <div
-                        key={i}
-                        className={
-                          // username === msg.username
-                          //   ? "flex justify-end text-xs mr-4 font-semibold"
-                          "flex text-xs m-3 font-semibold"
-                        }
-                      >
+                      <div className={"flex text-xs m-3 font-semibold"}>
                         {msg.username}
                       </div>
                     ) : (
@@ -452,9 +513,7 @@ const Chat = () => {
                             : "bg-blue-600 rounded-xl rounded-tl-none"
                         } h-auto p-2 text-white m-2 w-fit max-w-[30%] text-left p-2`}
                       >
-                        <div key={i} className="flex">
-                          {msg.message}
-                        </div>
+                        <div className="flex">{msg.message}</div>
                       </div>
                     </div>
                     {username !== msg.username ? (
@@ -469,7 +528,6 @@ const Chat = () => {
                         </button>
                         <br></br> */}
                         <button
-                          key={i}
                           component="MenuItem"
                           sx={{ display: "inline" }}
                           onClick={() => {
@@ -489,64 +547,40 @@ const Chat = () => {
             ))}
         </div>
       </div>
-      {host === kakaoId ? (
-        <div className="absolute bottom-0 left-0 w-full h-[10%]">
+      <div className="absolute bottom-0 left-0 w-full h-[10%]">
+        {host === kakaoId ? (
           <button onClick={tabooOpen} className="w-12 h-12 border rounded-xl">
             +
           </button>
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-[70%] h-12 border p-3 outline-none rounded-xl"
-            type="text"
-            placeholder="message send"
-            onKeyPress={onKeyPress}
-          />
-          {message != null ? (
-            <button
-              onClick={sendMessage}
-              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-              style={{ backgroundColor: "#89ab79" }}
-            >
-              SEND
-            </button>
-          ) : (
-            <button
-              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-              style={{ backgroundColor: "#89ab79" }}
-            >
-              SEND
-            </button>
-          )}
-        </div>
-      ) : (
-        <div className="absolute bottom-0 left-0 w-full h-[10%]">
-          <input
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-[80%] h-12 border p-3 outline-none rounded-xl"
-            type="text"
-            placeholder="message send"
-            onKeyPress={onKeyPress}
-          />
-          {message != null ? (
-            <button
-              onClick={sendMessage}
-              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-              style={{ backgroundColor: "#89ab79" }}
-            >
-              SEND
-            </button>
-          ) : (
-            <button
-              className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
-              style={{ backgroundColor: "#89ab79" }}
-            >
-              SEND
-            </button>
-          )}
-        </div>
-      )}
+        ) : (
+          <></>
+        )}
+        <input
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="w-[70%] h-12 border p-3 outline-none rounded-xl"
+          type="text"
+          placeholder="message send"
+          onKeyPress={onKeyPress}
+        />
+        {message != null ? (
+          <button
+            onClick={sendMessage}
+            className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+            style={{ backgroundColor: "#89ab79" }}
+          >
+            SEND
+          </button>
+        ) : (
+          <button
+            className="w-[15%] bg-indigo-600 text-white h-12 hover-opacity-70 rounded-xl"
+            style={{ backgroundColor: "#89ab79" }}
+          >
+            SEND
+          </button>
+        )}
+      </div>
+
       <Modal
         open={profileInfo}
         onClose={() => setProfileInfo(false)}
@@ -569,137 +603,74 @@ const Chat = () => {
             alignItems: "center",
           }}
         >
-          <Grid container>
-            <Grid item xs={6} alignItems="flex-end">
-              <Grid>
-                <img
-                  className="rounded-full"
-                  alt="gugu_tilt"
-                  src={ownerProfileImg}
-                  style={{
-                    height: 120,
-                    width: 120,
-                    position: "relative",
-                    display: "flex",
-                    alignItems: "center",
-                    margin: "auto",
-                  }}
-                />
-              </Grid>
-              <Grid style={{ float: "none" }}>
-                <Button
-                  style={{
-                    color: "#000000",
-                    alignItems: "center",
-                    position: "relative",
-                  }}
-                >
-                  {ownerName}
-                </Button>
-              </Grid>
-            </Grid>
-            <Grid item xs={6} alignItems="flex-end">
-              <Grid item xs={5} style={{ float: "right" }}>
-                <IconButton
-                  component="label"
-                  style={{ color: "#89ab79" }}
-                  onClick={() => setProfileInfo(false)}
-                >
-                  <CancelIcon />
-                </IconButton>
-              </Grid>
-              <Grid item xs={15}>
-                ⛔금기어 목록⛔
-                {tabooList.map((value, index) => (
-                  <Typography key={index}>{value}</Typography>
-                ))}
-              </Grid>
-            </Grid>
-          </Grid>
+          <img
+            className="rounded-full"
+            alt="gugu_tilt"
+            src={ownerProfileImg}
+            style={{
+              height: 120,
+              width: 120,
+              position: "relative",
+              display: "flex",
+              alignItems: "center",
+              marginBottom: 20,
+            }}
+          />
+          {ownerName}
+          {/* <IconButton
+            component="label"
+            style={{ color: "#89ab79" }}
+            onClick={() => setProfileInfo(false)}
+          >
+            <CancelIcon />
+          </IconButton> */}
+          ⛔금기어 목록⛔
+          {tabooList.map((value, index) => (
+            <Typography key={index}>{value}</Typography>
+          ))}
         </Box>
       </Modal>
-      <Modal
-        open={taboo}
-        onClose={() => setTaboo(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            내 방 금기어 리스트
-          </Typography>
-          <Typography className="h-20vh">
-            {tabooList.map((taboo, idx) =>
-              taboo !== "" ? (
-                <Typography
-                  id="modal-modal-title"
-                  variant="h6"
-                  component="h2"
+
+      <Dialog open={taboo} onClose={() => setTaboo(false)}>
+        <DialogTitle>⛔내 방 금기어 리스트⛔</DialogTitle>
+        <DialogContent>
+          {tabooList.map((taboo, idx) =>
+            taboo !== "" ? (
+              <DialogContentText id="modal-modal-title" key={idx}>
+                <span key={idx + "번"} className="text-[14px]">
+                  {taboo}
+                </span>
+                &nbsp;&nbsp;&nbsp;
+                <button
+                  onClick={() => tabooDelete(idx)}
                   key={idx}
+                  className="text-[14px]"
                 >
-                  <span key={idx + "번"} className="text-[14px]">
-                    {taboo}
-                  </span>
-                  &nbsp;&nbsp;&nbsp;
-                  <button
-                    onClick={() => tabooDelete(idx)}
-                    key={idx}
-                    className="text-[14px]"
-                  >
-                    🗑
-                  </button>
-                </Typography>
-              ) : (
-                <></>
-              )
-            )}
-          </Typography>
-          <br></br>
-          <input
+                  <DeleteForeverIcon />
+                </button>
+              </DialogContentText>
+            ) : (
+              <></>
+            )
+          )}
+          <TextField
+            autoFocus
+            margin="dense"
+            label="추가 금기어 입력"
+            fullWidth
+            variant="standard"
             value={tabooWord}
             onChange={(e) => setTabooWord(e.target.value)}
             type="text"
-            placeholder="추가 금기어 입력"
-            className="h-10 w-[50%] border-solid border-2"
-          ></input>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            <Grid container direction="row" alignItems="center">
-              <Grid>
-                <button
-                  className="border-solid border-2 rounded-xl w-16"
-                  style={{ backgroundColor: "#89ab79" }}
-                  onClick={insertTaboo}
-                >
-                  insert
-                </button>{" "}
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button
-                  className="border-solid border-2 rounded-xl w-16"
-                  onClick={() => setTaboo(false)}
-                  style={{ backgroundColor: "#89ab79" }}
-                >
-                  close
-                </button>
-              </Grid>
-            </Grid>
-          </Typography>
-        </Box>
-      </Modal>
+            placeholder="taboo"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={insertTaboo}>Insert</Button>
+          <Button onClick={() => setTaboo(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
       <Dialog
         open={openKick}
         onClose={handleCloseKick}
@@ -723,6 +694,75 @@ const Chat = () => {
             autoFocus
           >
             확인
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={del}
+        onClose={handleClosedel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"5인 이하의 방은 퇴장시 해당방이 사라집니다."}
+        </DialogTitle>
+        {/* <img alt="flyGugu" src={flyGugu}></img> */}
+
+        <DialogActions>
+          <Button
+            onClick={() => {
+              // 소켓에서 퇴장하기. socket.disconnect();
+              socket.emit("left", [username, room, "close"]);
+              // 소켓 연결 끊기
+              socket.disconnect();
+              // db인원 -1
+              client_out(room);
+              // 룸에서 해당 아이디 index 찾기
+              let idx = clientList
+                .map((e, i) => (e.roomNo === room ? i : ""))
+                .filter(String);
+              // console.log(idx);
+              // index에 해당하는 key 가져오기
+              let deletedulgi = Object.values(
+                clientKey
+                  .map((e, i) => {
+                    return clientKey[idx[i]];
+                  })
+                  .filter(String)
+              );
+              console.log(deletedulgi);
+
+              deletedulgi.map((e, i) => {
+                deleteDulgi(e);
+                if (i === clientList.length - 1) {
+                  deleteDulgi(e).then(() => {
+                    deleteRoom(room);
+                    document.location.href = "/";
+                  });
+                }
+              });
+            }}
+            autoFocus
+          >
+            날아가기
+          </Button>
+          <Button onClick={handleClosedel}>둥지틀기</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={clear}
+        onClose={() => (document.location.href = "/")}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          {"모두가 떠나 홀로 남았습니다.."}
+        </DialogTitle>
+        <img alt="guguEyes" src={gugueyes}></img>
+
+        <DialogActions>
+          <Button onClick={() => (document.location.href = "/")} autoFocus>
+            날아가기
           </Button>
         </DialogActions>
       </Dialog>

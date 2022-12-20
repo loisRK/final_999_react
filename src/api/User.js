@@ -11,3 +11,14 @@ export const axiosUser = async () => {
   console.log("User.js : " + response.data);
   return response.data;
 };
+
+// User 정보 수정 - PUT
+export const axiosUserUpdate = async (userId, formData) => {
+  console.log("axiosUserUpdate" + userId);
+
+  await axios.put(`http://localhost:8080/api/updateUser/${userId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+};

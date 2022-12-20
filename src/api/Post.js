@@ -10,12 +10,12 @@ export const createPost = async (formData) => {
   axios
     .post("http://localhost:8080/api/post", formData, {
       headers: {
-        "Contest-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
         Authorization: token,
       },
     })
-    .then((res) => console.log("postNo : " + res.data));
-  // .then((document.location.href = "/posting"));
+    .then((res) => console.log("postNo : " + res.data))
+    .then((document.location.href = "/posting"));
 };
 
 // Post 전체 데이터 불러오기 - GET
@@ -52,7 +52,7 @@ export const postUpdate = async (postNo, formData) => {
 
   await axios.put(`http://localhost:8080/api/updatePost/${postNo}`, formData, {
     headers: {
-      "Contest-Type": "multipart/form-data",
+      "Content-Type": "multipart/form-data",
     },
   });
   // .then((document.location.href = `/posting`));
@@ -173,7 +173,7 @@ export const createDiary = async (formData) => {
   axios
     .post("http://localhost:8080/api/insert", formData, {
       headers: {
-        "Contest-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data",
       },
     })
     .then((res) => console.log("diaryNo : " + res.data))

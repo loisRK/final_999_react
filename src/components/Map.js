@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import { roomList } from "../api/Chatting";
 import { Box } from "@mui/system";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
@@ -42,10 +43,10 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
 function Map({ token }) {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
-  const [roomNo, setRoomNo] = useState(null);
+  // const [roomNo, setRoomNo] = useState(null);
   const [open, setOpen] = useState(false);
   const [errorOpen, setErrorOpen] = useState(false);
-  const [posts, setPosts] = useState([]);
+  // const [posts, setPosts] = useState([]);
   const [username, setUsername] = useState("gugu");
   const [chatList, setChatList] = useState([]); // 채팅 리스트 전부 불러오기
   const [modalOpen, setModalOpen] = useState(false);
@@ -86,19 +87,25 @@ function Map({ token }) {
     }
   };
   useEffect(() => {
-    if (token != null) {
-    const data = axiosUser();
-    data.then((res) => setUsername(res.kakaoNickname));
-    data
-      .then((res) => axioUserPosts(res.kakaoId))
-      .then((res) => setUserPosts(res));
+    if (token !== null) {
+      const data = axiosUser();
+      data.then((res) => setUsername(res.kakaoNickname));
+      data
+        .then((res) => axioUserPosts(res.kakaoId))
+        .then((res) => setUserPosts(res));
     }
     // 페이지 로드 시 현재 위치 지정
     currentPosition();
 
+    // 생성된 채팅방 리스트 가져오기
+    const chatData = roomList();
+    // chatData.then((response) => console.log(response));
+    chatData.then((response) => setChatList(response));
+  }, []);
+
+  useEffect(() => {
     const options = {
       //지도를 생성할 때 필요한 기본 옵션
-      // center: new window.kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
       center: new window.kakao.maps.LatLng(latitude, longitude), //지도의 현재 사용자 좌표.
       level: 5, //지도의 레벨(확대, 축소 정도)
     };
@@ -109,17 +116,17 @@ function Map({ token }) {
     // 지도 생성
     const map = new kakao.maps.Map(container, options);
 
-    // // 사용자 위치 마커 이미지 옵션
-    // const imageSrc = "bidulgi.png"; // 나중에 우리 비둘기 이미지로 변경
-    // const imageSize = new kakao.maps.Size(50, 50); // 마커이미지의 크기
+    // 사용자 마커 이미지 옵션
+    const imageSrc = "place.png";
+    const imageSize = new kakao.maps.Size(40, 40); // 마커이미지의 크기
     // const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
 
-    // // 마커의 이미지 정보를 가지고 있는 마커이미지 생성
-    // const markerImage = new kakao.maps.MarkerImage(
-    //   imageSrc,
-    //   imageSize,
-    //   imageOption
-    // );
+    // 사용자 마커의 이미지 정보를 가지고 있는 마커이미지 생성
+    const userMarkerImg = new kakao.maps.MarkerImage(
+      imageSrc,
+      imageSize
+      // imageOption
+    );
 
     // 사용자 마커 위치 지정
     // 임시로 현재 위치로 지정함
@@ -127,7 +134,7 @@ function Map({ token }) {
     const userMarker = new kakao.maps.Marker({
       map: map,
       position: markerPosition,
-      // image: markerImage,
+      image: userMarkerImg,
       title: "현재 사용자의 위치",
     });
 
@@ -137,11 +144,6 @@ function Map({ token }) {
     userMarker.setMap(map); // 마커 객체 생성 시, map 지정해줬으면 setMap 안해줘도 됨
     // overlay.setMap(map);
 
-    // 포스팅 마커 표시하기
-    const postsData = axiosGetAllPosts();
-    // postsData.then((res) => console.log(res));
-    postsData.then((res) => setPosts(res));
-
     // posts.forEach((post) => {
     userPosts.forEach((post) => {
       const postLatlng = new kakao.maps.LatLng(post.postLat, post.postLong);
@@ -150,7 +152,7 @@ function Map({ token }) {
       // 포스트 마커 이미지 옵션
       const imageSrc = "feather.png";
       const imageSize = new kakao.maps.Size(30, 30); // 마커이미지의 크기
-      const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
+      // const imageOption = { offset: new kakao.maps.Point(27, 69) }; // 마커이미지의 옵션
 
       // 포스트 마커의 이미지 정보를 가지고 있는 마커이미지 생성
       const postImage = new kakao.maps.MarkerImage(
@@ -173,11 +175,6 @@ function Map({ token }) {
         setModalOpen(true);
       });
     });
-
-    // 생성된 채팅방 리스트 가져오기
-    const chatData = roomList();
-    // chatData.then((response) => console.log(response));
-    chatData.then((response) => setChatList(response));
 
     // 채팅방 마커 표시하기
     // 채팅방 목록을 가져와서 forEach로 마커 생성
@@ -302,33 +299,9 @@ function Map({ token }) {
     var content = document.createElement("div");
     content.className = "overlaybox";
     content.innerHTML = "    <div class=boxtitle></div>";
-    // '        <li class="posting">' +
-    // '            <span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
-    // '            <span class="title"><Link to={"/insert"}>깃털꽂기</Link></span>' +
-    // "        </li>" +
-    // '        <li class="chatting">' +
-    // '            <span class="icon"><img src="https://emojigraph.org/media/google/bug_1f41b.png" width="25" height="25"></span>' +
-    // '            <span class="title">먹이주기</span>' +
-    // "        </li>";
+
     content.appendChild(postingElement);
     content.appendChild(chattingElement);
-
-    // var content =
-    // '<div class="overlaybox">' +
-    // '    <div class="boxtitle">999' +
-    // '            <div class="close" onclick="closeOverlay()" title="닫기">' +
-    // '               <img src="https://cdn-icons-png.flaticon.com/512/5610/5610967.png" width="15" height="15">' +
-    // '           </div>' +
-    //       '</div>' +
-    // '        <li class="posting">' +
-    // '            <span class="icon"><img src="https://emojigraph.org/media/openmoji/feather_1fab6.png" width="30" height="30"></span>' +
-    // '            <span class="title">깃털꽂기</span>' +
-    // "        </li>" +
-    // '        <li class="chatting">' +
-    // '            <span class="icon"><img src="https://emojigraph.org/media/google/bug_1f41b.png" width="25" height="25"></span>' +
-    // '            <span class="title">먹이주기</span>' +
-    // "        </li>" +
-    // "</div>";
 
     // 오버레이 생성
     var overlay = new kakao.maps.CustomOverlay({
@@ -447,10 +420,10 @@ function Map({ token }) {
       center: markerPosition, // 원의 중심좌표입니다
       radius: 1000, // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
       strokeWeight: 1, // 선의 두께입니다
-      strokeColor: "#00a0e9", // 선의 색깔입니다
+      strokeColor: "#555555", // 선의 색깔입니다
       strokeOpacity: 0.1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
       strokeStyle: "solid", // 선의 스타일입니다
-      fillColor: "#00a0e9", // 채우기 색깔입니다
+      fillColor: "#555555", // 채우기 색깔입니다
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
@@ -461,23 +434,8 @@ function Map({ token }) {
       currentPosition();
       map.setCenter(markerPosition);
     });
-  }, [latitude, longitude, posts.length, chatList.length]);
-
-  function time(postedDate) {
-    const today = new Date();
-    const postDate = new Date(postedDate);
-    const postedTime = Math.ceil(
-      (today.getTime() - postDate.getTime()) / (1000 * 60)
-    );
-
-    if (postedTime >= 1440) {
-      return "" + Math.round(postedTime / 3600) + "d";
-    } else if (postedTime >= 60) {
-      return "" + Math.round(postedTime / 60) + "h";
-    } else {
-      return "" + Math.round(postedTime) + "m";
-    }
-  }
+  }, [latitude, longitude, chatList.length]);
+  // }, [latitude, longitude, posts.length, chatList.length]);
 
   return (
     <div>
@@ -548,11 +506,7 @@ function Map({ token }) {
           className="map"
           style={{ width: `"${window.innerWidth}"`, height: "65vh" }}
         >
-          <img
-            id="gps_bnt"
-            className="gps_bnt mt-[55vh] ml-[3vh]"
-            src="gps.png"
-          />
+          <MyLocationIcon id="gps_bnt" className="gps_bnt mt-[55vh] ml-[3vh]" />
         </div>
       </div>
 
