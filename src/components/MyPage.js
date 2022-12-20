@@ -219,6 +219,7 @@ function MyPage() {
     } else {
       console.log("삭제 눌렀을 때 : " + postNo);
       axiosDeletePost(postNo);
+      window.location.href = "/myPage";
     }
   };
 

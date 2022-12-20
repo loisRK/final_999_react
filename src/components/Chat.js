@@ -88,6 +88,7 @@ const Chat = () => {
   const [outGoing, setOutGoing] = useState("");
   const [count, setCount] = useState([]);
   const [kickLists, setKickLists] = useState([]);
+  const [alertes, setAlertes] = useState(false);
 
   const [search, setSearch] = useSearchParams();
   const room = search.get("roomNo");
@@ -351,6 +352,10 @@ const Chat = () => {
     setAlerts(!alerts);
   };
 
+  const alertClick3 = () => {
+    setAlertes(!alertes);
+  };
+
   // 추방자 리스트 확인 후 추방하기 !
   useEffect(() => {
     let outDulgi = count.filter(function (data) {
@@ -454,18 +459,22 @@ const Chat = () => {
     const formData = new FormData();
     // console.log([messageList[index]]);
     let reportMessage = messageList[index];
-    formData.append("roomNo", reportMessage.room);
-    formData.append("message", reportMessage.message);
-    formData.append("reporterId", kakaoId);
-    formData.append("reportedId", reportMessage.userId);
+    if (reportMessage.userId !== host) {
+      formData.append("roomNo", reportMessage.room);
+      formData.append("message", reportMessage.message);
+      formData.append("reporterId", kakaoId);
+      formData.append("reportedId", reportMessage.userId);
 
-    report(formData).then((data) => {
-      console.log("#### 신고 숫자 : " + data);
-      if (data === 1) {
-        console.log("### 신고 3번 이상!!!!!");
-        socket.emit("reported", [reportMessage.userId, room]);
-      }
-    });
+      report(formData).then((data) => {
+        console.log("#### 신고 숫자 : " + data);
+        if (data === 3) {
+          console.log("### 신고 3번 이상!!!!!");
+          socket.emit("reported", [reportMessage.userId, room]);
+        }
+      });
+    } else {
+      alertClick3();
+    }
 
     // 신고 3번 이상 받으면 퇴장당하기
     // axiosReportNum(reportMessage.room, reportMessage.userId).then((data) => {
@@ -771,10 +780,12 @@ const Chat = () => {
           <Typography className="h-[30vh] overflow-y-auto">
             {tabooList.map((taboo, idx) =>
               taboo !== "" ? (
-                <DialogContentText id="modal-modal-title" key={idx}>
-                  <span key={idx + "번"} className="text-[14px]">
-                    {idx + 1 + ". " + taboo}
-                  </span>
+                <DialogContentText
+                  id="modal-modal-title"
+                  key={idx}
+                  className="text-[14px]"
+                >
+                  {idx + 1 + ". " + taboo}
                   &nbsp;&nbsp;&nbsp;
                   <button
                     onClick={() => tabooDelete(idx)}
@@ -929,6 +940,20 @@ const Chat = () => {
       >
         <Alert severity="success" sx={{ width: "100%" }}>
           {`${visitor} 둘기가 합류하였습니다`}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertes}
+        autoHideDuration={3000}
+        onClose={alertClick3}
+      >
+        <Alert severity="error" sx={{ width: "100%" }}>
+          {`방장 둘기는 기싸움을 버텨냈습니다 😎`}
         </Alert>
       </Snackbar>
     </div>
