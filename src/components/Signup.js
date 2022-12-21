@@ -110,7 +110,7 @@ function Profile() {
         encType="multipart/form-data"
       >
         {/* 고정 상단바 */}
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1 }} style={{ fontFamily: "KJCGothicLight" }}>
           <AppBar position="static" sx={{ background: "#B6E2A1" }}>
             <Toolbar>
               <IconButton

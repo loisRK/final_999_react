@@ -316,7 +316,7 @@ function MyPage() {
                   flexGrow: 1,
                   fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
-                  fontSize: 30,
+                  fontSize: "large",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -508,7 +508,7 @@ function MyPage() {
             direction="column"
             alignItems="center"
             padding={3}
-            style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
+            style={{ fontFamily: "KJCGothicLight" }}
           >
             <Grid>
               <Avatar
@@ -524,13 +524,16 @@ function MyPage() {
               />
             </Grid>
             &nbsp;&nbsp;&nbsp;
-            <Grid>{nickname}</Grid>
+            <Grid>@{nickname}</Grid>
             <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
           </Grid>
         </div>
 
         <div className="mypageTab">
-          <Box sx={{ width: "100%", typography: "body1" }}>
+          <Box
+            sx={{ width: "100%", typography: "body1" }}
+            style={{ fontFamily: "KJCGothicLight" }}
+          >
             <TabContext value={value}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <TabList
