@@ -153,6 +153,7 @@ const Chat = () => {
     // 방의 태그 내용 입력
     data.then((response) => setTags(response.title));
     data.then((response) => setHost(response.user.kakaoId));
+
     // 방장 프로필 보기 용 변수 설정
     data.then((response) => setOwnerProfileImg(response.user.kakaoProfileImg));
     data.then((response) => setOwnerName(response.user.kakaoNickname));
