@@ -133,7 +133,7 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
         style={{
           // height: "30vh",
           overflowY: "scroll",
-          fontFamily: "LeferiPoint-WhiteObliqueA",
+          fontFamily: "KJCGothicLight",
         }}
       >
         {posts.map((post, idx) => {
@@ -225,7 +225,7 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
           style: {
             maxHeight: ITEM_HEIGHT * 6,
             width: "15ch",
-            fontFamily: "LeferiPoint-WhiteObliqueA",
+            fontFamily: "KJCGothicLight",
           },
         }}
       >

@@ -268,7 +268,7 @@ function Home() {
                   flexGrow: 1,
                   fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
-                  fontSize: 30,
+                  fontSize: "large",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",

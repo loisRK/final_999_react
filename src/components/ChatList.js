@@ -200,9 +200,16 @@ function ChatList({ token }) {
       <div
         id="chatList"
         className="chatList"
-        style={{ width: `"${window.innerWidth}"`, height: "500px" }}
+        style={{
+          width: `"${window.innerWidth}"`,
+          height: "500px",
+          fontFamily: "KJCGothicLight",
+        }}
       >
-        <TableContainer component={Paper}>
+        <TableContainer
+          component={Paper}
+          // style={{ fontFamily: "KJCGothicLight" }}
+        >
           <br />
           <Table
             sx={{ width: 1 / 1, height: 1 / 2 }}
