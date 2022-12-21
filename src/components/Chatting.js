@@ -27,12 +27,15 @@ import { axiosUser } from "../api/User";
 import Autocomplete from "@mui/material/Autocomplete";
 import gugu from "../img/bidulgi.png";
 import Snackbar from "@mui/material/Snackbar";
-// import io from "socket.io-client";
+import io from "socket.io-client";
 
 function Chatting() {
   // useNavigate() : 양식이 제출되거나 특정 event가 발생할 때, url 조작
   const navigate = useNavigate();
   const formData = new FormData();
+
+  const socket = io.connect("http://192.168.0.25:9999");
+  // const socket = io.connect("https://server.bnmnil96.repl.co");
 
   const token = window.localStorage.getItem("token");
   const [nickname, setNickname] = useState("비회원");
@@ -249,7 +252,10 @@ function Chatting() {
           /> */}
           <br />
           <Button
-            onClick={(e) => createRoom(e, nickname, newNickname, tag, category)}
+            onClick={(e) => {
+              createRoom(e, nickname, newNickname, tag, category);
+              socket.emit("createRoom", "채팅방 개설");
+            }}
             variant="contained"
             color="success"
           >
