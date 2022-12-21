@@ -61,10 +61,6 @@ function Posting() {
       case "Login":
         setOpen(true);
         break;
-      case "My Profile":
-        // 내 프로필 모달로 보여주기
-        alert("프로필보여주기");
-        break;
       case "Logout":
         // kakaoLogout 이동
         setLogoutOpen(true);
@@ -284,6 +280,7 @@ function Posting() {
                 flexGrow: 1,
                 fontFamily: "SEBANG_Gothic_Bold",
                 fontWeight: 700,
+                fontSize: "large",
                 letterSpacing: ".3rem",
                 color: "inherit",
                 textDecoration: "none",

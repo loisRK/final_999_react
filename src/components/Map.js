@@ -27,7 +27,6 @@ import { axiosDeletePost } from "../api/Post";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
-  const socket = io.connect("https://server.bnmnil96.repl.co");
   function deg2rad(deg) {
     return deg * (Math.PI / 180);
   }
@@ -45,7 +44,7 @@ function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
   var d = R * c; // Distance in km
   return d;
 }
-
+const map = null;
 function Map({ token }) {
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
@@ -60,6 +59,11 @@ function Map({ token }) {
   const [userPosts, setUserPosts] = useState([]);
   const [kakaoId, setKakaoId] = useState("");
   const [kickLists, setKickLists] = useState([]);
+  const [map, setMap] = useState(null);
+  const [markerPosition, setMarkerPosition] = useState(null);
+
+  const socket = io.connect("http://192.168.0.25:9999");
+  // const socket = io.connect("https://server.bnmnil96.repl.co");
 
   // const [overlayState, setOverlayState] = useState("open");
   var overlayState = "open";
@@ -130,6 +134,19 @@ function Map({ token }) {
   }, []);
 
   useEffect(() => {
+    socket.on("returnRoom", (data) => {
+      chatListUpdata();
+    });
+  }, [socket]);
+
+  const chatListUpdata = () => {
+    // 생성된 채팅방 리스트 가져오기
+    const chatData = roomList();
+    // chatData.then((response) => console.log(response));
+    chatData.then((response) => setChatList(response));
+  };
+
+  useEffect(() => {
     const options = {
       //지도를 생성할 때 필요한 기본 옵션
       center: new window.kakao.maps.LatLng(latitude, longitude), //지도의 현재 사용자 좌표.
@@ -141,6 +158,7 @@ function Map({ token }) {
 
     // 지도 생성
     const map = new kakao.maps.Map(container, options);
+    setMap(map);
 
     // 사용자 마커 이미지 옵션
     const imageSrc = "place.png";
@@ -157,6 +175,7 @@ function Map({ token }) {
     // 사용자 마커 위치 지정
     // 임시로 현재 위치로 지정함
     const markerPosition = new kakao.maps.LatLng(latitude, longitude);
+    setMarkerPosition(new kakao.maps.LatLng(latitude, longitude));
     const userMarker = new kakao.maps.Marker({
       map: map,
       position: markerPosition,
@@ -449,6 +468,31 @@ function Map({ token }) {
     // 사용자의 위치를 기준으로 원 생성
     // 원 객체를 생성합니다
 
+    // var circle = new kakao.maps.Circle({
+    //   center: markerPosition, // 원의 중심좌표입니다
+    //   radius: 1000, // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
+    //   strokeWeight: 1, // 선의 두께입니다
+    //   strokeColor: "#555555", // 선의 색깔입니다
+    //   strokeOpacity: 0.1, // 선의 불투명도입니다 0에서 1 사이값이며 0에 가까울수록 투명합니다
+    //   strokeStyle: "solid", // 선의 스타일입니다
+    //   fillColor: "#555555", // 채우기 색깔입니다
+    //   fillOpacity: 0.2, // 채우기 불투명도입니다
+    // });
+    // circle.setMap(map);
+    // gps 버튼 동작
+    const gps = document.getElementById("gps_bnt");
+    gps.addEventListener("click", () => {
+      console.log("gps 작동");
+      currentPosition();
+      map.setCenter(markerPosition);
+    });
+  }, [latitude, longitude, userPosts.length, chatList.length]);
+  // }, [latitude, longitude, posts.length, chatList.length]);
+
+  useEffect(() => {
+    // 사용자의 위치를 기준으로 원 생성
+    // 원 객체를 생성합니다
+
     var circle = new kakao.maps.Circle({
       center: markerPosition, // 원의 중심좌표입니다
       radius: 1000, // 원의 반지름입니다 m 단위 이며 선 객체를 이용해서 얻어옵니다
@@ -460,15 +504,7 @@ function Map({ token }) {
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
-    // gps 버튼 동작
-    const gps = document.getElementById("gps_bnt");
-    gps.addEventListener("click", () => {
-      console.log("gps 작동");
-      currentPosition();
-      map.setCenter(markerPosition);
-    });
-  }, [latitude, longitude, userPosts.length, chatList.length]);
-  // }, [latitude, longitude, posts.length, chatList.length]);
+  }, [markerPosition])
 
   useEffect(() => {
     if (token !== null) {
@@ -485,7 +521,7 @@ function Map({ token }) {
     const chatData = roomList();
     // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
-  }, []);
+  }, [chatList.length]);
 
   const handleClick = (event, postNo) => {
     // console.log("handleClick : " + postNo + " " + postOwner);
