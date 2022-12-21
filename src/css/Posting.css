@@ -94,6 +94,15 @@
   object-fit: contain;
 }
 
+/* 이미지 크기 조절 */
+.modal_img {
+  margin-top: 15px;
+  max-width: 60%;
+  border-radius: 20px;
+  height: 60%;
+  object-fit: contain;
+}
+
 /* 수정/삭제 점점점 버튼 스타일 */
 .heart_btn {
   position: absolute;

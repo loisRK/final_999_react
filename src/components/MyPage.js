@@ -68,6 +68,7 @@ function MyPage() {
       case "Edit Profile":
         // 내 프로필 모달로 보여주기
         editMypage();
+        // alert("프로필수정하기");
         break;
       case "Logout":
         // kakaoLogout 이동
@@ -82,6 +83,7 @@ function MyPage() {
   const [profileImg, setProfileImg] = useState("../img/dulgi.jpg");
   const [email, setEmail] = useState("gugu@999.com");
   const [userId, setUserId] = useState("");
+  const [userPostCnt, setUserPostCnt] = useState(0);
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
   const [userPosts, setUserPosts] = useState([]);
@@ -121,6 +123,7 @@ function MyPage() {
       .then((res) => axioUserPosts(res.kakaoId))
       .then((res) => setUserPosts(res));
     // const postsData = axioUserPosts(userId);
+    data.then((res) => setUserPostCnt(res.postCnt));
 
     // 지도생성
     currentPositions();
@@ -188,6 +191,7 @@ function MyPage() {
       kakao.maps.event.addListener(postMarkers, "click", function (mouseEvent) {
         const onePost = postData(postNo);
         onePost.then((res) => setPostDetail(res));
+
         setModalOpen(true);
       });
     });
@@ -293,9 +297,9 @@ function MyPage() {
                 sx={{
                   mr: 2,
                   display: { xs: "none", md: "flex" },
-                  fontFamily: "SEBANG_Gothic_Bold",
+                  fontFamily: "KJCGothicBold",
                   fontWeight: 700,
-                  fontSize: "large",
+                  fontSize: "medium",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -313,7 +317,7 @@ function MyPage() {
                   mr: 2,
                   display: { xs: "flex", md: "none" },
                   flexGrow: 1,
-                  fontFamily: "SEBANG_Gothic_Bold",
+                  fontFamily: "KJCGothicBold",
                   fontWeight: 700,
                   fontSize: "large",
                   letterSpacing: ".3rem",
@@ -355,72 +359,6 @@ function MyPage() {
             </Toolbar>
           </Container>
         </AppBar>
-        <Modal
-          open={modalOpen}
-          onClose={() => {
-            setModalOpen(false);
-          }}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "white",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
-            }}
-          >
-            {postDetail === null ? (
-              <></>
-            ) : (
-              <div>
-                <span className="dot_btn">
-                  {" "}
-                  <IconButton
-                    aria-label="more"
-                    id="long-button"
-                    aria-controls={modalOpen ? "long-menu" : undefined}
-                    aria-expanded={modalOpen ? "true" : undefined}
-                    aria-haspopup="true"
-                    onClick={(e) =>
-                      handleClick(e, postDetail.postNo, postDetail.kakaoId)
-                    }
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                </span>
-                <div id="modal-modal-title" variant="h6" component="h2"></div>
-                <div className="flex">
-                  <Avatar
-                    className="profile_img"
-                    src={postDetail.userDTO.kakaoProfileImg}
-                    width="100px"
-                    height="100px"
-                  />
-                </div>
-                <div id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>@{postDetail.userDTO.kakaoNickname}</b>
-                  &nbsp;&nbsp;
-                  <span className="post_detail">
-                    {postDetail.postDate.substr(0, 10)}
-                  </span>
-                </div>
-                <div className="post_content">{postDetail.postContent}</div>
-                {postDetail.postImg === "" ? (
-                  <></>
-                ) : (
-                  <img className="post_img" src={postDetail.postImg} />
-                )}
-              </div>
-            )}
-          </Box>
-        </Modal>
       </div>
       <div>
         <div className="mypagePostModal">
@@ -490,7 +428,7 @@ function MyPage() {
                   {postDetail.postImg === "" ? (
                     <></>
                   ) : (
-                    <img className="post_img" src={postDetail.postImg} />
+                    <img className="modal_img" src={postDetail.postImg} />
                   )}
                 </div>
               )}
@@ -525,6 +463,7 @@ function MyPage() {
             &nbsp;&nbsp;&nbsp;
             <Grid>@{nickname}</Grid>
             <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
+            {/* <Grid>Posting : {userPostCnt}</Grid> */}
           </Grid>
         </div>
 
@@ -541,7 +480,11 @@ function MyPage() {
                   aria-label="lab API tabs example"
                 >
                   <Tab label="Map" value="1" sx={{ width: "50vw" }} />
-                  <Tab label="List" value="2" sx={{ width: "50vw" }} />
+                  <Tab
+                    label={["List  ", userPostCnt]}
+                    value="2"
+                    sx={{ width: "50vw" }}
+                  />
                 </TabList>
               </Box>
               <TabPanel
