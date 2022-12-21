@@ -2,6 +2,7 @@ import axios from "axios";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { REST_API_KEY, REDIRECT_URI } from "../components/KakaoLogoutData";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const KakaoRedirectHandler = () => {
   const navigate = useNavigate();
@@ -33,8 +34,14 @@ const KakaoRedirectHandler = () => {
   }, []);
 
   return (
-    <div>
-      <div>잠시만 기다려 주세요! 로그아웃 중입니다.</div>
+    <div className="d_container">
+      <div className="div_box">
+        잠시만 기다려 주세요! 로그아웃 중입니다.
+        <br />
+        <br />
+        <br />
+        <CircularProgress color="inherit" />
+      </div>
     </div>
   );
 };

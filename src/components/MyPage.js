@@ -580,17 +580,17 @@ function MyPage() {
         value={2}
       >
         <BottomNavigationAction
-          icon={<StickyNote2Outlined />}
+          icon={<StickyNote2Outlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/posting"
         />
         <BottomNavigationAction
-          icon={<HomeOutlined />}
+          icon={<HomeOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/"
         />
         <BottomNavigationAction
-          icon={<AccountCircleOutlined />}
+          icon={<AccountCircleOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/myPage"
         />
