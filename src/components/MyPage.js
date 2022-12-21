@@ -208,6 +208,7 @@ function MyPage() {
     } else {
       console.log("삭제 눌렀을 때 : " + postNo);
       axiosDeletePost(postNo);
+      window.location.href = "/myPage";
     }
   };
 
@@ -315,7 +316,7 @@ function MyPage() {
                   flexGrow: 1,
                   fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
-                  fontSize: 30,
+                  fontSize: "large",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -502,14 +503,14 @@ function MyPage() {
         </div>
         <br/><br/><br/>
         <div className="mypageInfo">
-            <Grid
-              container
-              justifycontent="center"
-              direction="column"
-              alignItems="center"
-              padding={3}
-              style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
-              >
+          <Grid
+            container
+            justifycontent="center"
+            direction="column"
+            alignItems="center"
+            padding={3}
+            style={{ fontFamily: "KJCGothicLight" }}
+          >
             <Grid>
               <Avatar
                 className="profileImg"
@@ -524,13 +525,14 @@ function MyPage() {
               />
             </Grid>
             &nbsp;&nbsp;&nbsp;
-            <Grid>{nickname}</Grid>
+            <Grid>@{nickname}</Grid>
             <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
           </Grid>
         </div>
         
         <div className="mypageTab">
-            <Box sx={{ width: "100%", typography: "body1"}}>
+            <Box sx={{ width: "100%", typography: "body1"}}
+                  style={{ fontFamily: "KJCGothicLight" }}>
               <TabContext value={value}>
                   <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                     <TabList

@@ -127,7 +127,7 @@ function Profile() {
         encType="multipart/form-data"
       >
         {/* 고정 상단바 */}
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ flexGrow: 1 }} style={{ fontFamily: "KJCGothicLight" }}>
           <AppBar position="static" sx={{ background: "#B6E2A1" }}>
             <Toolbar>
               <IconButton
@@ -202,7 +202,10 @@ function Profile() {
         {/* 수정 입력 부분 -> 테이블 형식*/}
         <div>
           <div>
-            <TableContainer component={Paper}>
+            <TableContainer
+              component={Paper}
+              style={{ fontFamily: "KJCGothicLight" }}
+            >
               <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                   <TableRow>
@@ -270,14 +273,20 @@ function Profile() {
               </Table>
             </TableContainer>
           </div>
-          <div style={{ padding: 10, float: "right" }}>
+          <div
+            style={{
+              padding: 10,
+              float: "right",
+              fontFamily: "KJCGothicLight",
+            }}
+          >
             <Button
               aria-describedby={id}
               variant="contained"
               onClick={withdrawButton}
               style={{ backgroundColor: "#999999" }}
             >
-              회원탈퇴😲
+              회 원 탈 퇴 😲
             </Button>
             <Dialog
               open={open}

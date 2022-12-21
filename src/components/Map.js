@@ -27,7 +27,6 @@ import { axiosDeletePost } from "../api/Post";
 
 // 위도, 경도로 위치 계산해서 km로 반환하는 함수
 function getDistanceFromLatLonInKm(lat1, lng1, lat2, lng2) {
-  const socket = io.connect("https://server.bnmnil96.repl.co");
   function deg2rad(deg) {
     return deg * (Math.PI / 180);
   }
@@ -62,6 +61,9 @@ function Map({ token }) {
   const [kickLists, setKickLists] = useState([]);
   const [map, setMap] = useState(null);
   const [markerPosition, setMarkerPosition] = useState(null);
+
+  const socket = io.connect("http://192.168.0.25:9999");
+  // const socket = io.connect("https://server.bnmnil96.repl.co");
 
   // const [overlayState, setOverlayState] = useState("open");
   var overlayState = "open";
@@ -130,6 +132,19 @@ function Map({ token }) {
     // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
   }, []);
+
+  useEffect(() => {
+    socket.on("returnRoom", (data) => {
+      chatListUpdata();
+    });
+  }, [socket]);
+
+  const chatListUpdata = () => {
+    // 생성된 채팅방 리스트 가져오기
+    const chatData = roomList();
+    // chatData.then((response) => console.log(response));
+    chatData.then((response) => setChatList(response));
+  };
 
   useEffect(() => {
     const options = {
@@ -506,7 +521,7 @@ function Map({ token }) {
     const chatData = roomList();
     // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
-  }, []);
+  }, [chatList.length]);
 
   const handleClick = (event, postNo) => {
     // console.log("handleClick : " + postNo + " " + postOwner);
