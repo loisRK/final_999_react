@@ -220,6 +220,11 @@ function Home() {
     }
   }, []);
 
+  function homeClick() {
+    setToggled(false);
+  }
+
+
   return (
     <div className="wrap1">
       <div className="header">
@@ -373,6 +378,7 @@ function Home() {
           icon={<HomeOutlined sx={{ transform: "scale(1.3)" }} />}
           component={Link}
           to="/"
+          onClick={homeClick}
         />
         <BottomNavigationAction
           // label="My Page"
