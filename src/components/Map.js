@@ -485,7 +485,9 @@ function Map({ token }) {
     const chatData = roomList();
     // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
+    console.log("chatList",chatList)
   }, []);
+
 
   const handleClick = (event, postNo) => {
     // console.log("handleClick : " + postNo + " " + postOwner);
