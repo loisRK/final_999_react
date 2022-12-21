@@ -506,7 +506,7 @@ function Map({ token }) {
     } else {
       console.log("삭제 눌렀을 때 : " + postNo);
       axiosDeletePost(postNo);
-      window.location.href = "/posting/*";
+      // window.location.href = "/posting/*";
     }
   };
 
