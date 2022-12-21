@@ -601,7 +601,7 @@ function Map({ token }) {
                   width="100px"
                   height="100px"
                 />
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                <Typography id="modal-modal-description" sx={{ mt: 2, fontFamily: "KJCGothicBold"}}>
                   <b>@{postDetail.userDTO.kakaoNickname}</b> &nbsp;&nbsp;
                   <span className="post_detail">
                     {postDetail.postDate.substr(0, 10)}
@@ -611,7 +611,7 @@ function Map({ token }) {
                 {postDetail.postImg === "" ? (
                   <></>
                 ) : (
-                  <img className="post_img" src={postDetail.postImg} />
+                  <img className="modal_img" src={postDetail.postImg} />
                 )}
               </div>
             )}
@@ -628,8 +628,8 @@ function Map({ token }) {
         onClose={handleClose}
         PaperProps={{
           style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: "20ch",
+            maxHeight: ITEM_HEIGHT * 6,
+            width: "15ch",
           },
         }}
       >
