@@ -461,7 +461,7 @@ function MyPage() {
             &nbsp;&nbsp;&nbsp;
             <Grid>@{nickname}</Grid>
             <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
-            <Grid>Posting : {userPostCnt}</Grid>
+            {/* <Grid>Posting : {userPostCnt}</Grid> */}
           </Grid>
         </div>
         
@@ -476,7 +476,7 @@ function MyPage() {
                       aria-label="lab API tabs example"
                     >
                       <Tab label="Map" value="1" sx={{ width: "50vw" }} />
-                      <Tab label="List" value="2" sx={{ width: "50vw" }} />
+                      <Tab label={ ["List  ",userPostCnt] } value="2" sx={{ width: "50vw" }} />
                     </TabList>
                   </Box>
                 <TabPanel

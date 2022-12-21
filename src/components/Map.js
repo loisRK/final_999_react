@@ -601,7 +601,7 @@ function Map({ token }) {
                   width="100px"
                   height="100px"
                 />
-                <Typography id="modal-modal-description" sx={{ mt: 2, fontFamily: "SEBANG_Gothic_Bold"}}>
+                <Typography id="modal-modal-description" sx={{ mt: 2, fontFamily: "KJCGothicBold"}}>
                   <b>@{postDetail.userDTO.kakaoNickname}</b> &nbsp;&nbsp;
                   <span className="post_detail">
                     {postDetail.postDate.substr(0, 10)}
