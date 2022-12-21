@@ -31,12 +31,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { axiosUser } from "../api/User";
-import {
-  axioUserPosts,
-  postData,
-  axiosDeletePost,
-  axiosMypagePosts,
-} from "../api/Post";
+import { axioUserPosts, postData, axiosDeletePost, axiosMypagePosts } from "../api/Post";
 // import Avatar from "@mui/material/Avatar";
 import "../css/MyPage.css";
 import { useNavigate } from "react-router-dom";
@@ -223,7 +218,7 @@ function MyPage() {
     );
   };
 
-  const [value, setValue] = React.useState("1");
+  const [value, setValue] = React.useState('1');
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -255,8 +250,13 @@ function MyPage() {
           setEnd
         );
       });
-    }
-  }, [currentPage, wasLastList, prevPage]);
+          
+        };
+  }, [
+    currentPage,
+    wasLastList,
+    prevPage,
+  ]);
 
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -296,7 +296,7 @@ function MyPage() {
                   display: { xs: "none", md: "flex" },
                   fontFamily: "SEBANG_Gothic_Bold",
                   fontWeight: 700,
-                  fontSize: "large",
+                  fontSize: "medium",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
@@ -416,7 +416,10 @@ function MyPage() {
                 {postDetail.postImg === "" ? (
                   <></>
                 ) : (
-                  <img className="post_img" src={postDetail.postImg} />
+                  <img
+                    className="post_img"
+                    src={postDetail.postImg}
+                  />
                 )}
               </div>
             )}
@@ -498,9 +501,7 @@ function MyPage() {
             </Box>
           </Modal>
         </div>
-        <br />
-        <br />
-        <br />
+        <br/><br/><br/>
         <div className="mypageInfo">
           <Grid
             container
@@ -519,7 +520,7 @@ function MyPage() {
                   width: 100,
                   height: 100,
                   border: "0.1px solid lightgray",
-                  zIndex: 0,
+                  zIndex:0
                 }}
               />
             </Grid>
@@ -528,45 +529,45 @@ function MyPage() {
             <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
           </Grid>
         </div>
-
+        
         <div className="mypageTab">
-          <Box
-            sx={{ width: "100%", typography: "body1" }}
-            style={{ fontFamily: "KJCGothicLight" }}
-          >
-            <TabContext value={value}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <TabList
-                  onChange={handleChange}
-                  centered
-                  aria-label="lab API tabs example"
+            <Box sx={{ width: "100%", typography: "body1"}}
+                  style={{ fontFamily: "KJCGothicLight" }}>
+              <TabContext value={value}>
+                  <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                    <TabList
+                      onChange={handleChange}
+                      centered
+                      aria-label="lab API tabs example"
+                    >
+                      <Tab label="Map" value="1" sx={{ width: "50vw" }} />
+                      <Tab label="List" value="2" sx={{ width: "50vw" }} />
+                    </TabList>
+                  </Box>
+                <TabPanel
+                  value="1"
+                  id="map"
+                  sx={{ width: `"${window.innerWidth}"`, height: "40vh" }}
                 >
-                  <Tab label="Map" value="1" sx={{ width: "50vw" }} />
-                  <Tab label="List" value="2" sx={{ width: "50vw" }} />
-                </TabList>
-              </Box>
-              <TabPanel
-                value="1"
-                id="map"
-                sx={{ width: `"${window.innerWidth}"`, height: "40vh" }}
-              ></TabPanel>
-              <TabPanel
-                value="2"
-                id="postList"
-                sx={{ width: `"${window.innerWidth}"`, height: "20px" }}
-              >
-                <Posts
-                  sx={{ height: "30vh !important" }}
-                  onScroll={onScroll}
-                  listInnerRef={listInnerRef}
-                  posts={posts}
-                  setLikes={setLikes}
-                  likes={likes}
-                ></Posts>
-              </TabPanel>
-            </TabContext>
-          </Box>
+                </TabPanel>
+                <TabPanel 
+                  value="2"
+                  id="postList"
+                  sx={{ width: `"${window.innerWidth}"`, height: "20px" }}
+                  >
+                  <Posts
+                    sx={{height:"30vh !important"}}
+                    onScroll={onScroll}
+                    listInnerRef={listInnerRef}
+                    posts={posts}
+                    setLikes={setLikes}
+                    likes={likes}
+                  ></Posts>
+                </TabPanel>
+              </TabContext>
+            </Box>
         </div>
+        
       </div>
 
       <BottomNavigation
