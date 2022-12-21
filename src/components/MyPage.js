@@ -68,7 +68,6 @@ function MyPage() {
       case "Edit Profile":
         // 내 프로필 모달로 보여주기
         editMypage();
-        alert("프로필수정하기");
         break;
       case "Logout":
         // kakaoLogout 이동
