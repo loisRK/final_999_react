@@ -186,6 +186,7 @@ function Posting() {
   ]);
   // console.log("######## POSTS : " + posts);
 
+  // searchId를 같은 위에랑 같은 useEffect에 같이 넣으니까 currentPage랑 previousPage 리셋이 잘 안돼서 이렇게 했어야함..!
   useEffect(() => {
     token !== null
       ? axiosUser().then((res) => {
@@ -218,7 +219,7 @@ function Posting() {
         );
   }, [searchId]);
 
-  console.log("### Posting.js likes : " + likes);
+  // console.log("### Posting.js likes : " + likes);
 
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -229,9 +230,9 @@ function Posting() {
         Math.ceil(scrollTop) + clientHeight >= scrollHeight &&
         currentPage < end
       ) {
-        console.log(
-          "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
-        );
+        // console.log(
+        //   "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
+        // );
         setCurrentPage(currentPage + 1);
       }
     }

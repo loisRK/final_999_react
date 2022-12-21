@@ -63,7 +63,7 @@ function MyPage() {
       case "Edit Profile":
         // 내 프로필 모달로 보여주기
         editMypage();
-        alert("프로필수정하기");
+        // alert("프로필수정하기");
         break;
       case "Logout":
         // kakaoLogout 이동
@@ -78,6 +78,7 @@ function MyPage() {
   const [profileImg, setProfileImg] = useState("../img/dulgi.jpg");
   const [email, setEmail] = useState("gugu@999.com");
   const [userId, setUserId] = useState("");
+  const [userPostCnt, setUserPostCnt] = useState(0);
   const [latitude, setLatitude] = useState(0); // 위도
   const [longitude, setLongitude] = useState(0); // 경도
   const [userPosts, setUserPosts] = useState([]);
@@ -117,6 +118,7 @@ function MyPage() {
       .then((res) => axioUserPosts(res.kakaoId))
       .then((res) => setUserPosts(res));
     // const postsData = axioUserPosts(userId);
+    data.then((res) => setUserPostCnt(res.postCnt));
 
     // 지도생성
     currentPositions();
@@ -184,6 +186,7 @@ function MyPage() {
       kakao.maps.event.addListener(postMarkers, "click", function (mouseEvent) {
         const onePost = postData(postNo);
         onePost.then((res) => setPostDetail(res));
+
         setModalOpen(true);
       });
     });
@@ -458,6 +461,7 @@ function MyPage() {
             &nbsp;&nbsp;&nbsp;
             <Grid>@{nickname}</Grid>
             <Grid sx={{ fontSize: 15, color: "grey" }}>{email}</Grid>
+            <Grid>Posting : {userPostCnt}</Grid>
           </Grid>
         </div>
         

@@ -13,15 +13,15 @@ import SendIcon from "@mui/icons-material/Send";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert, IconButton } from "@mui/material";
 import { PhotoCamera } from "@mui/icons-material";
-import {  
+import {
   TableContainer,
   Paper,
   Table,
   TableHead,
   TableCell,
   TableBody,
-  TableRow 
-} from  "@mui/material";
+  TableRow,
+} from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function InsertDiary() {
@@ -71,12 +71,12 @@ function InsertDiary() {
     console.log(fileArr);
   };
 
-    // 수정하려는 이미지 미리보기
-    const saveFileImage = (e) => {
-      setFileImage(URL.createObjectURL(e.target.files[0]));
-    };
+  // 수정하려는 이미지 미리보기
+  const saveFileImage = (e) => {
+    setFileImage(URL.createObjectURL(e.target.files[0]));
+  };
 
-      // 이미지 파일 삭제
+  // 이미지 파일 삭제
   function deleteFileImage(e) {
     console.log(fileImage);
     URL.revokeObjectURL(fileImage);
@@ -114,135 +114,54 @@ function InsertDiary() {
         console.log("formdata확인" + key, ":", formData.get(key));
       }
 
-      createPost(formData).then((document.location.href = "/posting"));
+      createPost(formData);
       console.log("formData" + formData);
     }
   };
 
   return (
-    // 원래 있던 코드
-    // <Box
-    //   component="form"
-    //   sx={{
-    //     "& .MuiTextField-root": { m: 2, width: "50ch" },
-    //     flexGrow: 1,
-    //   }}
-    //   noValidate
-    //   autoComplete="off"
-    //   method="POST"
-    //   onSubmit={(e) => sendDiary(e)}
-    //   encType="multipart/form-data"
-    // >
-    //   <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-    //     <Toolbar>
-    //       <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-    //         <img
-    //           src="https://emojigraph.org/media/openmoji/feather_1fab6.png"
-    //           width="30"
-    //           height="30"
-    //         />
-    //       </Typography>
-    //       <Button color="success" endIcon={<SendIcon />} onClick={sendDiary}>
-    //         Send
-    //       </Button>
-    //       <Button
-    //         color="error"
-    //         endIcon={<DeleteIcon />}
-    //         onClick={() => (window.location.href = "/")}
-    //       >
-    //         Cancel
-    //       </Button>
-    //     </Toolbar>
-    //   </AppBar>
-    //   <div>
-    //     <TextField
-    //       id="outlined-multiline-static"
-    //       label="Content"
-    //       name="content"
-    //       multiline
-    //       rows={4}
-    //       onChange={getContent}
-    //       defaultValue={content}
-    //     />
-    //   </div>
-    //   <div>
-    //     <IconButton
-    //       color="primary"
-    //       aria-label="upload picture"
-    //       component="label"
-    //     >
-    //       <input
-    //         type="file"
-    //         name="newfiles"
-    //         id="newfiles"
-    //         onChange={getFile}
-    //         hidden
-    //         // accept="image/*"
-    //       />
-    //       <PhotoCamera />
-    //     </IconButton>
-    //     {/* <input
-    //       type="file"
-    //       name="newfiles"
-    //       id="newfiles"
-    //       // multiple
-    //       onChange={getFile}
-    //     ></input> */}
-    //     <Snackbar
-    //       className="mapAlert"
-    //       anchorOrigin={{
-    //         vertical: "top",
-    //         horizontal: "center",
-    //       }}
-    //       open={alertStatus}
-    //       autoHideDuration={1000}
-    //       onClose={alertClick}
-    //     >
-    //       <Alert severity="warning" sx={{ width: "100%" }}>
-    //         포스팅 내용을 입력해주세요.
-    //       </Alert>
-    //     </Snackbar>
-    //   </div>
-    // </Box>
-    
     // 수정하기 페이지랑 맞춘 CSS
     <div>
-<div>
- <Box
-       component="form"
-       sx={{
-         "& .MuiTextField-root": { m: 2, width: "50ch" },
-         flexGrow: 1,
-       }}
-       noValidate
-       autoComplete="off"
-       method="POST"
-       onSubmit={(e) => sendDiary(e)}
-       encType="multipart/form-data"
-     >
-        {/* 고정 상단바 */}
-        <AppBar position="static" sx={{ background: "#B6E2A1" }}>
-         <Toolbar>
-           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-             <img
-               src="https://emojigraph.org/media/openmoji/feather_1fab6.png"
-               width="30"
-               height="30"
-             />
-           </Typography>
-           <Button color="success" endIcon={<SendIcon />} onClick={sendDiary}>
-             Send
-           </Button>
-           <Button
-             color="error"
-             endIcon={<DeleteIcon />}
-             onClick={() => (window.location.href = "/")}
-           >
-             Cancel
-           </Button>
-         </Toolbar>
-       </AppBar>
-        {/* 수정 입력 부분 -> 테이블 형식*/}
+      <div>
+        <Box
+          component="form"
+          sx={{
+            "& .MuiTextField-root": { m: 2, width: "50ch" },
+            flexGrow: 1,
+          }}
+          noValidate
+          autoComplete="off"
+          method="POST"
+          onSubmit={(e) => sendDiary(e)}
+          encType="multipart/form-data"
+        >
+          {/* 고정 상단바 */}
+          <AppBar position="static" sx={{ background: "#B6E2A1" }}>
+            <Toolbar>
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                <img
+                  src="https://emojigraph.org/media/openmoji/feather_1fab6.png"
+                  width="30"
+                  height="30"
+                />
+              </Typography>
+              <Button
+                color="success"
+                endIcon={<SendIcon />}
+                onClick={sendDiary}
+              >
+                Send
+              </Button>
+              <Button
+                color="error"
+                endIcon={<DeleteIcon />}
+                onClick={() => (window.location.href = "/")}
+              >
+                Cancel
+              </Button>
+            </Toolbar>
+          </AppBar>
+          {/* 수정 입력 부분 -> 테이블 형식*/}
 
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -252,71 +171,80 @@ function InsertDiary() {
                   <TableCell align="center">
                     {/* 내용수정 */}
                     <TextField
-                    id="outlined-multiline-static"
-                    label="Content"
-                    name="content"
-                    multiline
-                    variant="standard"
-                    onChange={getContent}
-                    defaultValue={content}
-                    style={{ width: "80%" }}
-                  />
+                      id="outlined-multiline-static"
+                      label="Content"
+                      name="content"
+                      multiline
+                      variant="standard"
+                      onChange={getContent}
+                      defaultValue={content}
+                      style={{ width: "80%" }}
+                    />
                   </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                <TableRow
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
                   {/* photo 입력부분 */}
-                <TableCell component="th" scope="row" align="center">Photo</TableCell>
-                <TableCell align="center">
-                <div align="center">
-                      {fileImage && <img className="post_img" alt="sample" src={fileImage} style={{objectFit: "contain"}}/>}
+                  <TableCell component="th" scope="row" align="center">
+                    Photo
+                  </TableCell>
+                  <TableCell align="center">
+                    <div align="center">
+                      {fileImage && (
+                        <img
+                          className="post_img"
+                          alt="sample"
+                          src={fileImage}
+                          style={{ objectFit: "contain" }}
+                        />
+                      )}
                     </div>
-                    </TableCell>
+                  </TableCell>
                   <TableCell>
-                <IconButton
+                    <IconButton
                       color="primary"
                       aria-label="upload picture"
                       component="label"
                     >
-              <input
-                type="file"
-                name="newfiles"
-                id="newfiles"
-                onChange={getFile}
-                hidden
-                // accept="image/*"
-              />
-              <PhotoCamera />
-              </IconButton>
-            {/* 미리보기 사진 삭제 버튼 */}
-            <IconButton onClick={deleteFileImage}>
-              <DeleteForeverIcon />
-            </IconButton>
-              </TableCell>
-             </TableRow>
+                      <input
+                        type="file"
+                        name="newfiles"
+                        id="newfiles"
+                        onChange={getFile}
+                        hidden
+                        // accept="image/*"
+                      />
+                      <PhotoCamera />
+                    </IconButton>
+                    {/* 미리보기 사진 삭제 버튼 */}
+                    <IconButton onClick={deleteFileImage}>
+                      <DeleteForeverIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
-     </Box>
-          
+        </Box>
+      </div>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertStatus}
+        autoHideDuration={1000}
+        onClose={alertClick}
+      >
+        <Alert severity="warning" sx={{ width: "100%" }}>
+          포스팅 내용을 입력해주세요.
+        </Alert>
+      </Snackbar>
     </div>
-    <Snackbar
-           className="mapAlert"
-           anchorOrigin={{
-             vertical: "top",
-             horizontal: "center",
-           }}
-           open={alertStatus}
-           autoHideDuration={1000}
-           onClose={alertClick}
-         >
-           <Alert severity="warning" sx={{ width: "100%" }}>
-             포스팅 내용을 입력해주세요.
-           </Alert>
-         </Snackbar>
-    </div>
-
   );
 }
 
