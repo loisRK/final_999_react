@@ -294,7 +294,7 @@ function MyPage() {
                 sx={{
                   mr: 2,
                   display: { xs: "none", md: "flex" },
-                  fontFamily: "SEBANG_Gothic_Bold",
+                  fontFamily: "KJCGothicBold",
                   fontWeight: 700,
                   fontSize: "medium",
                   letterSpacing: ".3rem",
@@ -314,7 +314,7 @@ function MyPage() {
                   mr: 2,
                   display: { xs: "flex", md: "none" },
                   flexGrow: 1,
-                  fontFamily: "SEBANG_Gothic_Bold",
+                  fontFamily: "KJCGothicBold",
                   fontWeight: 700,
                   fontSize: "large",
                   letterSpacing: ".3rem",
@@ -356,75 +356,6 @@ function MyPage() {
             </Toolbar>
           </Container>
         </AppBar>
-        <Modal
-          open={modalOpen}
-          onClose={() => {
-            setModalOpen(false);
-          }}
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description"
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 400,
-              bgcolor: "white",
-              border: "2px solid #000",
-              boxShadow: 24,
-              p: 4,
-            }}
-          >
-            {postDetail === null ? (
-              <></>
-            ) : (
-              <div>
-                <span className="dot_btn">
-                  {" "}
-                  <IconButton
-                    aria-label="more"
-                    id="long-button"
-                    aria-controls={modalOpen ? "long-menu" : undefined}
-                    aria-expanded={modalOpen ? "true" : undefined}
-                    aria-haspopup="true"
-                    onClick={(e) =>
-                      handleClick(e, postDetail.postNo, postDetail.kakaoId)
-                    }
-                  >
-                    <MoreVertIcon />
-                  </IconButton>
-                </span>
-                <div id="modal-modal-title" variant="h6" component="h2"></div>
-                <div className="flex">
-                  <Avatar
-                    className="profile_img"
-                    src={postDetail.userDTO.kakaoProfileImg}
-                    width="100px"
-                    height="100px"
-                  />
-                </div>
-                <div id="modal-modal-description" sx={{ mt: 2 }}>
-                  <b>@{postDetail.userDTO.kakaoNickname}</b>
-                  &nbsp;&nbsp;
-                  <span className="post_detail">
-                    {postDetail.postDate.substr(0, 10)}
-                  </span>
-                </div>
-                <div className="post_content">{postDetail.postContent}</div>
-                {postDetail.postImg === "" ? (
-                  <></>
-                ) : (
-                  <img
-                    className="post_img"
-                    src={postDetail.postImg}
-                  />
-                )}
-              </div>
-            )}
-          </Box>
-        </Modal>
       </div>
       <div>
         <div className="mypagePostModal">
@@ -494,7 +425,7 @@ function MyPage() {
                   {postDetail.postImg === "" ? (
                     <></>
                   ) : (
-                    <img className="post_img" src={postDetail.postImg} />
+                    <img className="modal_img" src={postDetail.postImg} />
                   )}
                 </div>
               )}
