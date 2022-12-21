@@ -238,6 +238,7 @@ const Chat = () => {
           // message: message,
           message: message.replace(test2, "구구"),
           userId: kakaoId,
+          profile: profileImg,
           room: room,
           date: new Date().toLocaleString(), // 2022. 12. 7. 오전 11:24:42
         };
@@ -286,7 +287,7 @@ const Chat = () => {
     }
   };
 
-  // console.log("messageList", messageList);
+  console.log("messageList", messageList);
 
   // EXIT 버튼을 누르면 채팅방을 나가거나 채팅방에 남거나 선택하는 modal
   const [open, setOpen] = React.useState(false);
@@ -381,7 +382,7 @@ const Chat = () => {
     };
   }, []);
 
-  // // 새로고침 막기 -> 브라우저 종료시 인원 -1
+  // 브라우저 종료시 인원 -1
   window.addEventListener("unload", (event) => {
     // 표준에 따라 기본 동작 방지
     event.preventDefault();
