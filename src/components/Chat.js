@@ -513,7 +513,7 @@ const Chat = () => {
     // items-center justify-center
     <div
       className="flex flex-col h-fit"
-      style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
+      style={{ fontFamily: "KJHGothicLight" }}
     >
       <div className="w-full h-screen bg-white relative overflow-y-auto">
         <Box sx={{ flexGrow: 1 }}>
@@ -559,7 +559,7 @@ const Chat = () => {
                 onClick={() => handleClickOpen()}
                 style={{
                   backgroundColor: "#89ab79",
-                  fontFamily: "LeferiPoint-WhiteObliqueA",
+                  fontFamily: "KJHGothicLight",
                   fontWeight: "bold",
                 }}
               >
@@ -573,11 +573,11 @@ const Chat = () => {
           onClose={handleClose}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
-          sx={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
+          sx={{ fontFamily: "KJHGothicLight" }}
         >
           <DialogTitle
             id="alert-dialog-title"
-            sx={{ fontFamily: "LeferiPoint-WhiteObliqueA", fontWeight: "bold" }}
+            sx={{ fontFamily: "KJHGothicLight", fontWeight: "bold" }}
           >
             {"조금 더 자유로워지시겠습니까?"}
           </DialogTitle>
@@ -586,7 +586,7 @@ const Chat = () => {
           <DialogActions>
             <Button
               style={{
-                fontFamily: "LeferiPoint-WhiteObliqueA",
+                fontFamily: "KJHGothicLight",
                 fontWeight: "bold",
               }}
               onClick={() => {
@@ -598,7 +598,7 @@ const Chat = () => {
             </Button>
             <Button
               style={{
-                fontFamily: "LeferiPoint-WhiteObliqueA",
+                fontFamily: "KJHGothicLight",
                 fontWeight: "bold",
               }}
               onClick={handleClose}
@@ -649,7 +649,7 @@ const Chat = () => {
                       <Menu {...bindMenu(popupState)}>
                         <button
                           component="MenuItem"
-                          style={{ fontFamily: "LeferiPoint-WhiteObliqueA" }}
+                          style={{ fontFamily: "KJHGothicLight" }}
                           sx={{
                             display: "inline",
                           }}
@@ -725,7 +725,7 @@ const Chat = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            fontFamily: "LeferiPoint-WhiteObliqueA",
+            fontFamily: "KJHGothicLight",
           }}
         >
           <img

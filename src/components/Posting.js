@@ -61,10 +61,6 @@ function Posting() {
       case "Login":
         setOpen(true);
         break;
-      case "My Profile":
-        // 내 프로필 모달로 보여주기
-        alert("프로필보여주기");
-        break;
       case "Logout":
         // kakaoLogout 이동
         setLogoutOpen(true);
@@ -93,7 +89,7 @@ function Posting() {
     if (token !== null) {
       const data = axiosUser();
       data.then((res) => setProfileImg(res.kakaoProfileImg));
-      setSettings(["My Profile", "Logout"]);
+      setSettings(["Logout"]);
     } else {
       setSettings(["Login"]);
     }
@@ -190,6 +186,7 @@ function Posting() {
   ]);
   // console.log("######## POSTS : " + posts);
 
+  // searchId를 같은 위에랑 같은 useEffect에 같이 넣으니까 currentPage랑 previousPage 리셋이 잘 안돼서 이렇게 했어야함..!
   useEffect(() => {
     token !== null
       ? axiosUser().then((res) => {
@@ -222,7 +219,7 @@ function Posting() {
         );
   }, [searchId]);
 
-  console.log("### Posting.js likes : " + likes);
+  // console.log("### Posting.js likes : " + likes);
 
   const onScroll = () => {
     if (listInnerRef.current) {
@@ -233,9 +230,9 @@ function Posting() {
         Math.ceil(scrollTop) + clientHeight >= scrollHeight &&
         currentPage < end
       ) {
-        console.log(
-          "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
-        );
+        // console.log(
+        //   "스크롤 할 때 페이지 번호" + currentPage + "마지막 페이지" + end
+        // );
         setCurrentPage(currentPage + 1);
       }
     }
@@ -261,7 +258,7 @@ function Posting() {
               sx={{
                 mr: 2,
                 display: { xs: "none", md: "flex" },
-                fontFamily: "SEBANG_Gothic_Bold",
+                fontFamily: "KJCGothicBold",
                 fontWeight: 700,
                 fontSize: "large",
                 letterSpacing: ".3rem",
@@ -281,8 +278,9 @@ function Posting() {
                 mr: 2,
                 display: { xs: "flex", md: "none" },
                 flexGrow: 1,
-                fontFamily: "SEBANG_Gothic_Bold",
+                fontFamily: "KJCGothicBold",
                 fontWeight: 700,
+                fontSize: "large",
                 letterSpacing: ".3rem",
                 color: "inherit",
                 textDecoration: "none",

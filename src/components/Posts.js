@@ -23,9 +23,8 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
   const [postNo, setPostNo] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [userId, setUserId] = useState("");
-  const [likesList, setLikesList] = useState(likes);
   const open = Boolean(anchorEl);
-  console.log("### Posts.js likes : " + likes);
+  // console.log("### Posts.js likes : " + likes);
 
   const token = window.localStorage.getItem("token");
   const [alertStatus, setAlertStatus] = useState(false);
@@ -38,7 +37,7 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
     }
   }, []);
 
-  console.log(likes);
+  // console.log(likes);
 
   const heartClick = (event, postNum, liked, idx) => {
     // 데이터 전송을 위한 form, file 객체 생성
@@ -55,7 +54,7 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
 
     // formdata 값 확인해 보는 법 !
     for (let key of formData.keys()) {
-      console.log("formdata확인" + key, ":", formData.get(key));
+      // console.log("formdata확인" + key, ":", formData.get(key));
     }
 
     axiosLike(formData);
@@ -103,7 +102,7 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
         navigate(`/postEdit?postNo=${postNo}`);
       } else {
         // console.log("삭제 눌렀을 때 : " + postNo);
-        axiosDeletePost(postNo).then((document.location.href = `/posting`));
+        axiosDeletePost(postNo);
       }
     }
   };
@@ -133,7 +132,7 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
         style={{
           // height: "30vh",
           overflowY: "scroll",
-          fontFamily: "LeferiPoint-WhiteObliqueA",
+          fontFamily: "KJCGothicLight",
         }}
       >
         {posts.map((post, idx) => {
@@ -225,7 +224,7 @@ const Posts = ({ onScroll, listInnerRef, posts, likes, setLikes }) => {
           style: {
             maxHeight: ITEM_HEIGHT * 6,
             width: "15ch",
-            fontFamily: "LeferiPoint-WhiteObliqueA",
+            fontFamily: "KJCGothicLight",
           },
         }}
       >

@@ -56,7 +56,6 @@ ul {
   font-weight: bold; */
 }
 
-
 /* .overlaybox ul {
   width: 247px;
 } */
@@ -70,12 +69,12 @@ ul {
   padding: 5px 5px;
   color: rgb(36, 117, 44);
   line-height: 1;
-  font-family: "양진체";
-  font-size: 13px;
+  font-family: "KJHGothicBold";
+  font-size: 20px;
   /* font-weight: bold; */
-  vertical-align: middle;
+  vertical-align: top;
   float: inherit;
-  border-radius: 15% / 30%;
+  border-radius: 10% / 30%;
 }
 
 .overlaybox li span {
@@ -103,7 +102,7 @@ ul {
   padding: 5px 5px;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.55);
   white-space: normal;
-  font-family: "양진체";
+  font-family: "KJHGothicBold";
 }
 
 .enteroveray div:hover {
@@ -120,9 +119,9 @@ ul {
   width: 100px;
   height: auto;
   background: rgb(62, 62, 62);
-  border-radius: 10% / 20%;
+  border-radius: 10% / 30%;
   padding: 5px 5px;
   white-space: normal;
-  font-family: "양진체";
+  font-family: "KJHGothicBold";
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.55);
 }
