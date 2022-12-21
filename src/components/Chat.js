@@ -88,6 +88,7 @@ const Chat = () => {
   const [outGoing, setOutGoing] = useState("");
   const [count, setCount] = useState([]);
   const [kickLists, setKickLists] = useState([]);
+  const [alertes, setAlertes] = useState(false);
 
   const [search, setSearch] = useSearchParams();
   const room = search.get("roomNo");
@@ -237,6 +238,7 @@ const Chat = () => {
           // message: message,
           message: message.replace(test2, "구구"),
           userId: kakaoId,
+          profile: profileImg,
           room: room,
           date: new Date().toLocaleString(), // 2022. 12. 7. 오전 11:24:42
         };
@@ -285,7 +287,7 @@ const Chat = () => {
     }
   };
 
-  // console.log("messageList", messageList);
+  console.log("messageList", messageList);
 
   // EXIT 버튼을 누르면 채팅방을 나가거나 채팅방에 남거나 선택하는 modal
   const [open, setOpen] = React.useState(false);
@@ -351,6 +353,10 @@ const Chat = () => {
     setAlerts(!alerts);
   };
 
+  const alertClick3 = () => {
+    setAlertes(!alertes);
+  };
+
   // 추방자 리스트 확인 후 추방하기 !
   useEffect(() => {
     let outDulgi = count.filter(function (data) {
@@ -376,7 +382,7 @@ const Chat = () => {
     };
   }, []);
 
-  // // 새로고침 막기 -> 브라우저 종료시 인원 -1
+  // 브라우저 종료시 인원 -1
   window.addEventListener("unload", (event) => {
     // 표준에 따라 기본 동작 방지
     event.preventDefault();
@@ -454,18 +460,22 @@ const Chat = () => {
     const formData = new FormData();
     // console.log([messageList[index]]);
     let reportMessage = messageList[index];
-    formData.append("roomNo", reportMessage.room);
-    formData.append("message", reportMessage.message);
-    formData.append("reporterId", kakaoId);
-    formData.append("reportedId", reportMessage.userId);
+    if (reportMessage.userId !== host) {
+      formData.append("roomNo", reportMessage.room);
+      formData.append("message", reportMessage.message);
+      formData.append("reporterId", kakaoId);
+      formData.append("reportedId", reportMessage.userId);
 
-    report(formData).then((data) => {
-      console.log("#### 신고 숫자 : " + data);
-      if (data === 3) {
-        console.log("### 신고 3번 이상!!!!!");
-        socket.emit("reported", [reportMessage.userId, room]);
-      }
-    });
+      report(formData).then((data) => {
+        console.log("#### 신고 숫자 : " + data);
+        if (data === 3) {
+          console.log("### 신고 3번 이상!!!!!");
+          socket.emit("reported", [reportMessage.userId, room]);
+        }
+      });
+    } else {
+      alertClick3();
+    }
 
     // 신고 3번 이상 받으면 퇴장당하기
     // axiosReportNum(reportMessage.room, reportMessage.userId).then((data) => {
@@ -774,7 +784,7 @@ const Chat = () => {
               taboo !== "" ? (
                 <DialogContentText
                   id="modal-modal-title"
-                  key={idx + "번"}
+                  key={idx}
                   className="text-[14px]"
                 >
                   {idx + 1 + ". " + taboo}
@@ -932,6 +942,20 @@ const Chat = () => {
       >
         <Alert severity="success" sx={{ width: "100%" }}>
           {`${visitor} 둘기가 합류하였습니다`}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertes}
+        autoHideDuration={3000}
+        onClose={alertClick3}
+      >
+        <Alert severity="error" sx={{ width: "100%" }}>
+          {`방장 둘기는 기싸움을 버텨냈습니다 😎`}
         </Alert>
       </Snackbar>
     </div>
