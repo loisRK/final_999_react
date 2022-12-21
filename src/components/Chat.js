@@ -5,7 +5,7 @@ import Menu from "@mui/material/Menu";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import io from "socket.io-client";
 import { axiosUser } from "../api/User";
-import { useSearchParams, Link } from "react-router-dom";
+import { useSearchParams, Link, useInRouterContext } from "react-router-dom";
 import {
   report,
   roomInfo,
@@ -87,7 +87,7 @@ const Chat = () => {
   const [visitor, setVisitor] = useState("");
   const [outGoing, setOutGoing] = useState("");
   const [count, setCount] = useState([]);
-  const [kickLists, setKickLists] = useState([]);
+  const [check, setCheck] = useState([]);
   const [alertes, setAlertes] = useState(false);
 
   const [search, setSearch] = useSearchParams();
@@ -106,25 +106,13 @@ const Chat = () => {
     const userData = axiosUser();
     const dulgiData = dulgiList();
 
+    userData.then((res) => setUsername(res.kakaoNickname));
     userData.then((res) => setKakaoId(res.kakaoId));
-    userData
-      .then((res) => setUsername(res.kakaoNickname))
-      .then(() =>
-        dulgiData.then(
-          (res) =>
-            Object.values(res).filter(function (data) {
-              return data.dulgi === kakaoId && data.roomNo === room;
-            }).length >= 1
-              ? ""
-              : client_in(room), // 방의 user_cnt +1
-          userData.then(
-            (res) => dulgiInsert({ roomNo: room, dulgi: res.kakaoId }) // 룸 내 새로운 방문객 추가
-          )
-        )
-      );
     userData.then((res) => setProfileImg(res.kakaoProfileImg));
     // 같은 방으로 join
     userData.then((res) => socket.emit("room", [room, res.kakaoNickname]));
+
+    dulgiData.then((res) => setClientList(Object.values(res)));
 
     console.log("CHATTING # : " + room);
 
@@ -141,15 +129,11 @@ const Chat = () => {
       )
     );
 
-    // 추방자 리스트 모두 가져오기.
-    const dulgilist = kickList();
-    dulgilist.then((res) => setKickLists(Object.values(res)));
-
     // 방의 상세정보 조회
     const data = roomInfo(room);
     // 참여 인원 입력
     // data.then((response) => console.log(response.user.kakaoId));
-    data.then((response) => setClients(response.userCnt + 1));
+    data.then((response) => setClients(response.userCnt));
     // 방의 태그 내용 입력
     data.then((response) => setTags(response.title));
     data.then((response) => setHost(response.user.kakaoId));
@@ -383,17 +367,17 @@ const Chat = () => {
     };
   }, []);
 
-  // 브라우저 종료시 인원 -1
-  window.addEventListener("unload", (event) => {
-    // 표준에 따라 기본 동작 방지
-    event.preventDefault();
-    chatOut();
+  // 방문자 in
+  const userIn = () => {
+    let counts = clientList.filter(function (data) {
+      return data.dulgi === kakaoId && data.roomNo === room;
+    });
+    if (counts.length === 0) {
+      client_in(room); // 방의 user_cnt +1
+      dulgiInsert({ roomNo: room, dulgi: kakaoId }); // 룸 내 새로운 방문객 추가
+    }
+  };
 
-    // document.location.href = "/";
-
-    // Chrome에서는 returnValue 설정이 필요함
-    event.returnValue = "";
-  });
   // 채팅방 퇴장하기2
   const chatOut2 = () => {
     // 소켓에서 퇴장하기. socket.disconnect();
@@ -939,7 +923,10 @@ const Chat = () => {
         }}
         open={alertStatus}
         autoHideDuration={3000}
-        onClose={alertClick}
+        onClose={() => {
+          alertClick();
+          userIn();
+        }}
       >
         <Alert severity="success" sx={{ width: "100%" }}>
           {`${visitor} 둘기가 합류하였습니다`}
