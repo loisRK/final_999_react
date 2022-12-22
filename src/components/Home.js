@@ -224,7 +224,6 @@ function Home() {
     setToggled(false);
   }
 
-
   return (
     <div className="wrap1">
       <div className="header">

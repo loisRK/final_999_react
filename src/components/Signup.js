@@ -30,6 +30,7 @@ import {
 import { axiosSignup } from "../api/KakaoRedirectSignup";
 import { PhotoCamera } from "@mui/icons-material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { dividerClasses } from "@mui/joy";
 
 function Profile() {
   const [search, setSearch] = useSearchParams();
