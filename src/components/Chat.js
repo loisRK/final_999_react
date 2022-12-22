@@ -751,40 +751,40 @@ const Chat = () => {
           <br />
           <Typography>⛔금기어 목록⛔</Typography>
           <br />
-          <Typography className="h-[30vh] overflow-y-auto">
+          <div className="h-[30vh] overflow-y-auto">
             {tabooList.map((value, index) => (
               <Typography key={index}>{value}</Typography>
             ))}
-          </Typography>
+          </div>
         </Box>
       </Modal>
 
       <Dialog open={taboo} onClose={() => setTaboo(false)}>
         <DialogTitle>⛔내 방 금기어 리스트⛔</DialogTitle>
         <DialogContent>
-          <Typography className="h-[30vh] overflow-y-auto">
-            {tabooList.map((taboo, idx) =>
-              taboo !== "" ? (
-                <DialogContentText
-                  id="modal-modal-title"
+          {/* <Typography className="h-[30vh] overflow-y-auto"> */}
+          {tabooList.map((taboo, idx) =>
+            taboo !== "" ? (
+              <DialogContentText
+                id="modal-modal-title"
+                key={idx}
+                className="text-[14px]"
+              >
+                {idx + 1 + ". " + taboo}
+                &nbsp;&nbsp;&nbsp;
+                <button
+                  onClick={() => tabooDelete(idx)}
                   key={idx}
                   className="text-[14px]"
                 >
-                  {idx + 1 + ". " + taboo}
-                  &nbsp;&nbsp;&nbsp;
-                  <button
-                    onClick={() => tabooDelete(idx)}
-                    key={idx}
-                    className="text-[14px]"
-                  >
-                    <DeleteForeverIcon />
-                  </button>
-                </DialogContentText>
-              ) : (
-                <></>
-              )
-            )}
-          </Typography>
+                  <DeleteForeverIcon />
+                </button>
+              </DialogContentText>
+            ) : (
+              <></>
+            )
+          )}
+          {/* </Typography> */}
           <TextField
             autoFocus
             margin="dense"
