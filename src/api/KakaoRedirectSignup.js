@@ -9,7 +9,7 @@ export const axiosSignup = async (formData) => {
   const token = window.localStorage.getItem("token");
 
   axios
-    .post(`http://35.78.93.205:8080/api/oauth/token`, formData, {
+    .post(`http://13.231.10.66:8080/api/oauth/token`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: token,

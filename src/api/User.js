@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // User 정보 불러오기 - GET
 export const axiosUser = async () => {
   const token = window.localStorage.getItem("token");
-  const response = await axios.get("http://35.78.93.205:8080/api/myPage", {
+  const response = await axios.get("http://13.231.10.66:8080/api/myPage", {
     headers: {
       Authorization: token,
     },
@@ -18,7 +18,7 @@ export const axiosUserUpdate = async (userId, formData) => {
   console.log("axiosUserUpdate" + userId);
 
   await axios.put(
-    `http://35.78.93.205:8080/api/updateUser/${userId}`,
+    `http://13.231.10.66:8080/api/updateUser/${userId}`,
     formData,
     {
       headers: {
@@ -32,7 +32,7 @@ export const axiosUserUpdate = async (userId, formData) => {
 export const userWithdraw = async () => {
   const token = window.localStorage.getItem("token");
   const response = await axios
-    .get("http://35.78.93.205:8080/api/guguWithdraw", {
+    .get("http://13.231.10.66:8080/api/guguWithdraw", {
       headers: {
         Authorization: token,
       },
