@@ -126,7 +126,7 @@ function InsertDiary() {
         <Box
           component="form"
           sx={{
-            "& .MuiTextField-root": { m: 2, width: "20vw" },
+            "& .MuiTextField-root": { m: 2, width: "50vw" },
             flexGrow: 1,
           }}
           noValidate
