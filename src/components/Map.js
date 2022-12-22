@@ -62,8 +62,8 @@ function Map({ token }) {
   const [map, setMap] = useState(null);
   const [markerPosition, setMarkerPosition] = useState(null);
 
-  const socket = io.connect("http://192.168.0.25:9999");
-  // const socket = io.connect("https://server.bnmnil96.repl.co");
+  // const socket = io.connect("http://192.168.0.25:9999");
+  const socket = io.connect("https://server.bnmnil96.repl.co");
 
   // const [overlayState, setOverlayState] = useState("open");
   var overlayState = "open";
