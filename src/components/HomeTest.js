@@ -114,6 +114,7 @@ function Home() {
                 mr: 2,
                 display: { xs: "none", md: "flex" },
                 fontFamily: "monospace",
+                fontSize: "large",
                 fontWeight: 700,
                 letterSpacing: ".3rem",
                 color: "inherit",

@@ -146,7 +146,7 @@ function Chatting() {
               sx={{ flexGrow: 1 }}
               style={{ color: "#4d5749" }}
             >
-              채팅방 개설
+              먹이주기
             </Typography>
           </Toolbar>
         </AppBar>
@@ -155,10 +155,10 @@ function Chatting() {
       {token !== null ? (
         <>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="right">카테고리</TableCell>
+                  <TableCell align="right">Category</TableCell>
                   <TableCell align="center">
                     <Autocomplete
                       align="center"
@@ -168,7 +168,7 @@ function Chatting() {
                       }}
                       id="controllable-states-demo"
                       options={options}
-                      sx={{ width: 300 }}
+                      // sx={{ width: 300 }}
                       renderInput={(params) => (
                         <TextField {...params} label="Category *(필수)" />
                       )}
@@ -200,7 +200,7 @@ function Chatting() {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row" align="right">
-                    방 제목 입력
+                    Title
                   </TableCell>
                   <TableCell align="left">
                     <TextField
@@ -259,7 +259,7 @@ function Chatting() {
             variant="contained"
             color="success"
           >
-            채팅방 만들기
+            START
           </Button>
         </>
       ) : (
