@@ -32,7 +32,6 @@ function App() {
           <Route path="/myPage" element={<MyPage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/chatting" element={<Chatting />} />
           <Route path={`/room/*`} element={<Chat />} />
         </Routes>
       </BrowserRouter>

@@ -1,5 +1,5 @@
 import axios, { all } from "axios";
-import { createRooms } from "../api/Chatting";
+import { createRooms, client_in } from "../api/Chatting";
 import React, { FormEvent, useEffect, useState } from "react";
 import {
   Box,
@@ -104,6 +104,7 @@ function Chatting() {
       );
       const data = createRooms(formData);
       data.then((res) => console.log(res));
+      data.then((res) => client_in(String(res)));
       data.then((res) => {
         navigate(`/room?roomNo=${String(res)}`);
       });
