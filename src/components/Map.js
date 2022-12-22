@@ -18,7 +18,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { roomList } from "../api/Chatting";
+import { roomList, client_in } from "../api/Chatting";
 import { Box } from "@mui/system";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { kickList } from "../api/Firebase";
@@ -313,6 +313,7 @@ function Map({ token }) {
       if (outDulgi.length >= 1) {
         enterOverlay.setContent(blockElement);
       } else if (distance <= 1) {
+        client_in(roomNo); /// 해당 채팅방에 인원 +1
         enterOverlay.setContent(enterElement);
       } else {
         enterOverlay.setContent(blockElement);
