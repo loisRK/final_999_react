@@ -131,15 +131,15 @@ function Map({ token }) {
     const chatData = roomList();
     // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
-  }, []);
+  }, [chatList.length]);
 
   useEffect(() => {
     socket.on("returnRoom", (data) => {
-      chatListUpdata();
+      chatListUpdate();
     });
   }, [socket]);
 
-  const chatListUpdata = () => {
+  const chatListUpdate = () => {
     // 생성된 채팅방 리스트 가져오기
     const chatData = roomList();
     // chatData.then((response) => console.log(response));
@@ -521,7 +521,7 @@ function Map({ token }) {
     const chatData = roomList();
     // chatData.then((response) => console.log(response));
     chatData.then((response) => setChatList(response));
-  }, [chatList.length]);
+  }, []);
 
   const handleClick = (event, postNo) => {
     // console.log("handleClick : " + postNo + " " + postOwner);
