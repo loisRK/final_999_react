@@ -299,7 +299,7 @@ function MyPage() {
                   display: { xs: "none", md: "flex" },
                   fontFamily: "KJCGothicBold",
                   fontWeight: 700,
-                  fontSize: "medium",
+                  fontSize: "large",
                   letterSpacing: ".3rem",
                   color: "inherit",
                   textDecoration: "none",
