@@ -34,8 +34,8 @@ function Chatting() {
   const navigate = useNavigate();
   const formData = new FormData();
 
-  const socket = io.connect("http://192.168.0.25:9999");
-  // const socket = io.connect("https://server.bnmnil96.repl.co");
+  // const socket = io.connect("http://192.168.0.25:9999");
+  const socket = io.connect("https://server.bnmnil96.repl.co");
 
   const token = window.localStorage.getItem("token");
   const [nickname, setNickname] = useState("비회원");
