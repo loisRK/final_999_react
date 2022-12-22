@@ -127,7 +127,7 @@ function Profile() {
         encType="multipart/form-data"
       >
         {/* 고정 상단바 */}
-        <Box sx={{ flexGrow: 1 }} style={{ fontFamily: "KJCGothicLight" }}>
+        <Box sx={{ flexGrow: 1 }}>
           <AppBar position="static" sx={{ background: "#B6E2A1" }}>
             <Toolbar>
               <IconButton
@@ -157,7 +157,7 @@ function Profile() {
                 sx={{ flexGrow: 1 }}
                 style={{ color: "#4d5749" }}
               >
-                Profile Edit Page
+                Profile Edit
               </Typography>
               {/* 수정 submit버튼 */}
               <Button
@@ -167,7 +167,7 @@ function Profile() {
                 defaultValue="save"
                 // style={{ backgroundColor: "#89ab79" }}
               >
-                EDIT
+                Edit
               </Button>
               <Button
                 color="error"
@@ -203,13 +203,11 @@ function Profile() {
         <div>
           <div>
             <TableContainer
-              component={Paper}
-              style={{ fontFamily: "KJCGothicLight" }}
-            >
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              component={Paper}>
+              <Table aria-label="simple table">
                 <TableHead>
                   <TableRow>
-                    <TableCell align="center">Email</TableCell>
+                    <TableCell align="center" >Email</TableCell>
                     <TableCell align="center">
                       {/* 이메일 수정 */}
                       <TextField
@@ -217,10 +215,10 @@ function Profile() {
                         name="content"
                         multiline
                         variant="outlined"
-                        sx={{ m: 1, minWidth: 180 }}
+                        // sx={{ m: 1, minWidth: 180 }}
                         defaultValue={currentEmail}
                         onChange={(e) => emailFromHandlerContent(e)}
-                        style={{ width: "80%" }}
+                        style={{ width: "85%" }}
                       />
                     </TableCell>
                   </TableRow>
@@ -235,10 +233,10 @@ function Profile() {
                         name="content"
                         multiline
                         variant="outlined"
-                        sx={{ m: 1, minWidth: 180 }}
+                        // sx={{ m: 1, minWidth: 180 }}
                         defaultValue={currentNickname}
                         onChange={(e) => nicknameFromHandlerContent(e)}
-                        style={{ width: "80%" }}
+                        style={{ width: "85%" }}
                       />
                     </TableCell>
                   </TableRow>

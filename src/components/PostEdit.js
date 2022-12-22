@@ -1,3 +1,5 @@
+<<<<<<< HEAD
+=======
 import React, {
   useEffect,
   useState,
@@ -305,3 +307,4 @@ function PostEdit() {
 }
 
 export default PostEdit;
+>>>>>>> 7fd1e71559bbd580c56a9e258a3243b8ec4bcc15
