@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 import React, {
   useEffect,
   useState,
@@ -179,7 +177,7 @@ function PostEdit() {
                 sx={{ flexGrow: 1 }}
                 style={{ color: "#4d5749" }}
               >
-                Edit
+                Post Edit
               </Typography>
               {/* 수정 submit버튼 */}
               {/* <Button
@@ -307,4 +305,3 @@ function PostEdit() {
 }
 
 export default PostEdit;
->>>>>>> 7fd1e71559bbd580c56a9e258a3243b8ec4bcc15
