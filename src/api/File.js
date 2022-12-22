@@ -3,7 +3,7 @@ import axios from "axios";
 // 서버에서 데이터 불러오기 - GET
 export const fileData = async (diaryNo) => {
   const response = await axios.get(
-    `http://localhost:8080/api/fileInfo?diaryno=${diaryNo}`
+    `http://35.78.93.205:8080/api/fileInfo?diaryno=${diaryNo}`
   );
   return response.data;
 };
@@ -11,7 +11,7 @@ export const fileData = async (diaryNo) => {
 // file-download - GET
 export const fileDownload = async (fileName) => {
   const response = await axios.get(
-    `http://localhost:8080/api/file-download?fileName=${fileName}`
+    `http://35.78.93.205:8080/api/file-download?fileName=${fileName}`
   );
   return response.data;
 };
@@ -19,7 +19,7 @@ export const fileDownload = async (fileName) => {
 // file-upload - POST
 // export const fileUpload = async (files) => {
 //   const response = await axios.post(
-//     "http://localhost:8080/api/fileUpload",
+//     "http://35.78.93.205:8080/api/fileUpload",
 //     files
 //   );
 //   return response.data;
@@ -29,7 +29,7 @@ export const fileDownload = async (fileName) => {
 export const deleteFile = async (fileNo, diaryNo) => {
   console.log("fileNO" + fileNo);
   const response = await axios
-    .get(`http://localhost:8080/api/deleteFile?fileNo=${fileNo}`)
+    .get(`http://35.78.93.205:8080/api/deleteFile?fileNo=${fileNo}`)
     .then(window.location.replace(`/diaryEdit/${diaryNo}`));
   // .then((window.location.href = "/"));
   // return response.data;

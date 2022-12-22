@@ -8,7 +8,7 @@ export const createPost = async (formData) => {
   console.log(token);
   console.log("글쓰기 데이터 넘어옴" + formData);
   axios
-    .post("http://localhost:8080/api/post", formData, {
+    .post("http://35.78.93.205:8080/api/post", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: token,
@@ -27,7 +27,7 @@ export const postAllData = async (
   currentPage
 ) => {
   const response = await axios.get(
-    `http://localhost:8080/api/postPage?page=${currentPage}&size=10`
+    `http://35.78.93.205:8080/api/postPage?page=${currentPage}&size=10`
   );
   console.log("Diary.js : " + response.data.dtoList);
   // 데이터가 없으면 마지막 페이지였다는걸 표시
@@ -41,7 +41,9 @@ export const postAllData = async (
 
 // Post 한개 객체 불러오기 - GET
 export const postData = async (postNo) => {
-  const response = await axios.get(`http://localhost:8080/api/post/${postNo}`);
+  const response = await axios.get(
+    `http://35.78.93.205:8080/api/post/${postNo}`
+  );
   return response.data;
 };
 
@@ -50,33 +52,37 @@ export const postUpdate = async (postNo, formData) => {
   console.log("수정하기!!!!" + formData);
   console.log(postNo);
 
-  await axios.put(`http://localhost:8080/api/updatePost/${postNo}`, formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  await axios.put(
+    `http://35.78.93.205:8080/api/updatePost/${postNo}`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
   // .then((document.location.href = `/posting`));
 };
 
 // post 삭제하기 - delete
 export const axiosDeletePost = async (postNo) => {
   const response = await axios
-    .delete(`http://localhost:8080/api/postDelete?postNo=${postNo}`)
+    .delete(`http://35.78.93.205:8080/api/postDelete?postNo=${postNo}`)
     .then((document.location.href = `/posting`));
   return response.data;
 };
 
 // 모든 post 불러오기(깃털꽂기) - GET
 export const axiosGetAllPosts = async () => {
-  const response = await axios.get(`http://localhost:8080/api/postList`);
+  const response = await axios.get(`http://35.78.93.205:8080/api/postList`);
 
   return response.data;
 };
 // Like 정보 보내기 - POST
 export const axiosLike = async (formData) => {
   const response = await axios.post(
-    `http://localhost:8080/api/addLikeCnt`,
-    // `http://localhost:8080/api/addLike`,
+    `http://35.78.93.205:8080/api/addLikeCnt`,
+    // `http://35.78.93.205:8080/api/addLike`,
     formData,
     {
       headers: {
@@ -91,7 +97,7 @@ export const axiosLike = async (formData) => {
 // 해당 user의 포스팅 like 정보 가져오기 - GET
 // export const axiosGetLike = async (postNo, userId) => {
 //   const response = await axios.get(
-//     `http://localhost:8080/api/getLike?postNo=${postNo}&userId=${userId}`
+//     `http://35.78.93.205:8080/api/getLike?postNo=${postNo}&userId=${userId}`
 //   );
 //   return response.data;
 // };
@@ -106,7 +112,7 @@ export const axiosAllPostAndLike = async (
   userId
 ) => {
   const response = await axios.get(
-    `http://localhost:8080/api/postPage?page=${currentPage}&size=10&userId=${userId}`
+    `http://35.78.93.205:8080/api/postPage?page=${currentPage}&size=10&userId=${userId}`
   );
   console.log("Diary.js : " + response.data.dtoList);
   // 데이터가 없으면 마지막 페이지였다는걸 표시
@@ -121,7 +127,7 @@ export const axiosAllPostAndLike = async (
 // 특정 유저의 post 불러오기(깃털꽂기) - GET
 export const axioUserPosts = async (userId) => {
   const response = await axios.get(
-    `http://localhost:8080/api/userPosts/${userId}`
+    `http://35.78.93.205:8080/api/userPosts/${userId}`
   );
 
   return response.data;
@@ -144,7 +150,7 @@ export const axiosPostLike = async (
   // console.log("searchId : " + searchId);
   // console.log("loginId : " + loginId);
   const response = await axios.get(
-    `http://localhost:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}&searchId=${searchId}`
+    `http://35.78.93.205:8080/api/postLikePage?page=${currentPage}&size=10&loginId=${loginId}&searchId=${searchId}`
   );
 
   // console.log("## inside axiosPostLike : " + response.data.dtoList);
@@ -180,7 +186,7 @@ export const axiosPostLike = async (
 // insert Diary - post (사용안하면 삭제)
 export const createDiary = async (formData) => {
   axios
-    .post("http://localhost:8080/api/insert", formData, {
+    .post("http://35.78.93.205:8080/api/insert", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -198,7 +204,7 @@ export const axiosData = async (
   currentPage
 ) => {
   const response = await axios.get(
-    `http://localhost:8080/api/diaryPage?page=${currentPage}&size=10`
+    `http://35.78.93.205:8080/api/diaryPage?page=${currentPage}&size=10`
   );
   // 데이터가 없으면 마지막 페이지였다는걸 표시
   if (!response.data.dtoList.length) {
@@ -224,7 +230,7 @@ export const axiosMypagePosts = async (
   console.log("currentPage" + currentPage);
   console.log("loginId : " + loginId);
   const response = await axios.get(
-    `http://localhost:8080/api/mypagePosts?page=${currentPage}&size=10&loginId=${loginId}`
+    `http://35.78.93.205:8080/api/mypagePosts?page=${currentPage}&size=10&loginId=${loginId}`
   );
 
   console.log("## inside axiosPostLike : " + response.data.dtoList);
