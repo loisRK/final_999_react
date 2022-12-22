@@ -21,26 +21,6 @@
   margin: "1px";
 }
 
-.track {
-  /* borderradius: "20px";
-  backgroundcolor: "#818181";
-  opacity: "1 !important";
-  :after:before {
-      color: "white";
-      fontSize: "11px";
-      position: "absolute";
-      top: "6px";
-    }
-    :after {
-      content: "'On'"
-      left: "8px"
-    }
-    :before {
-      content: "'Off'"
-      right: "7px"
-    } */
-}
-
 .checked {
   color: "#23bf58 !important";
   transform: "translateX(26px) !important";

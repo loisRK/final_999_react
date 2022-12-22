@@ -171,7 +171,7 @@ function PostEdit() {
                 sx={{ flexGrow: 1 }}
                 style={{ color: "#4d5749" }}
               >
-                Post Edit Page
+                Edit
               </Typography>
               {/* 수정 submit버튼 */}
               {/* <Button
@@ -198,9 +198,9 @@ function PostEdit() {
           </AppBar>
         </Box>
         {/* 수정 입력 부분 -> 테이블 형식*/}
-        <div>
+        <Box>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell align="center">Content</TableCell>
@@ -263,7 +263,7 @@ function PostEdit() {
               </TableBody>
             </Table>
           </TableContainer>
-        </div>
+        </Box>
         {/* file list에서 파일 하나씩 전개 -> 사진 하나만 업로드 가능하도록 했기 때문에 multiple 지움*/}
         {/* {files != null ? (
           <ul>

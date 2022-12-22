@@ -126,7 +126,7 @@ function InsertDiary() {
         <Box
           component="form"
           sx={{
-            "& .MuiTextField-root": { m: 2, width: "50ch" },
+            "& .MuiTextField-root": { m: 2, width: "50vw" },
             flexGrow: 1,
           }}
           noValidate
@@ -164,7 +164,7 @@ function InsertDiary() {
           {/* 수정 입력 부분 -> 테이블 형식*/}
 
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell align="center">Content</TableCell>
