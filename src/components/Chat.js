@@ -9,7 +9,6 @@ import { useSearchParams, Link, useInRouterContext } from "react-router-dom";
 import {
   report,
   roomInfo,
-  client_in,
   client_out,
   insert_taboo,
   alltabooList,
@@ -58,8 +57,8 @@ import { Input } from "postcss";
 
 // const socket = io.connect("http://192.168.0.147:9999");
 // const socket = io.connect("http://192.168.0.13:9999");
-const socket = io.connect("http://192.168.0.25:9999");
-// const socket = io.connect("https://server.bnmnil96.repl.co");
+// const socket = io.connect("http://192.168.0.25:9999");
+const socket = io.connect("https://server.bnmnil96.repl.co");
 
 // const Chat = ({ socket, room, username }) => {
 const Chat = () => {
@@ -373,7 +372,6 @@ const Chat = () => {
       return data.dulgi === kakaoId && data.roomNo === room;
     });
     if (counts.length === 0) {
-      client_in(room); // 방의 user_cnt +1
       dulgiInsert({ roomNo: room, dulgi: kakaoId }); // 룸 내 새로운 방문객 추가
     }
   };

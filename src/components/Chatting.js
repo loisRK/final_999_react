@@ -1,5 +1,5 @@
 import axios, { all } from "axios";
-import { createRooms } from "../api/Chatting";
+import { createRooms, client_in } from "../api/Chatting";
 import React, { FormEvent, useEffect, useState } from "react";
 import {
   Box,
@@ -34,8 +34,8 @@ function Chatting() {
   const navigate = useNavigate();
   const formData = new FormData();
 
-  const socket = io.connect("http://192.168.0.25:9999");
-  // const socket = io.connect("https://server.bnmnil96.repl.co");
+  // const socket = io.connect("http://192.168.0.25:9999");
+  const socket = io.connect("https://server.bnmnil96.repl.co");
 
   const token = window.localStorage.getItem("token");
   const [nickname, setNickname] = useState("비회원");
@@ -104,6 +104,7 @@ function Chatting() {
       );
       const data = createRooms(formData);
       data.then((res) => console.log(res));
+      data.then((res) => client_in(String(res)));
       data.then((res) => {
         navigate(`/room?roomNo=${String(res)}`);
       });
