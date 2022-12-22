@@ -18,7 +18,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import { roomList } from "../api/Chatting";
+import { roomList, client_in } from "../api/Chatting";
 import { Box } from "@mui/system";
 import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { kickList } from "../api/Firebase";
@@ -62,8 +62,8 @@ function Map({ token }) {
   const [map, setMap] = useState(null);
   const [markerPosition, setMarkerPosition] = useState(null);
 
-  const socket = io.connect("http://192.168.0.25:9999");
-  // const socket = io.connect("https://server.bnmnil96.repl.co");
+  // const socket = io.connect("http://192.168.0.25:9999");
+  const socket = io.connect("https://server.bnmnil96.repl.co");
 
   // const [overlayState, setOverlayState] = useState("open");
   var overlayState = "open";
@@ -313,6 +313,7 @@ function Map({ token }) {
       if (outDulgi.length >= 1) {
         enterOverlay.setContent(blockElement);
       } else if (distance <= 1) {
+        client_in(roomNo); /// 해당 채팅방에 인원 +1
         enterOverlay.setContent(enterElement);
       } else {
         enterOverlay.setContent(blockElement);
@@ -504,7 +505,7 @@ function Map({ token }) {
       fillOpacity: 0.2, // 채우기 불투명도입니다
     });
     circle.setMap(map);
-  }, [markerPosition])
+  }, [markerPosition]);
 
   useEffect(() => {
     if (token !== null) {
@@ -601,7 +602,10 @@ function Map({ token }) {
                   width="100px"
                   height="100px"
                 />
-                <Typography id="modal-modal-description" sx={{ mt: 2, fontFamily: "KJCGothicBold"}}>
+                <Typography
+                  id="modal-modal-description"
+                  sx={{ mt: 2, fontFamily: "KJCGothicBold" }}
+                >
                   <b>@{postDetail.userDTO.kakaoNickname}</b> &nbsp;&nbsp;
                   <span className="post_detail">
                     {postDetail.postDate.substr(0, 10)}

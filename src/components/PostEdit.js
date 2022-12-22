@@ -31,6 +31,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import { PhotoCamera } from "@mui/icons-material";
+import Snackbar from "@mui/material/Snackbar";
+import { Alert } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function PostEdit() {
@@ -119,18 +121,22 @@ function PostEdit() {
   const submit = (e) => {
     e.preventDefault();
     console.log("addedFile : " + addedFile[0]);
-    formData.append("content", content);
-    formData.append("files", addedFile[0]);
-    formData.append("stringFile", fileImage);
+    if (content === "" && content === null) {
+      alertClick();
+    } else {
+      formData.append("content", content);
+      formData.append("files", addedFile[0]);
+      formData.append("stringFile", fileImage);
 
-    // formdata 값 확인해 보는 법 !
-    for (let key of formData.keys()) {
-      console.log("formdata확인" + key, ":", formData.get(key));
+      // formdata 값 확인해 보는 법 !
+      for (let key of formData.keys()) {
+        console.log("formdata확인" + key, ":", formData.get(key));
+      }
+
+      postUpdate(postNo, formData, currentPage).then(
+        (document.location.href = `/posting`)
+      )();
     }
-
-    postUpdate(postNo, formData, currentPage).then(
-      (document.location.href = `/posting`)
-    );
   };
 
   return (
@@ -280,6 +286,20 @@ function PostEdit() {
           <></>
         )} */}
       </form>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertStatus}
+        autoHideDuration={1000}
+        onClose={alertClick}
+      >
+        <Alert severity="warning" sx={{ width: "100%" }}>
+          포스팅 내용을 입력해주세요.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
