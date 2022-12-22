@@ -8,7 +8,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 // export const userWithdraw = async () => {
 //   const token = window.localStorage.getItem("token");
 //   const response = await axios
-//     .get("http://localhost:8080/api/guguWithdraw", {
+//     .get("http://35.78.93.205:8080/api/guguWithdraw", {
 //       headers: {
 //         Authorization: token,
 //       },
@@ -31,7 +31,7 @@ const KakaoRedirectWithdraw = () => {
     (async () => {
       try {
         const res = await axios
-          .get("http://localhost:8080/api/guguWithdraw", {
+          .get("http://35.78.93.205:8080/api/guguWithdraw", {
             headers: {
               Authorization: token,
             },
