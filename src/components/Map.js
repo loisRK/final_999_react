@@ -63,9 +63,9 @@ function Map({ token }) {
   const [markerPosition, setMarkerPosition] = useState(null);
 
   // const socket = io.connect("http://192.168.0.25:9999");
-  // const socket = io.connect("https://server.bnmnil96.repl.co");
+  const socket = io.connect("https://server.bnmnil96.repl.co");
   // aws ec2 server
-  const socket = io.connect("https://52.197.104.112:5000");
+  // const socket = io.connect("https://52.197.104.112:5000");
 
   // const [overlayState, setOverlayState] = useState("open");
   var overlayState = "open";
