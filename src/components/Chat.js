@@ -151,7 +151,6 @@ const Chat = () => {
   useEffect(() => {
     socket.on("clients", (data) => {
       // console.log(data);
-      setClients(data[0]);
       setVisitor(data[1]);
       alertClick();
     });
@@ -161,7 +160,7 @@ const Chat = () => {
   useEffect(() => {
     socket.on("out", (data) => {
       setOutGoing(data[0]);
-      setClients(data[1]);
+      setClients(clients - 1);
       alertClick2();
     });
   }, [socket]);
