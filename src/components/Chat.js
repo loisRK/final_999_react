@@ -639,7 +639,7 @@ const Chat = () => {
                           username === msg.username
                             ? "bg-green-600 rounded-xl rounded-tr-none "
                             : "bg-blue-600 rounded-xl rounded-tl-none"
-                        } h-auto p-2 text-white m-2 w-fit max-w-[30%] text-left p-2`}
+                        } h-auto p-2 text-white m-2 w-fit max-w-[30%] text-left p-2 break-all`}
                       >
                         <div className="flex">{msg.message}</div>
                       </div>

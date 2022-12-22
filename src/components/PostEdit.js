@@ -31,6 +31,8 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import SendIcon from "@mui/icons-material/Send";
 import { PhotoCamera } from "@mui/icons-material";
+import Snackbar from "@mui/material/Snackbar";
+import { Alert } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 function PostEdit() {
@@ -119,18 +121,22 @@ function PostEdit() {
   const submit = (e) => {
     e.preventDefault();
     console.log("addedFile : " + addedFile[0]);
-    formData.append("content", content);
-    formData.append("files", addedFile[0]);
-    formData.append("stringFile", fileImage);
+    if (content === "" && content === null) {
+      alertClick();
+    } else {
+      formData.append("content", content);
+      formData.append("files", addedFile[0]);
+      formData.append("stringFile", fileImage);
 
-    // formdata 값 확인해 보는 법 !
-    for (let key of formData.keys()) {
-      console.log("formdata확인" + key, ":", formData.get(key));
+      // formdata 값 확인해 보는 법 !
+      for (let key of formData.keys()) {
+        console.log("formdata확인" + key, ":", formData.get(key));
+      }
+
+      postUpdate(postNo, formData, currentPage).then(
+        (document.location.href = `/posting`)
+      )();
     }
-
-    postUpdate(postNo, formData, currentPage).then(
-      (document.location.href = `/posting`)
-    );
   };
 
   return (
@@ -171,7 +177,7 @@ function PostEdit() {
                 sx={{ flexGrow: 1 }}
                 style={{ color: "#4d5749" }}
               >
-                Post Edit Page
+                Edit
               </Typography>
               {/* 수정 submit버튼 */}
               {/* <Button
@@ -198,9 +204,9 @@ function PostEdit() {
           </AppBar>
         </Box>
         {/* 수정 입력 부분 -> 테이블 형식*/}
-        <div>
+        <Box>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell align="center">Content</TableCell>
@@ -263,7 +269,7 @@ function PostEdit() {
               </TableBody>
             </Table>
           </TableContainer>
-        </div>
+        </Box>
         {/* file list에서 파일 하나씩 전개 -> 사진 하나만 업로드 가능하도록 했기 때문에 multiple 지움*/}
         {/* {files != null ? (
           <ul>
@@ -280,6 +286,20 @@ function PostEdit() {
           <></>
         )} */}
       </form>
+      <Snackbar
+        className="mapAlert"
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "center",
+        }}
+        open={alertStatus}
+        autoHideDuration={1000}
+        onClose={alertClick}
+      >
+        <Alert severity="warning" sx={{ width: "100%" }}>
+          포스팅 내용을 입력해주세요.
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
