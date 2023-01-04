@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // User 정보 불러오기 - GET
 export const axiosUser = async () => {
   const token = window.localStorage.getItem("token");
-  const response = await axios.get("http://13.231.10.66:8080/api/myPage", {
+  const response = await axios.get("https://api.dulgi.net/api/myPage", {
     headers: {
       Authorization: token,
     },
@@ -17,22 +17,18 @@ export const axiosUser = async () => {
 export const axiosUserUpdate = async (userId, formData) => {
   console.log("axiosUserUpdate" + userId);
 
-  await axios.put(
-    `http://13.231.10.66:8080/api/updateUser/${userId}`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
+  await axios.put(`https://api.dulgi.net/api/updateUser/${userId}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 // User 정보 보내기 - GET
 export const userWithdraw = async () => {
   const token = window.localStorage.getItem("token");
   const response = await axios
-    .get("http://13.231.10.66:8080/api/guguWithdraw", {
+    .get("https://api.dulgi.net/api/guguWithdraw", {
       headers: {
         Authorization: token,
       },
