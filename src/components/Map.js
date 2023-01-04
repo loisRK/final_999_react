@@ -152,7 +152,7 @@ function Map({ token }) {
     const options = {
       //지도를 생성할 때 필요한 기본 옵션
       // center: new window.kakao.maps.LatLng(latitude, longitude), //지도의 현재 사용자 좌표.
-      center: new Window.kakao.maps.LatLng(latitude, longitude), //지도의 현재 사용자 좌표.
+      center: new window.kakao.maps.LatLng(latitude, longitude), //지도의 현재 사용자 좌표.
       level: 5, //지도의 레벨(확대, 축소 정도)
     };
 
