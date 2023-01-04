@@ -14,7 +14,7 @@ const KakaoRedirectHandler = () => {
     (async () => {
       try {
         const res = await axios
-          .get("http://13.231.10.66:8080/api/kakaoLogout", {
+          .get("https://api.dulgi.net/api/kakaoLogout", {
             headers: {
               Authorization: token,
             },

@@ -31,7 +31,7 @@ const KakaoRedirectWithdraw = () => {
     (async () => {
       try {
         const res = await axios
-          .get("http://13.231.10.66:8080/api/guguWithdraw", {
+          .get("https://api.dulgi.net/api/guguWithdraw", {
             headers: {
               Authorization: token,
             },
